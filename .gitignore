@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Production / Builds
+build/
+dist/
+.next/
+.nuxt/
+
+# Logs and runtime data
+logs
+*.log
+npm-debug.log*
+
+# Environment variables (Crucial for security)
+.env
+.env.local
+.env.development.local

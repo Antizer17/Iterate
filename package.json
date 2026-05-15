@@ -1,0 +1,22 @@
+{
+  "name": "revisionapp",
+  "version": "1.0.0",
+  "description": "A revision app for students.",
+  "license": "ISC",
+  "author": "Sameer",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --env-file=.env index.js ",
+    "seed": "node --env-file=.env seed.js",
+    "mail": "node --env-file=.env ./utils/handleMail.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.2",
+    "nodemailer": "^8.0.7",
+    "nodemon": "^3.1.14"
+  }
+}
