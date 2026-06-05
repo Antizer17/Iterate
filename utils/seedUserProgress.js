@@ -6,8 +6,7 @@ import content from '../models/materials.js'
 export const seedProgressDB = async (userId) => {
   try {
 
-    await connectDB();
-    await content.updateMany({},{$set:{approved:true}})
+    // await connectDB();
     console.log(`🌱 Seeding pre-allocated progress rows for User: ${userId}...`);
     const allTopics = await content.find({ approved: true });
     if (allTopics.length === 0) {
@@ -35,4 +34,4 @@ export const seedProgressDB = async (userId) => {
     }
   }
 };
-seedProgressDB("6a05d1284dabf21a3c7aa4a1")
+export default seedProgressDB;
