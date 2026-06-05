@@ -37,20 +37,59 @@ async function generateAndSeed() {
       console.log(`Generating content for: ${item.topic}...`);
 
       const prompt = `
-        You are a Senior CS Lecturer. Generate a revision module for the topic "${item.topic}" in the course "${item.course}".
-        Return the response in the following JSON format:
-        {
-          "course": "${item.course}",
-          "topic": "${item.topic}",
-          "interviewRelevance": "Explain why this is crucial for software engineering interviews.",
-          "lessonBody": "Provide a concise explanation in HTML format. Use <b>, <ul>, <li> tags. Keep it offline-friendly.",
-          "quiz": {
-            "question": "A specific multiple choice or logic question.",
-            "answer": "The detailed explanation of the answer."
-          },
-          
-        }
-      `;
+  You are a Senior CS Lecturer and Technical Interviewer. Generate a comprehensive interview revision module for the topic "${item.topic}" within the course "${item.course}".
+
+  Return your response strictly as a single, valid JSON object following this exact format:
+  {
+    "course": "${item.course}",
+    "topic": "${item.topic}",
+    "interviewRelevance": "Provide a high-impact, 2-3 sentence explanation of why this specific topic is a favorite for technical recruiters and software engineering interviews.",
+    "lessonBody": "Provide a concise, dense, high-yield summary of the core concepts in HTML format. Use tags like <b>, <ul>, and <li> to highlight key terminology. Keep it professional and focused on absolute fundamentals.",
+    "quiz": [
+      {
+        "questionNumber": 1,
+        "questionBody": "An introductory, definition-based multiple-choice question testing the absolute basics (Easy).",
+        "options": [
+          "A. First option text",
+          "B. Second option text",
+          "C. Third option text",
+          "D. Fourth option text"
+        ],
+        "correctAnswer": "The single correct upper-case letter: A, B, C, or D",
+        "solutionExplanation": "A detailed explanation of why this choice is correct and why the other options are technically incorrect in this context."
+      },
+      {
+        "questionNumber": 2,
+        "questionBody": "A moderate difficulty question testing core differences, structural relationships, runtime behavior, or classic exam patterns (Moderate).",
+        "options": [
+          "A. First option text",
+          "B. Second option text",
+          "C. Third option text",
+          "D. Fourth option text"
+        ],
+        "correctAnswer": "The single correct upper-case letter: A, B, C, or D",
+        "solutionExplanation": "A detailed explanation of why this choice is correct."
+      },
+      {
+        "questionNumber": 3,
+        "questionBody": "An advanced scenario-based question analyzing a hypothetical engineering problem, edge case, or system failure mode related to this topic (Hard).",
+        "options": [
+          "A. First option text",
+          "B. Second option text",
+          "C. Third option text",
+          "D. Fourth option text"
+        ],
+        "correctAnswer": "The single correct upper-case letter: A, B, C, or D",
+        "solutionExplanation": "A detailed explanation of why this choice is correct and how to avoid the common trap."
+      }
+    ]
+  }
+
+  CRITICAL CONSTRAINTS:
+  - Do not include markdown formatting wraps like \`\`\`json or \`\`\`. Output raw string text that can be parsed directly with JSON.parse().
+  - Ensure every array under "options" contains exactly 4 elements, explicitly prefixed with "A.", "B.", "C.", and "D.".
+  - The "correctAnswer" field must contain exactly one character from the set ["A", "B", "C", "D"].
+`;
 
       const result = await model.generateContent(prompt);
       const contentData = JSON.parse(result.response.text());
@@ -69,3 +108,4 @@ async function generateAndSeed() {
 }
 
 generateAndSeed();
+

@@ -9,14 +9,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --env-file=.env index.js ",
-    "seed": "node --env-file=.env seed.js",
-    "mail": "node --env-file=.env ./utils/handleMail.js"
+    "seedContent": "node --env-file=.env seed.js",
+    "mail": "node --env-file=.env ./utils/mailer.js",
+    "seedUser": "node --env-file=.env ./utils/seedUserProgress.js",
+    "generateSyllabus": "node --env-file=.env ./utils/generateSyllabus.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "express": "^5.2.1",
     "mongoose": "^9.6.2",
+    "node-cron": "^4.2.1",
     "nodemailer": "^8.0.7",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "openai": "^6.42.0",
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.18.0"
   }
 }
