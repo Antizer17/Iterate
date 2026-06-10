@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
 const materialsSchema = new mongoose.Schema({
-  course: { type: String, required: true, enum: ['dsa', 'os', 'dbms', 'networks'] },
-  courseCode:[{type: String, enums: [CSE111,CSE220,CSE221,CSE370,CSE321,CSE421,CSE470,CSE422,CSE471]}],
+  course: { type: String, required: true, enum: ['Algorithms', 'Operating Systems', 'Database Management Systems', 'Computer Networks', 'Data Structures', 'Artificial Intelligence','Software Engineering'] },
+  courseCode:{type: String, enum: ['CSE111','CSE220','CSE221','CSE370','CSE321','CSE421','CSE470','CSE422','CSE471']},
   topic: { type: String, required: true },  
   order: { type: Number, required: true },   
   bracUNotesContext: { type: String, required: true } 
