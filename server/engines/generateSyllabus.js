@@ -13,8 +13,17 @@ const __dirname = path.dirname(__filename);
 const cse221Roadmap = [
   // { order: 1, topic: "Introduction to Algorithms",           fileName: "1.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 1,  endPage: 5  },
   // { order: 2, topic: "Running Time & Algorithm Analysis",    fileName: "1.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 6,  endPage: 9  },
-  { order: 3, topic: "Big-O, Omega & Theta Notation",        fileName: "1.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 10, endPage: 35 },
-  { order: 4, topic: "Complexity Analysis of Code Patterns", fileName: "1.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 36, endPage: 54 },
+  // { order: 3, topic: "Big-O, Omega & Theta Notation",        fileName: "1.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 10, endPage: 35 },
+  // 
+  // { order: 5, topic: "Binary Search", fileName: "4.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 1, endPage: 9 },
+  // { order: 6, topic: "Ternary Search", fileName: "5.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 1, endPage: 7 },
+  // { order: 7, topic: "Divide and Conquer Strategy", fileName: "6.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 1, endPage: 51 },
+  // { order: 8, topic: "Quick Sort", fileName: "7.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 1, endPage: 11 },
+  { order: 9, topic: "Graph Basics", fileName: "8.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 1, endPage: 13 },
+{ order: 10, topic: "Paths, Connectivity & Trees", fileName: "8.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 14, endPage: 16 },
+{ order: 11, topic: "Graph Representations", fileName: "8.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 17, endPage: 21 },
+{ order: 12, topic: "Breadth First Search (BFS)", fileName: "8.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 22, endPage: 28 },
+{ order: 13, topic: "Depth First Search (DFS)", fileName: "8.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 29, endPage: 31 },
 ];
 
 function extractPages(text, startPage, endPage) {
@@ -48,7 +57,9 @@ STRICT RULES:
 Topic: ${topicName}
 Step: ${stepOrder}
 
-Extract all technical definitions, formulas, constraints, time complexities, best/worst cases, and pseudocode from the text below. Be dense, bulleted, and exam-focused.
+this is for lightweight revision Extract the core concepts from the notes including all technical definitions, formulas but skip historical relevance. Incase of complex example and simulation just extract the topic name, for example graph basics, dfs, bfc, etc.
+ Be dense, bulleted, and exam-focused.
+  Math data maybe noisy dont focus too much on extracting dense math concepts but summarize the core ideas so another llm can generate from them. Make sure to include just the most important concepts not all examples as content must fit one page email.
 
 Text array containing objects with text and page numbers of the lecture slides:
 ${rawText}`

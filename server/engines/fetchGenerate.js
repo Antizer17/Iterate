@@ -12,13 +12,16 @@ const fetchGenerate = async (courseCode, currentStep) =>{
     if(!isMaterial){
         throw new Error("No material found for the given course code and step.")
     }
+    console.log(isMaterial.topic)
     const isGenerated= await generatedModules.findOne({
-        course: isMaterial.course,
+        courseCode: isMaterial.courseCode,
         topic: isMaterial.topic,})
     if(!isGenerated){
+        console.log('Cache miss: Generating content for', isMaterial.topic)
        const response= await generateContent(isMaterial.course,isMaterial.courseCode,isMaterial.topic,isMaterial.order,isMaterial.bracUNotesContext)
        return response
     }
+    console.log('Cache hit: Returning existing content for', isMaterial.topic)
     return isGenerated
 
     
@@ -26,6 +29,4 @@ const fetchGenerate = async (courseCode, currentStep) =>{
     console.error(`Error fetching generated module for course ${courseCode} step ${currentStep}: ${err}`)
 }
 }
-
-const result=await fetchGenerate("CSE221",1)
-console.log(result)
+export default fetchGenerate;

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const generatedModulesSchema = new mongoose.Schema({
-  course: {
+  courseCode: {
     type: String,
     maxlength: 6, 
     required: true,
@@ -63,9 +63,9 @@ const generatedModulesSchema = new mongoose.Schema({
     ],
     validate: {
       validator: function (val) {
-        return val.length === 3; // STRICT ENFORCEMENT
+        return val.length === 2; // STRICT ENFORCEMENT
       },
-      message: "A topic refresher module must contain exactly 3 MCQs."
+      message: "A topic refresher module must contain exactly 2 MCQs."
     },
     required: true
   }

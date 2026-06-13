@@ -2,9 +2,15 @@ import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 import progress from '../models/progress.js';
 import content from '../models/materials.js';
-import users from '../models/users.js'; // Ensure the model is registered
+import users from '../models/users.js'; 
 import connectDB from './dbConnect.js';
 import PDFDocument from 'pdfkit';
+import calculatePriority from '../engines/prioritySchedular.js';
+import fetchGenerate from '../engines/fetchGenerate.js'; 
+import { marked } from 'marked';
+
+
+
 
 
 // 1. Configure your Nodemailer Transporter
@@ -75,18 +81,19 @@ export const runDailyEmailJob = async () => {
     const userData = await users.find({});
     
     for (const user of userData) {
-      const topicData = await progress.findOne({ user: user._id, seenStatus: false }).populate('topic');
+
+      const currentTopicData = await calculatePriority(user);
       
-      if (!topicData) {
-        console.log(`⏩ Skipping ${user.name}: All caught up.`);
+      if (!currentTopicData) {
+        console.log(`⏩ Skipping ${user.name}: Not enrolled in any courses.`);
         continue;
       }
 
       const userEmail = user.email;
-      const material = topicData.topic;
+      const material = await fetchGenerate(currentTopicData[1], currentTopicData[2]);
 
       if (!material) {
-        console.warn(`⚠️ Warning: Missing topic reference on tracking card ${topicData._id}`);
+        console.warn(`⚠️ Warning: Missing relevant materials for topic`);
         continue; 
       }
 
@@ -95,6 +102,8 @@ export const runDailyEmailJob = async () => {
       console.log(`📄 Generating dynamically compiled Solution PDF for ${user.name}...`);
       // Build the binary attachment asset
       const pdfBuffer = await generateSolutionPDF(material, activeQuizArray);
+      // Convert markdown to HTML before injecting
+      const lessonBodyHTML = marked.parse(material.lessonBody);
 
       // 2. Build the Email Configuration
       const mailOptions = {
@@ -105,7 +114,7 @@ export const runDailyEmailJob = async () => {
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; line-height: 1.6;">
             
             <span style="color: #6c757d; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
-              Course: ${material.course} // Syllabus Refresher
+              Course: ${material.courseCode} // Syllabus Refresher
             </span>
             <h1 style="margin-top: 5px; margin-bottom: 15px; color: #111; font-size: 24px; font-weight: 700;">
               ${material.topic}
@@ -117,8 +126,14 @@ export const runDailyEmailJob = async () => {
             </div>
             
             <div style="font-size: 16px; color: #1e293b; margin-bottom: 30px;">
-              ${material.lessonBody}
-            </div>
+  <style>
+    ul { padding-left: 20px; margin: 8px 0; }
+    li { margin-bottom: 6px; }
+    strong { color: #0f172a; }
+    p { margin: 0 0 12px 0; }
+  </style>
+  ${lessonBodyHTML}
+</div>
             
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
 
@@ -164,9 +179,9 @@ export const runDailyEmailJob = async () => {
             }).join('') : ''}
 
             <div style="text-align: center; margin-top: 35px; border-top: 1px dashed #cbd5e1; padding-top: 25px;">
-              <a href="${BASE_URL}/api/streak/sync?userId=${user._id}&progressId=${topicData._id}" 
+              <a href="${BASE_URL}/api/streak/sync?userId=${user._id}&progressId=${currentTopicData[1]}" 
                  style="display: inline-block; background-color: #0f172a; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
-                 Lock In Today's Streak 🔥
+                 Aced It!
               </a>
             </div>
           </div>
@@ -184,9 +199,14 @@ export const runDailyEmailJob = async () => {
       await transporter.sendMail(mailOptions);
       console.log(`✅ Dispatched email with PDF Attachment to: ${userEmail}`);
 
-      topicData.seenStatus = true;
-      topicData.SentDate = new Date();
-      await topicData.save();
+      await progress.findOneAndUpdate({
+        user: user._id,
+        courseCode: currentTopicData[1],
+        currentOrderStep: currentTopicData[2] + 1
+      }, {
+        lastServedAt: new Date()
+      })
+      
     }
   } catch (err) {
     console.error("❌ Critical execution crash context:", err);
