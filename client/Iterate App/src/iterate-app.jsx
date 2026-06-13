@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Dashboard from "./RevisionTree.jsx";
+import {Routes, Route} from "react-router-dom" 
+import Topics from "./Topics.jsx"
 
 // ─── Logo: spinning arrow loop ───────────────────────────────────────────────
 function IterateLogo({ size = 36, spin = true }) {
@@ -327,7 +329,7 @@ function Landing({ setPage }) {
 
 // ─── App Shell ────────────────────────────────────────────────────────────────
 export default function App() {
-  const [page, setPage] = useState("landing");
+  const [page, setPage] = useState("dashboard");
   const showNav = page !== "landing";
 
   return (
@@ -335,22 +337,30 @@ export default function App() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #F7F6F2; font-family: 'Inter', sans-serif; }
+        body { background: #F7F6F2; font-family: 'Inter', sans-serif; width:100vw;}
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         input:focus { outline: 2px solid #1A1A1A; outline-offset: 2px; }
         button:focus-visible { outline: 2px solid #1A1A1A; outline-offset: 2px; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #D4D0C8; border-radius: 3px; }
       `}</style>
+      <Routes>
+        <Route path="/" element={ <Landing/>} />
+        <Route path="/progress" element={ <Dashboard/>} />
+        <Route path="/topics" element={<Topics />} />
+      </Routes>
 
-      <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>
-        {true && <SideNav page={page} setPage={setPage} />}
+      {/* <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>
+        {page!=="landing" && <SideNav page={page} setPage={setPage} />}
         <main style={{ flex: 1, overflow: "auto" }}>
           {page === "landing" && <Landing setPage={setPage} />}
           {(page === "dashboard" || page === "sessions" || page === "topics" || page === "settings") && (
             <Dashboard />
           )}
+          {(page === "topics") && (
+            <Topics />
+          )}
         </main>
-      </div>
+      </div> */}
     </>
   );
 }
@@ -359,7 +369,7 @@ export default function App() {
 const styles = {
   // Nav
   nav: {
-    width: 200,
+    minWidth: "12%",
     minHeight: "100vh",
     background: "#EFEDE8",
     borderRight: "1px solid #DDD9D0",
@@ -584,3 +594,5 @@ const styles = {
     color: "#1A1A1A",
   },
 };
+
+export {SideNav};

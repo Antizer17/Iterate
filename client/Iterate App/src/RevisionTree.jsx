@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import {SideNav} from "./iterate-app.jsx"
 
 // ── Design tokens (scoped to .rt-root) ──────────────────────────────────────
 const CSS = `
@@ -252,7 +253,7 @@ export function RevisionTree({ courses: initialCourses, title = "revision tree" 
   } = useRevisionTree(initialCourses);
 
   return (
-    <div className="rt-root">
+    <div className="rt-root" style={{minWidth:'88%'}}>
       <style>{CSS}</style>
       <div className="rt-wrap">
         <div className="rt-header">
@@ -320,5 +321,10 @@ const SAMPLE_COURSES = {
 };
 
 export default function Dashboard() {
-  return <RevisionTree courses={SAMPLE_COURSES} />;
+  return (
+  <div style={{ display: "flex", minHeight: "100vh",minWidth:"100vw", background: "#F7F6F2", flexDirection:"row" }}>
+    <SideNav/>
+    <RevisionTree courses={SAMPLE_COURSES} />
+  </div>)
+  
 }
