@@ -1,24 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { SideNav } from "./iterate-app";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
-const COURSES = [
-  { id: "CSE101", name: "Intro to Computer Science",     dept: "CSE", credits: 3, topics: 12, level: "Foundation",   desc: "Core programming concepts, problem-solving, and computational thinking." },
-  { id: "CSE221", name: "Algorithm Design & Analysis",   dept: "CSE", credits: 4, topics: 15, level: "Intermediate", desc: "Divide & conquer, dynamic programming, graph algorithms, and NP-completeness." },
-  { id: "CSE331", name: "Data Structures",               dept: "CSE", credits: 4, topics: 15, level: "Intermediate", desc: "Arrays, trees, heaps, hash tables, graphs — and when to reach for each." },
-  { id: "CSE341", name: "Operating Systems",             dept: "CSE", credits: 3, topics: 11, level: "Intermediate", desc: "Processes, threads, memory management, file systems, and concurrency." },
-  { id: "CSE351", name: "Computer Networks",             dept: "CSE", credits: 3, topics: 10, level: "Intermediate", desc: "TCP/IP, routing, DNS, HTTP, and the full network stack." },
-  { id: "CSE461", name: "Database Systems",              dept: "CSE", credits: 3, topics: 13, level: "Advanced",     desc: "Relational algebra, SQL, indexing, transactions, and query optimisation." },
-  { id: "CSE471", name: "Machine Learning",              dept: "CSE", credits: 4, topics: 14, level: "Advanced",     desc: "Supervised & unsupervised learning, neural networks, and model evaluation." },
-  { id: "MAT201", name: "Discrete Mathematics",          dept: "MAT", credits: 3, topics: 10, level: "Foundation",   desc: "Logic, proofs, combinatorics, graph theory, and probability basics." },
-  { id: "MAT301", name: "Linear Algebra",                dept: "MAT", credits: 3, topics: 9,  level: "Intermediate", desc: "Vectors, matrices, eigenvalues, and applications in ML and graphics." },
-  { id: "CSE481", name: "Compilers & Languages",         dept: "CSE", credits: 4, topics: 12, level: "Advanced",     desc: "Lexing, parsing, semantic analysis, IR generation, and code optimisation." },
-];
+// const COURSES = [
+//   { id: "CSE101", name: "Intro to Computer Science", topics: 12, desc: "Core programming concepts, problem-solving, and computational thinking." },
+//   { id: "CSE221", name: "Algorithm Design & Analysis", topics: 15, desc: "Divide & conquer, dynamic programming, graph algorithms, and NP-completeness." },
+//   { id: "CSE331", name: "Data Structures", topics: 15, desc: "Arrays, trees, heaps, hash tables, graphs — and when to reach for each." },
+//   { id: "CSE341", name: "Operating Systems", topics: 11, desc: "Processes, threads, memory management, file systems, and concurrency." },
+//   { id: "CSE351", name: "Computer Networks", topics: 10, desc: "TCP/IP, routing, DNS, HTTP, and the full network stack." },
+//   { id: "CSE461", name: "Database Systems", topics: 13, desc: "Relational algebra, SQL, indexing, transactions, and query optimisation." },
+//   { id: "CSE471", name: "Machine Learning", topics: 14, desc: "Supervised & unsupervised learning, neural networks, and model evaluation." },
+//   { id: "MAT201", name: "Discrete Mathematics",topics: 10, desc:  "Logic, proofs, combinatorics, graph theory, and probability basics." },
+//   { id: "MAT301", name: "Linear Algebra", topics: 9, desc: "Vectors, matrices, eigenvalues, and applications in ML and graphics." },
+//   { id: "CSE481", name: "Compilers & Languages", topics: 12, desc: "Lexing, parsing, semantic analysis, IR generation, and code optimisation." },
+// ];
+
 
 const DEPTS  = ["All", "CSE", "MAT"];
 const LEVELS = ["All levels", "Foundation", "Intermediate", "Advanced"];
 
 // ─── CourseCard ───────────────────────────────────────────────────────────────
 function CourseCard({ course, onEnroll }) {
+  console.log(`courseCode is ${course.courseCode}`)
   // state: 'default' | 'rating' | 'enrolled'
   const [cardState, setCardState] = useState("default");
   const [confidence, setConfidence] = useState(0);
@@ -31,7 +34,7 @@ function CourseCard({ course, onEnroll }) {
     if (!confidence) return;
     setEnrolledConf(confidence);
     setCardState("enrolled");
-    onEnroll({ courseId: course.id, confidence, enrolledAt: new Date().toISOString() });
+    onEnroll({ courseId: course.courseCode, confidence });
   }
 
   // lined paper background shared with the rest of the app
@@ -59,9 +62,9 @@ function CourseCard({ course, onEnroll }) {
       <div style={cardBase}>
         <div style={{ textAlign: "center" }}>
           <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: 17, color: "#1A1A1A", lineHeight: 1.3, marginBottom: 4 }}>
-            How confident are you in<br /><em>{course.name}</em>?
+            How confident are you in<br /><em>{course.courseCode}</em>?
           </p>
-          <p style={{ fontSize: 11, color: "#AAA" }}>{course.id} · {course.credits} credits</p>
+          <p style={{ fontSize: 11, color: "#AAA" }}>{course.id}</p>
         </div>
 
         {/* 1–10 scale */}
@@ -135,19 +138,19 @@ function CourseCard({ course, onEnroll }) {
           letterSpacing: "0.08em", textTransform: "uppercase",
           background: "#F7F6F2", border: "1px solid #E0DDD5",
           borderRadius: 3, padding: "2px 7px",
-        }}>{course.id}</span>
-        <span style={{ fontSize: 10, color: "#AAA", fontWeight: 500 }}>{course.dept}</span>
+        }}>{course.courseCode}</span>
+        {/* <span style={{ fontSize: 10, color: "#AAA", fontWeight: 500 }}>{course.dept}</span> */}
       </div>
 
       <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 17, color: "#1A1A1A", lineHeight: 1.25, letterSpacing: "-0.2px" }}>
-        {course.name}
+        {course.course}
       </div>
 
       <div style={{ fontSize: 11, color: "#888", lineHeight: 1.6 }}>{course.desc}</div>
 
       {/* meta tags */}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        {[course.level, `${course.credits} credits`, `${course.topics} topics`].map(t => (
+        {[`${course.courseCode} topics`].map(t => (
           <span key={t} style={{ fontSize: 10, border: "1px solid #DDD9D0", borderRadius: 3, padding: "2px 8px", color: "#666" }}>{t}</span>
         ))}
       </div>
@@ -198,9 +201,18 @@ function CourseCard({ course, onEnroll }) {
 export default function Topics() {
   const [activeDept,  setActiveDept]  = useState("All");
   const [activeLevel, setActiveLevel] = useState("All levels");
-  const [enrollments, setEnrollments] = useState([]); // [{ courseId, confidence, enrolledAt }]
+  const [enrollments, setEnrollments] = useState({}); // [{ courseId, confidence, enrolledAt }]
   const [toast, setToast]             = useState(null);
   const [syncing, setSyncing]         = useState(false);
+  const [courses,setCourses]          = useState([])
+
+  useEffect(()=>{
+    fetch("http://localhost:1700/api/materials/")
+      .then(res=>res.json())
+      .then(data=>{setCourses(data['data']['allTopics'])})
+      
+  },[])
+  console.log(courses)
 
   function showToast(msg) {
     setToast(msg);
@@ -208,12 +220,9 @@ export default function Topics() {
   }
 
   function handleEnroll(data) {
-    setEnrollments(prev => {
-      const without = prev.filter(e => e.courseId !== data.courseId);
-      return [...without, data];
-    });
-    const course = COURSES.find(c => c.id === data.courseId);
-    showToast(`✓ Enrolled in ${course?.name} — confidence ${data.confidence}/10`);
+    setEnrollments(data);
+    const course = courses.find(c => c.courseCode === data.courseId);
+    showToast(`✓ Enrolled in ${course?.courseCode} — confidence ${data.confidence}/10`);
   }
 
   async function syncToBackend() {
@@ -232,20 +241,20 @@ export default function Topics() {
     }
   }
 
-  const filtered = COURSES.filter(c =>
-    (activeDept  === "All"        || c.dept  === activeDept) &&
-    (activeLevel === "All levels" || c.level === activeLevel)
-  );
+  // const filtered = courses.filter(c =>
+  //   (activeDept  === "All"        || c.dept  === activeDept) &&
+  //   (activeLevel === "All levels" || c.level === activeLevel)
+  // );
 
-  const enrolledIds  = new Set(enrollments.map(e => e.courseId));
-  const enrolledCount = enrolledIds.size;
-  const topicsUnlocked = enrollments.reduce((a, e) => {
-    const c = COURSES.find(x => x.id === e.courseId);
-    return a + (c?.topics ?? 0);
-  }, 0);
-  const avgConf = enrolledCount
-    ? (enrollments.reduce((a, e) => a + e.confidence, 0) / enrolledCount).toFixed(1)
-    : "—";
+  // const enrolledIds  = new Set(enrollments.map(e => e.courseId));
+  // const enrolledCount = enrolledIds.size;
+  // const topicsUnlocked = enrollments.reduce((a, e) => {
+  //   const c = courses.find(x => x.courseCode === e.courseId);
+  //   return a + (c?.topics ?? 0);
+  // }, 0);
+  // const avgConf = enrolledCount
+  //   ? (enrollments.reduce((a, e) => a + e.confidence, 0) / enrolledCount).toFixed(1)
+  //   : "—";
 
   // ── Filter pill ──
   const FilterBtn = ({ label, active, onClick }) => (
@@ -267,7 +276,7 @@ export default function Topics() {
   );
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 860, margin: "0 auto" }}>
+    <div style={{ padding: "32px 36px",minWidth:"88%", maxWidth: 860, margin: "0 auto" }}>
 
       {/* Page header */}
       <div style={{ marginBottom: 28 }}>
@@ -280,7 +289,7 @@ export default function Topics() {
       </div>
 
       {/* Summary bar */}
-      <div style={{
+      {/* <div style={{
         background: "#fff", border: "1px solid #E0DDD5", borderRadius: 6,
         padding: "14px 20px", marginBottom: 20,
         display: "flex", gap: 24, alignItems: "center",
@@ -315,7 +324,7 @@ export default function Topics() {
         >
           {syncing ? "Syncing…" : "Sync to backend ↗"}
         </button>
-      </div>
+      </div> */}
 
       {/* Filter row */}
       <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
@@ -330,10 +339,10 @@ export default function Topics() {
 
       {/* Cards grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
-        {filtered.map(course => (
-          <CourseCard key={course.id} course={course} onEnroll={handleEnroll} />
+        {courses.map(course => (
+          <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} />
         ))}
-        {filtered.length === 0 && (
+        {courses.length === 0 && (
           <p style={{ gridColumn: "1/-1", fontSize: 13, color: "#AAA", textAlign: "center", padding: "40px 0" }}>
             No courses match this filter.
           </p>
@@ -357,3 +366,12 @@ export default function Topics() {
     </div>
   );
 }
+function TopicPage(){
+  return(
+    <div style={{display:"flex", flexDirection:"row"}}>
+      <SideNav/>
+      <Topics/>
+    </div>
+  )
+}
+export {TopicPage};

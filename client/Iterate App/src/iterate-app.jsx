@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Dashboard from "./RevisionTree.jsx";
-import {Routes, Route} from "react-router-dom" 
+import {Routes, Route, Navigate, useNavigate} from "react-router-dom" 
 import Topics from "./Topics.jsx"
+import { TopicPage } from "./Topics.jsx";
 
 // ─── Logo: spinning arrow loop ───────────────────────────────────────────────
 function IterateLogo({ size = 36, spin = true }) {
@@ -39,11 +40,12 @@ function IterateLogo({ size = 36, spin = true }) {
 // ─── Side Nav ────────────────────────────────────────────────────────────────
 function SideNav({ page, setPage }) {
   const links = [
-    { id: "dashboard", label: "Progress", icon: "◈" },
+    { id: "progress", label: "Progress", icon: "◈" },
     { id: "sessions",  label: "Sessions",  icon: "⊞" },
     { id: "topics",    label: "Topics",    icon: "⊟" },
     { id: "settings",  label: "Settings",  icon: "⊙" },
   ];
+  const navigate=useNavigate();
   return (
     <nav style={styles.nav}>
       <div style={styles.navLogo} onClick={() => setPage("landing")}>
@@ -54,7 +56,7 @@ function SideNav({ page, setPage }) {
         {links.map(l => (
           <button
             key={l.id}
-            onClick={() => setPage(l.id)}
+            onClick={() => navigate(`/${l.id}`)}
             style={{
               ...styles.navLink,
               ...(page === l.id ? styles.navLinkActive : {}),
@@ -254,11 +256,35 @@ function TreeLines() {
 function Landing({ setPage }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const navigate=useNavigate()
 
-  const handleSubmit = () => {
-    if (email.includes("@")) {
-      setSubmitted(true);
-      setTimeout(() => setPage("dashboard"), 1800);
+  const handleSubmit = async () => {
+    if (email.includes("@g.bracu.ac.bd")) {
+      console.log('EMAIL PASSES!')
+      try{
+        const response= await fetch("http://localhost:1700/api/onboard/",{
+          method:"post",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            email:email
+          })
+        })
+        const data= await response.json()
+        
+        if(!response.ok){
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        console.log(`Welcome aboard pilot:${response}`)
+        if(data.status==="Success"){
+        setTimeout(() => navigate(`/topics`), 1800);
+        setSubmitted(true);
+      }
+      }catch(err){
+            console.error("Error during POST request:",err)
+          }
+      
     }
   };
 
@@ -346,7 +372,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={ <Landing/>} />
         <Route path="/progress" element={ <Dashboard/>} />
-        <Route path="/topics" element={<Topics />} />
+        <Route path="/topics" element={<TopicPage />} />
       </Routes>
 
       {/* <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>
