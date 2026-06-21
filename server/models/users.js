@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     name:{
         type: String,
     },
-    enRolledCourses:[{type: String, enums: ['CSE111','CSE220','CSE221','CSE370','CSE321','CSE421','CSE470','CSE422','CSE471']}],
+    enRolledCourses:[{type: String, enum: ['CSE111','CSE220','CSE221','CSE370','CSE321','CSE421','CSE470','CSE422','CSE471']}],
     streak:{
         currentStreak:{type:Number,default:0},
         longestStreak:{type:Number,default:0},

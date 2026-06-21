@@ -18,6 +18,7 @@ export default async function getTopics(req,res){
             }
 ])
         console.log(allTopics.length,allTopics)
+        res.json({status:"200",data:{allTopics}})
     }catch(err){
         console.error(err)
     }

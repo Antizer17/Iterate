@@ -1,6 +1,6 @@
 import express from 'express'
 import connectDB from './utils/dbConnect.js'
-import onBoardRouter from './Routes/onBoardingRoutes.js'
+import userRoute from './Routes/userRoutes.js'
 import materialsRouter from './Routes/materialRoutes.js'
 import cronSchedular from './utils/cronScheduler.js'
 import cors from "cors"
@@ -14,6 +14,7 @@ app.listen(port || 1700,()=>{
 app.use(cors());
 cronSchedular()
 app.use(express.json())
-app.use('/api/onboard', onBoardRouter)
+app.use('/api/users', userRoute)
 app.use('/api/materials', materialsRouter)
+
 
