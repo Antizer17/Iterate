@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema({
     name:{
         type: String,
     },
+    googleID:{
+        type:String,
+        unique:true,
+        sparse: true
+    },
     enRolledCourses:[{type: String, enum: ['CSE111','CSE220','CSE221','CSE370','CSE321','CSE421','CSE470','CSE422','CSE471']}],
     streak:{
         currentStreak:{type:Number,default:0},
