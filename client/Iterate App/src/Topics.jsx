@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { SideNav } from "./iterate-app";
 
+
 // ─── Data ─────────────────────────────────────────────────────────────────────
 // const COURSES = [
 //   { id: "CSE101", name: "Intro to Computer Science", topics: 12, desc: "Core programming concepts, problem-solving, and computational thinking." },
@@ -20,11 +21,11 @@ const DEPTS  = ["All", "CSE", "MAT"];
 const LEVELS = ["All levels", "Foundation", "Intermediate", "Advanced"];
 
 // ─── CourseCard ───────────────────────────────────────────────────────────────
-function CourseCard({ course, onEnroll, user, state }) {
+function CourseCard({ course, onEnroll, user, state, courseConfidence }) {
   console.log(`courseCode is ${course.courseCode}`)
   // state: 'default' | 'rating' | 'enrolled'
   const [cardState, setCardState] = useState(state);
-  const [confidence, setConfidence] = useState(0);
+  const [confidence, setConfidence] = useState(courseConfidence);
   const [enrolledConf, setEnrolledConf] = useState(null);
 
   function startRating() { setCardState("rating"); setConfidence(0); }
@@ -160,7 +161,7 @@ function CourseCard({ course, onEnroll, user, state }) {
         <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#888" }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#1A1A1A", flexShrink: 0 }} />
           <span>Enrolled</span>
-          <span style={{ marginLeft: "auto", fontSize: 10, color: "#666" }}>confidence {enrolledConf}/10</span>
+          <span style={{ marginLeft: "auto", fontSize: 10, color: "#666" }}>confidence {enrolledConf || courseConfidence}/10</span>
         </div>
       )}
 
@@ -207,15 +208,17 @@ export default function Topics() {
   const [courses,setCourses]          = useState([])
   const [user,setUser]                = useState("none")
   const [enrolled,setEnrolled]        = useState([])
+  const [confidenceArray,setConfidenceArray]    = useState([])
   const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
     async function callApis(){
       try{
         console.log("initiating connection")
-        const [userRes, materialsRes] = await Promise.all([
+        const [userRes, materialsRes, progressRes] = await Promise.all([
           fetch("http://localhost:1700/api/users/").then(res=>res.json()),
-          fetch("http://localhost:1700/api/materials/").then(res => res.json())
+          fetch("http://localhost:1700/api/materials/").then(res => res.json()),
+          fetch("http://localhost:1700/api/progress/user").then(res => res.json())
         ])
         if (materialsRes?.data?.allTopics) {
           setCourses(materialsRes.data.allTopics);
@@ -224,6 +227,9 @@ export default function Topics() {
         if (userRes?.data) {
           setUser(userRes.data._id);
           setEnrolled(userRes.data.enRolledCourses || []); 
+        }
+        if (progressRes?.data){
+          setConfidenceArray(progressRes.data)
         }
       }catch(err){
         console.error(`Error fetching data: ${err}`)
@@ -239,6 +245,7 @@ export default function Topics() {
   console.log(courses)
   console.log(`${user} yooo`)
   console.log(`${enrolled} enrolled courses baby :D`)
+  console.log("confidenceArray baby :D", confidenceArray)
 
   function showToast(msg) {
     setToast(msg);
@@ -382,7 +389,8 @@ export default function Topics() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
         {courses.map(course => 
           { const isEnrolled = enrolled.includes(course.courseCode);
-            return isEnrolled ? <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="enrolled" /> :
+            console.log(confidenceArray[0].confidenceScore)
+            return isEnrolled ? <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="enrolled" courseConfidence={confidenceArray[0].confidenceScore}/> :
             <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="default" />
             
           }
