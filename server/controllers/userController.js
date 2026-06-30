@@ -31,7 +31,9 @@ try{
 }
 
 const enrollCourse = async (req,res)=>{
-    const {userID, course, courseCode, confidenceScore} = req.body
+    const {course, courseCode, confidenceScore} = req.body
+    const userID=req.userId
+    console.log("HEY MAN USER ID IS ", userID)
     try{
         const userExists = await users.findOne({
         _id:userID
@@ -44,7 +46,7 @@ const enrollCourse = async (req,res)=>{
         courseCode:courseCode
     })
     if(progressExists){
-        return res.status(401).json({Error:"Already enrolled in this course."})
+        return res.status(409).json({Error:"Already enrolled in this course."})
     }
     const data = new progress({user:userID,
         course:course,
@@ -71,7 +73,8 @@ const enrollCourse = async (req,res)=>{
 }
 async function getUser(req,res){
     // const {userID} = req.body
-    const userID="6a2d6587c4331dbee5cf9bba"
+    const userID=req.userId
+    console.log("ENDPOINT HIT! ",userID)
     try{
         const userExists = await users.findOne({
             _id:userID
