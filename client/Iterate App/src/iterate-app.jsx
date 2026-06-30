@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dashboard from "./RevisionTree.jsx";
 import {Routes, Route, Navigate, useNavigate} from "react-router-dom" 
 import Topics from "./Topics.jsx"
@@ -45,6 +45,8 @@ function SideNav({ page, setPage }) {
     { id: "topics",    label: "Topics",    icon: "⊟" },
     { id: "settings",  label: "Settings",  icon: "⊙" },
   ];
+
+  
   const navigate=useNavigate();
   return (
     <nav style={styles.nav}>
@@ -256,36 +258,12 @@ function TreeLines() {
 function Landing({ setPage }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const navigate=useNavigate()
 
-  const handleSubmit = async () => {
-    if (email.includes("@g.bracu.ac.bd")) {
-      console.log('EMAIL PASSES!')
-      try{
-        const response= await fetch("http://localhost:1700/api/onboard/",{
-          method:"post",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            email:email
-          })
-        })
-        const data= await response.json()
-        
-        if(!response.ok){
-          throw new Error(`HTTP error! Status: ${response.status}`)
-        }
-        console.log(`Welcome aboard pilot:${response}`)
-        if(data.status==="Success"){
-        setTimeout(() => navigate(`/topics`), 1800);
-        setSubmitted(true);
-      }
-      }catch(err){
-            console.error("Error during POST request:",err)
-          }
-      
-    }
+ const handleSubmit = () => {
+    setIsLoading(true); 
+    window.location.href = "http://localhost:1700/api/auth/google";
   };
 
   return (
@@ -312,16 +290,8 @@ function Landing({ setPage }) {
             </p>
 
             <div style={styles.inputRow}>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSubmit()}
-                style={styles.emailInput}
-              />
               <button onClick={handleSubmit} style={styles.ctaButton}>
-                Get started →
+                Sign in with Google →
               </button>
             </div>
             <p style={styles.finePrint}>No password. No card. Just your email.</p>

@@ -20,10 +20,10 @@ const DEPTS  = ["All", "CSE", "MAT"];
 const LEVELS = ["All levels", "Foundation", "Intermediate", "Advanced"];
 
 // ─── CourseCard ───────────────────────────────────────────────────────────────
-function CourseCard({ course, onEnroll }) {
+function CourseCard({ course, onEnroll, user, state }) {
   console.log(`courseCode is ${course.courseCode}`)
   // state: 'default' | 'rating' | 'enrolled'
-  const [cardState, setCardState] = useState("default");
+  const [cardState, setCardState] = useState(state);
   const [confidence, setConfidence] = useState(0);
   const [enrolledConf, setEnrolledConf] = useState(null);
 
@@ -34,7 +34,7 @@ function CourseCard({ course, onEnroll }) {
     if (!confidence) return;
     setEnrolledConf(confidence);
     setCardState("enrolled");
-    onEnroll({ courseId: course.courseCode, confidence });
+    onEnroll({ userID:user, course:course, courseCode: course.courseCode, confidenceScore: confidence });
   }
 
   // lined paper background shared with the rest of the app
@@ -201,18 +201,44 @@ function CourseCard({ course, onEnroll }) {
 export default function Topics() {
   const [activeDept,  setActiveDept]  = useState("All");
   const [activeLevel, setActiveLevel] = useState("All levels");
-  const [enrollments, setEnrollments] = useState({}); // [{ courseId, confidence, enrolledAt }]
+  const [enrollments, setEnrollments] = useState([]); // [{ courseId, confidence, enrolledAt }]
   const [toast, setToast]             = useState(null);
   const [syncing, setSyncing]         = useState(false);
   const [courses,setCourses]          = useState([])
+  const [user,setUser]                = useState("none")
+  const [enrolled,setEnrolled]        = useState([])
+  const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
-    fetch("http://localhost:1700/api/materials/")
-      .then(res=>res.json())
-      .then(data=>{setCourses(data['data']['allTopics'])})
+    async function callApis(){
+      try{
+        console.log("initiating connection")
+        const [userRes, materialsRes] = await Promise.all([
+          fetch("http://localhost:1700/api/users/").then(res=>res.json()),
+          fetch("http://localhost:1700/api/materials/").then(res => res.json())
+        ])
+        if (materialsRes?.data?.allTopics) {
+          setCourses(materialsRes.data.allTopics);
+        }
+
+        if (userRes?.data) {
+          setUser(userRes.data._id);
+          setEnrolled(userRes.data.enRolledCourses || []); 
+        }
+      }catch(err){
+        console.error(`Error fetching data: ${err}`)
+      }finally{
+        setLoading(false)
+      }
+    }
+    callApis()
+
+      
       
   },[])
   console.log(courses)
+  console.log(`${user} yooo`)
+  console.log(`${enrolled} enrolled courses baby :D`)
 
   function showToast(msg) {
     setToast(msg);
@@ -220,7 +246,22 @@ export default function Topics() {
   }
 
   function handleEnroll(data) {
-    setEnrollments(data);
+    
+    try{
+      fetch("http://localhost:1700/api/users/enroll",{
+      method: 'put',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+          userID: data.userID,
+          course: data.course?.course || cardData.course?.title || "Computer Science Course",
+          courseCode: data.courseCode,
+          confidenceScore: data.confidenceScore       // Or grab this from a form input state
+        })}) 
+      
+    
+    }catch(err){
+      console.error(err)
+    }
     const course = courses.find(c => c.courseCode === data.courseId);
     showToast(`✓ Enrolled in ${course?.courseCode} — confidence ${data.confidence}/10`);
   }
@@ -339,9 +380,13 @@ export default function Topics() {
 
       {/* Cards grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
-        {courses.map(course => (
-          <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} />
-        ))}
+        {courses.map(course => 
+          { const isEnrolled = enrolled.includes(course.courseCode);
+            return isEnrolled ? <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="enrolled" /> :
+            <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="default" />
+            
+          }
+        )}
         {courses.length === 0 && (
           <p style={{ gridColumn: "1/-1", fontSize: 13, color: "#AAA", textAlign: "center", padding: "40px 0" }}>
             No courses match this filter.
