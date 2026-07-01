@@ -42,10 +42,25 @@ function SideNav({ page, setPage }) {
   const links = [
     { id: "progress", label: "Progress", icon: "◈" },
     { id: "sessions",  label: "Sessions",  icon: "⊞" },
-    { id: "topics",    label: "Topics",    icon: "⊟" },
+    { id: "topics",    label: "Courses",    icon: "⊟" },
     { id: "settings",  label: "Settings",  icon: "⊙" },
   ];
-
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    async function callApi(){
+      try{
+      const userData = await fetch("http://localhost:1700/api/users/",{ credentials: 'include' }).then(res=>res.json())
+      
+      if (userData){
+        setUser(userData)
+      }
+    }catch(err){
+      console.error(err)
+    }
+    }
+    callApi()
+  },[])
+    
   
   const navigate=useNavigate();
   return (
@@ -58,7 +73,7 @@ function SideNav({ page, setPage }) {
         {links.map(l => (
           <button
             key={l.id}
-            onClick={() => navigate(`/${l.id}`)}
+            onClick={() => navigate(`/${l.label}`)}
             style={{
               ...styles.navLink,
               ...(page === l.id ? styles.navLinkActive : {}),
@@ -71,7 +86,7 @@ function SideNav({ page, setPage }) {
       </div>
       <div style={styles.navFooter}>
         <div style={styles.navAvatar}>A</div>
-        <span style={{ fontSize: 12, color: "#888" }}>alex@uni.edu</span>
+        <span style={{ fontSize: 12, color: "#888" }}>{user?.data?.email || "User"}</span>
       </div>
     </nav>
   );
@@ -342,7 +357,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={ <Landing/>} />
         <Route path="/progress" element={ <Dashboard/>} />
-        <Route path="/topics" element={<TopicPage />} />
+        <Route path="/courses" element={<TopicPage />} />
       </Routes>
 
       {/* <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>

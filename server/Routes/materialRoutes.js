@@ -1,7 +1,10 @@
 import express from 'express'
-import getTopics from '../controllers/materialsControllers.js'
+import {getUniqueCourses,getCourseTopics} from '../controllers/materialsControllers.js'
+import {requireAuth} from '../middlewares/authMiddleware.js'
 
 const router=express.Router()
-router.get("/", getTopics)
+console.log("materialRoutes.js loaded");
+router.get("/", getUniqueCourses)
+router.get("/:courseCode",getCourseTopics)
 
 export default router;

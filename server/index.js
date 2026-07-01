@@ -25,8 +25,8 @@ app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoute)
-app.use('/api/materials', materialsRouter)
 app.use("/api/progress", progressRouter)
+app.use('/api/materials', materialsRouter)
 
 app.listen(port || 1700,()=>{
     console.log(`Server is running on port ${port}`)

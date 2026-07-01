@@ -216,9 +216,9 @@ export default function Topics() {
       try{
         console.log("initiating connection")
         const [userRes, materialsRes, progressRes] = await Promise.all([
-          fetch("http://localhost:1700/api/users/").then(res=>res.json()),
-          fetch("http://localhost:1700/api/materials/").then(res => res.json()),
-          fetch("http://localhost:1700/api/progress/user").then(res => res.json())
+          fetch("http://localhost:1700/api/users/",{ credentials: 'include' }).then(res=>res.json()),
+          fetch("http://localhost:1700/api/materials/",{ credentials: 'include' }).then(res => res.json()),
+          fetch("http://localhost:1700/api/progress/user",{ credentials: 'include' }).then(res => res.json())
         ])
         if (materialsRes?.data?.allTopics) {
           setCourses(materialsRes.data.allTopics);
@@ -230,6 +230,7 @@ export default function Topics() {
         }
         if (progressRes?.data){
           setConfidenceArray(progressRes.data)
+          console.log("progreeeeeeeeees :D ",progressRes)
         }
       }catch(err){
         console.error(`Error fetching data: ${err}`)
@@ -256,6 +257,7 @@ export default function Topics() {
     
     try{
       fetch("http://localhost:1700/api/users/enroll",{
+      credentials: "include",
       method: 'put',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -389,8 +391,8 @@ export default function Topics() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
         {courses.map(course => 
           { const isEnrolled = enrolled.includes(course.courseCode);
-            console.log(confidenceArray[0].confidenceScore)
-            return isEnrolled ? <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="enrolled" courseConfidence={confidenceArray[0].confidenceScore}/> :
+            const currentConfidence = confidenceArray.filter(obj=>obj.courseCode===course.courseCode);
+            return isEnrolled ? <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="enrolled" courseConfidence={currentConfidence[0].confidenceScore}/> :
             <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="default" />
             
           }
