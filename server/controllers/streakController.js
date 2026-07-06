@@ -1,0 +1,51 @@
+import jwt from "jsonwebtoken";
+import progress from "../models/progress.js";
+
+export default async function syncStreak(req, res) {
+  try {
+    const { token } = req.query;
+
+    if (!token) {
+      return res.status(400).send("Missing or invalid link.");
+    }
+
+    // Verify and decode the signed token from the email
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).send("This link has expired or is invalid.");
+    }
+
+    const { id, courseCode, currentOrder } = decoded;
+    const inSync = await progress.findOne({ user: id, courseCode: courseCode })
+    if(inSync.currentOrderStep===currentOrder){
+      const updated = await progress.findOneAndUpdate(
+      { user: id, courseCode: courseCode },
+      { $inc: { currentOrderStep: 1 } },
+      { new: true }
+    );
+      if (!updated) {
+      return res.status(404).send("Progress record not found.");
+    }
+    console.log(`🎯 Aced It! User ${id} advanced to step ${updated.currentOrderStep} for ${courseCode}`);
+    res.cookie('token', token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000, // match your JWT's expiry
+});
+
+return res.redirect(`http://localhost:5173/progress`); 
+    
+    // Redirect the user to the progress page 
+    }else if(inSync.currentOrderStep>currentOrder){
+      return res.send(`User ${id} is already at step ${inSync.currentOrderStep}. Skipping write.`)
+    }else{
+      return res.status(400).send("Your progress is out of sync with this confirmation link.");}
+
+  } catch (err) {
+    console.error(`❌ Error syncing streak: ${err}`);
+    return res.status(500).send("Something went wrong.");
+  }
+}

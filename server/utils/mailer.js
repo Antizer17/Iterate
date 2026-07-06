@@ -8,6 +8,7 @@ import PDFDocument from 'pdfkit';
 import calculatePriority from '../engines/prioritySchedular.js';
 import fetchGenerate from '../engines/fetchGenerate.js'; 
 import { marked } from 'marked';
+import getLinkToken from './linkTokenGenerator.js';
 
 
 
@@ -71,7 +72,7 @@ const generateSolutionPDF = (material, activeQuizArray) => {
   });
 };
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL || "http://localhost:1700";
 
 
 // 6. Dispatch the structured email
@@ -91,6 +92,7 @@ export const runDailyEmailJob = async () => {
 
       const userEmail = user.email;
       const material = await fetchGenerate(currentTopicData[1], currentTopicData[2]);
+      const linkToken = await getLinkToken(user._id,currentTopicData[1], currentTopicData[2])
 
       if (!material) {
         console.warn(`⚠️ Warning: Missing relevant materials for topic`);
@@ -99,7 +101,7 @@ export const runDailyEmailJob = async () => {
 
       const activeQuizArray = (material.quiz && material.quiz.length > 0) ? material.quiz : material.quizLevels;
 
-      console.log(`📄 Generating dynamically compiled Solution PDF for ${user.name}...`);
+      console.log(`📄 Generating dynamically compiled Solution PDF for ${user.name}, ${userEmail}...`);
       // Build the binary attachment asset
       const pdfBuffer = await generateSolutionPDF(material, activeQuizArray);
       // Convert markdown to HTML before injecting
@@ -108,7 +110,7 @@ export const runDailyEmailJob = async () => {
       // 2. Build the Email Configuration
       const mailOptions = {
         from: '"Iterate Prep" <noreply@iterateplatform.com>',
-        to: "ahmad.sameer@g.bracu.ac.bd",
+        to: userEmail,
         subject: `Daily Revision: ${material.topic}`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; line-height: 1.6;">
@@ -179,7 +181,7 @@ export const runDailyEmailJob = async () => {
             }).join('') : ''}
 
             <div style="text-align: center; margin-top: 35px; border-top: 1px dashed #cbd5e1; padding-top: 25px;">
-              <a href="${BASE_URL}/api/streak/sync?userId=${user._id}&progressId=${currentTopicData[1]}" 
+              <a href="${BASE_URL}/api/streak/sync?token=${linkToken}" 
                  style="display: inline-block; background-color: #0f172a; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
                  Aced It!
               </a>
@@ -202,9 +204,11 @@ export const runDailyEmailJob = async () => {
       await progress.findOneAndUpdate({
         user: user._id,
         courseCode: currentTopicData[1],
-        currentOrderStep: currentTopicData[2] + 1
+        currentOrderStep: currentTopicData[2] 
       }, {
-        lastServedAt: new Date()
+      
+    $set: { lastServedAt: new Date() },   // Update timestamp
+  
       })
       
     }

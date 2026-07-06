@@ -10,6 +10,7 @@ import './config/auth.js'; // This forces your Passport strategy file to execute
 import authRoutes from './Routes/authRoutes.js';
 import progressRouter from "./Routes/progressRoutes.js"
 import { requireAuth } from './middlewares/authMiddleware.js'
+import streakRouter from './Routes/streakRoutes.js'
 
 const port =process.env.PORT
 const app = express()
@@ -17,6 +18,7 @@ connectDB()
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 cronSchedular()
 app.use(express.json())
@@ -27,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoute)
 app.use("/api/progress", progressRouter)
 app.use('/api/materials', materialsRouter)
+app.use('/api/streak', streakRouter)
 
 app.listen(port || 1700,()=>{
     console.log(`Server is running on port ${port}`)
