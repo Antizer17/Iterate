@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import users from "./users.js"
 import content from "./materials.js"
-import MimeNode from "nodemailer/lib/mime-node/index.js";
+
 
 
 const progressSchema = new mongoose.Schema({
@@ -11,7 +11,12 @@ courseCode: { type: String, required: true, enum: ['CSE111','CSE220','CSE221','C
 confidenceScore: {type: Number, default: 1, min: 1, max: 10 },
 currentOrderStep: { type: Number, default: 1 }, 
 lastServedAt: { type: Date, default: Date.now }, 
-confusedVault: [{ type: mongoose.Schema.Types.ObjectId, ref: 'generatedModules' }] 
+confusedVault: [{ type: mongoose.Schema.Types.ObjectId, ref: 'generatedModules' }] ,
+completedTopics: [{
+  order: { type: Number, required: true },
+  acedAt: { type: Date, default: Date.now },
+  _id: false
+}]
 });
 
 progressSchema.index({ user: 1, course: 1 }, { unique: true });

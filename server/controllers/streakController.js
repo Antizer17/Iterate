@@ -18,17 +18,18 @@ export default async function syncStreak(req, res) {
     }
 
     const { id, courseCode, currentOrder } = decoded;
-    const inSync = await progress.findOne({ user: id, courseCode: courseCode })
-    if(inSync.currentOrderStep===currentOrder){
-      const updated = await progress.findOneAndUpdate(
-      { user: id, courseCode: courseCode },
-      { $inc: { currentOrderStep: 1 } },
+    const updated = await progress.findOneAndUpdate(
+      { user: id, courseCode: courseCode, currentOrderStep:currentOrder  },
+      {$inc: { currentOrderStep: 1 },
+      $push: {completedTopics: {order: currentOrder, acedAt: new Date()} },},
       { new: true }
     );
       if (!updated) {
       return res.status(404).send("Progress record not found.");
     }
     console.log(`🎯 Aced It! User ${id} advanced to step ${updated.currentOrderStep} for ${courseCode}`);
+    
+
     res.cookie('token', token, {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -39,12 +40,7 @@ export default async function syncStreak(req, res) {
 return res.redirect(`http://localhost:5173/progress`); 
     
     // Redirect the user to the progress page 
-    }else if(inSync.currentOrderStep>currentOrder){
-      return res.send(`User ${id} is already at step ${inSync.currentOrderStep}. Skipping write.`)
-    }else{
-      return res.status(400).send("Your progress is out of sync with this confirmation link.");}
-
-  } catch (err) {
+    } catch (err) {
     console.error(`❌ Error syncing streak: ${err}`);
     return res.status(500).send("Something went wrong.");
   }
