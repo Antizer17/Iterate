@@ -216,9 +216,9 @@ export default function Topics() {
       try{
         console.log("initiating connection")
         const [userRes, materialsRes, progressRes] = await Promise.all([
-          fetch("http://localhost:1700/api/users/",{ credentials: 'include' }).then(res=>res.json()),
-          fetch("http://localhost:1700/api/materials/",{ credentials: 'include' }).then(res => res.json()),
-          fetch("http://localhost:1700/api/progress/user",{ credentials: 'include' }).then(res => res.json())
+          fetch("/api/users/",{ credentials: 'include' }).then(res=>res.json()),
+          fetch("/api/materials/",{ credentials: 'include' }).then(res => res.json()),
+          fetch("/api/progress/user",{ credentials: 'include' }).then(res => res.json())
         ])
         if (materialsRes?.data?.allTopics) {
           setCourses(materialsRes.data.allTopics);
@@ -256,7 +256,7 @@ export default function Topics() {
   function handleEnroll(data) {
     
     try{
-      fetch("http://localhost:1700/api/users/enroll",{
+      fetch("/api/users/enroll",{
       credentials: "include",
       method: 'put',
       headers:{'Content-Type':'application/json'},

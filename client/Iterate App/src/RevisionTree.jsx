@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import {SideNav} from "./iterate-app.jsx"
+import { LiveRevisionTree } from "./LiveRevisionTree.jsx";
 
 // ── Design tokens (scoped to .rt-root) ──────────────────────────────────────
-const CSS = `
+export const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
 .rt-root *{box-sizing:border-box;margin:0;padding:0}
 .rt-root{
@@ -40,21 +41,39 @@ const CSS = `
 .rt-ace-btn:hover{background:var(--ink);color:var(--paper);border-style:solid;border-color:var(--ink)}
 .rt-ace-btn:active{transform:scale(0.96) rotate(-0.5deg)}
 @keyframes rt-popIn{0%{transform:scale(0.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.rt-acedlog{margin-top:0.75rem}
+.rt-acedlog-title{font-family:var(--font);font-size:17px;font-weight:700;color:var(--gray1);display:inline-block;transform:rotate(-0.3deg);margin-bottom:8px}
+.rt-acedlog-list{display:flex;flex-direction:column;gap:6px}
+.rt-acedlog-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:var(--paper);border:1.5px solid var(--gray4);padding:0.45rem 0.85rem;position:relative;transform:rotate(-0.15deg)}
+.rt-acedlog-row:nth-child(even){transform:rotate(0.2deg)}
+.rt-acedlog-row::before{content:'';position:absolute;top:-1px;right:-1px;width:7px;height:7px;border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
+.rt-acedlog-topic{font-family:var(--font);font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-acedlog-date{font-family:var(--font);font-size:14px;color:var(--gray2);font-style:italic;white-space:nowrap}
+.rt-acedlog-empty{font-family:var(--font);font-size:15px;color:var(--gray2);font-style:italic;padding:0.4rem 0.1rem}
 `;
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const SVG_W = 660, SVG_H = 350, NODE_R = 21;
-const LEVEL_Y = [32, 108, 196, 294];
-const LEVEL_COUNTS = [1, 2, 4, 8];
+const SVG_W = 660, NODE_R = 21;
+// Fallback defaults only — real trees get dynamic levelCounts/levelY from buildRevisionTree()
+const DEFAULT_LEVEL_Y = [32, 108, 196, 294];
+const DEFAULT_LEVEL_COUNTS = [1, 2, 4, 8];
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-function xFor(level, pos) { return (SVG_W / (LEVEL_COUNTS[level] + 1)) * (pos + 1); }
-function findNode(nodes, id) { return nodes.find(n => n.id === id); }
+// levelCounts must be sized to however many levels the current course actually has —
+// this is what makes node count/spacing dynamic instead of fixed at 15 (1+2+4+8).
+function xFor(level, pos, levelCounts) { return (SVG_W / (levelCounts[level] + 1)) * (pos + 1); }
+function findNode(nodes, seq) {
+  if (seq === undefined || seq === null) {
+    console.warn('findNode called with null/undefined seq — this should never happen');
+    return undefined;
+  }
+  return nodes.find(n => n.seq === seq);
+}
 function isUnlocked(nodes, edges, node) {
   if (node.level === 0) return true;
-  return edges.filter(([,t]) => t === node.id).map(([s]) => s).some(pid => findNode(nodes, pid)?.done);
+  return edges.filter(([,t]) => t === node.seq).map(([s]) => s).some(pSeq => findNode(nodes, pSeq)?.done);
 }
 function todayStr() { const d = new Date(); return `${MONTHS[d.getMonth()]} ${d.getDate()}`; }
 function formatDate() { const d = new Date(); return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()} ${d.getFullYear()}`; }
@@ -73,17 +92,38 @@ function sketchCirclePath(cx, cy, r, seed = 0) {
 }
 
 // ── TreeNode ─────────────────────────────────────────────────────────────────
-function TreeNode({ node, nodes, edges, animateId, onSelect }) {
-  const x = xFor(node.level, node.pos), y = LEVEL_Y[node.level];
+function TreeNode({ node, nodes, edges, animateId, onSelect, levelCounts, levelY }) {
+  const x = xFor(node.level, node.pos, levelCounts), y = levelY[node.level];
   const unlocked = isUnlocked(nodes, edges, node);
   const visible = node.done || unlocked;
-  const seed = node.id * 1.7;
+  const seed = node.seq * 1.7;
   const d = sketchCirclePath(x, y, NODE_R, seed);
   const cs = NODE_R * 0.38;
   const isNew = node.id === animateId;
 
   return (
     <g style={{ cursor: visible ? "pointer" : "default" }} onClick={() => visible && onSelect(node)}>
+      {isNew && (
+        <>
+          {/* Ripple rings — a synced-in node gets two staggered pulses
+              expanding outward from the node and fading, distinct from
+              the steady dashed pulse used for merely-unlocked nodes. */}
+          <circle cx={x} cy={y} r={NODE_R} fill="none" stroke="#1a1a18" strokeWidth="2">
+            <animate attributeName="r" from={NODE_R} to={NODE_R * 2.4} dur="1.1s" begin="0.1s" fill="freeze" />
+            <animate attributeName="opacity" from="0.7" to="0" dur="1.1s" begin="0.1s" fill="freeze" />
+          </circle>
+          <circle cx={x} cy={y} r={NODE_R} fill="none" stroke="#1a1a18" strokeWidth="1.5">
+            <animate attributeName="r" from={NODE_R} to={NODE_R * 2.4} dur="1.1s" begin="0.4s" fill="freeze" />
+            <animate attributeName="opacity" from="0.5" to="0" dur="1.1s" begin="0.4s" fill="freeze" />
+          </circle>
+          <text x={x} y={y - NODE_R - 8} textAnchor="middle" fontSize="13"
+            fontFamily="Caveat, cursive" fontWeight="700" fill="#1a1a18" opacity="0">
+            synced!
+            <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.75;1"
+              dur="1.5s" begin="0.1s" fill="freeze" />
+          </text>
+        </>
+      )}
       {node.done ? (
         <>
           <path d={d} fill="#1a1a18" stroke="#1a1a18" strokeWidth="1.5"
@@ -108,20 +148,30 @@ function TreeNode({ node, nodes, edges, animateId, onSelect }) {
 }
 
 // ── TreeSVG ──────────────────────────────────────────────────────────────────
-export function TreeSVG({ nodes, edges, animateId, onSelectNode }) {
+// nodes/edges/levelCounts/levelY all come from buildRevisionTree(materials, progress),
+// so however many topics a course has, the tree grows/shrinks to match — nothing here
+// is hardcoded to a 15-node (1+2+4+8) shape anymore.
+export function TreeSVG({ nodes, edges, animateId, onSelectNode, levelCounts, levelY }) {
+  const counts = levelCounts?.length ? levelCounts : DEFAULT_LEVEL_COUNTS;
+  const yPositions = levelY?.length ? levelY : DEFAULT_LEVEL_Y;
+  const svgHeight = Math.max(...yPositions) + NODE_R + 32;
+
   const rules = [];
-  for (let y = 18; y < SVG_H; y += 18)
+  for (let y = 18; y < svgHeight; y += 18)
     rules.push(<line key={y} x1={0} y1={y} x2={SVG_W} y2={y} stroke="#e8e5dc" strokeWidth="0.6" />);
 
   return (
-    <svg width={SVG_W} height={SVG_H} display="block">
+    <svg width={SVG_W} height={svgHeight} display="block">
       {rules}
-      <line x1={26} y1={0} x2={26} y2={SVG_H} stroke="#f0c0b0" strokeWidth="1" />
+      <line x1={26} y1={0} x2={26} y2={svgHeight} stroke="#f0c0b0" strokeWidth="1" />
       {edges.map(([fromId, toId], i) => {
         const from = findNode(nodes, fromId), to = findNode(nodes, toId);
-        if (!from || !to) return null;
-        const x1=xFor(from.level,from.pos), y1=LEVEL_Y[from.level]+NODE_R;
-        const x2=xFor(to.level,to.pos),     y2=LEVEL_Y[to.level]-NODE_R;
+        if (!from || !to) {
+        console.warn('Edge lookup failed:', { fromId, toId, from, to });
+        return null;
+      } 
+        const x1=xFor(from.level,from.pos,counts), y1=yPositions[from.level]+NODE_R;
+        const x2=xFor(to.level,to.pos,counts),     y2=yPositions[to.level]-NODE_R;
         return (
           <path key={i} d={wobbleLine(x1,y1,x2,y2,3,i)} fill="none"
             stroke={from.done&&to.done?"#7a7870":"#ccc9c0"}
@@ -130,8 +180,9 @@ export function TreeSVG({ nodes, edges, animateId, onSelectNode }) {
         );
       })}
       {nodes.map(node => (
-        <TreeNode key={node.id} node={node} nodes={nodes} edges={edges}
-          animateId={animateId} onSelect={onSelectNode} />
+        <TreeNode key={node.seq} node={node} nodes={nodes} edges={edges}
+          animateId={animateId} onSelect={onSelectNode}
+          levelCounts={counts} levelY={yPositions} />
       ))}
     </svg>
   );
@@ -149,182 +200,122 @@ export function StatsBar({ nodes }) {
   );
 }
 
-// ── CourseTabs ───────────────────────────────────────────────────────────────
-export function CourseTabs({ courses, activeKey, onChange }) {
-  return (
-    <div className="rt-tabs">
-      {Object.entries(courses).map(([key, val]) => (
-        <button key={key} className={`rt-tab${key===activeKey?" active":""}`} onClick={() => onChange(key)}>
-          {key} · {val.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 // ── NodeDetail ───────────────────────────────────────────────────────────────
-export function NodeDetail({ node, completedDate, onAce }) {
-  const [hl, setHl] = useState(false);
-  useEffect(() => {
-    if (!node) return;
-    setHl(true);
-    const t = setTimeout(() => setHl(false), 900);
-    return () => clearTimeout(t);
-  }, [node?.id]);
-
-  if (!node) return (
-    <div className="rt-detail"><div className="rt-detail-name">↑ tap a node to inspect</div></div>
-  );
-
-  const chips = [
-    { text: node.done ? "✓ done" : "up next", cls: node.done ? "done" : "amber" },
-    { text: `level ${node.level+1}`, cls: "" },
-    ...(completedDate ? [{ text: completedDate, cls: "" }] : []),
-  ];
+// Dynamic card driven by whichever node was last clicked in the tree
+// (selectedNode, set by handleSelectNode in LiveRevisionTree). TreeNode only
+// calls onSelect for visible nodes (node.done || unlocked — see isUnlocked),
+// so by the time we get a node here it's always safe to show.
+// completedDate is looked up by the caller from progress.completedTopics
+// (joined on order, same convention as AcedLog) and passed in as a prop —
+// this component doesn't know about progress shape at all.
+// Strictly read-only: "done" reflects progress.currentOrderStep and nothing
+// else. There is no ace-from-here action — acing only happens through the
+// canonical flow (the other page's button → API → currentOrderStep), so the
+// tree can never show a state the database doesn't also have.
+export function NodeDetail({ node, completedDate }) {
+  if (!node) {
+    return (
+      <div className="rt-detail">
+        <div className="rt-detail-meta">tap a node above to see its details</div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`rt-detail${hl?" highlight":""}`}>
+    <div className="rt-detail highlight">
       <div className="rt-detail-name">{node.topic}</div>
       <div className="rt-detail-meta">
-        {node.done ? (completedDate ? `completed on ${completedDate}` : "completed") : "up next — ace this session to unlock the next branch"}
+        {node.done
+          ? completedDate
+            ? `aced ${formatAcedDate(completedDate)}`
+            : "aced — date not tracked yet"
+          : "unlocked — not aced yet"}
       </div>
       <div className="rt-chips">
-        {chips.map((c, i) => (
-          <span key={i} className={`rt-chip${c.cls?" "+c.cls:""}`}
-            style={{ transform: `rotate(${[-0.5,0.4,-0.3,0.6][i%4]}deg)` }}>
-            {c.text}
-          </span>
-        ))}
-        {!node.done && <button className="rt-ace-btn" onClick={() => onAce(node)}>✓ aced it</button>}
+        <span className={`rt-chip ${node.done ? "done" : "amber"}`}>
+          {node.done ? "done" : "unlocked"}
+        </span>
       </div>
     </div>
   );
 }
 
-// ── useRevisionTree hook ─────────────────────────────────────────────────────
-export function useRevisionTree(initialCourses) {
-  const [courses, setCourses] = useState(() => JSON.parse(JSON.stringify(initialCourses)));
-  const [activeKey, setActiveKey] = useState(() => Object.keys(initialCourses)[0]);
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [animateId, setAnimateId] = useState(null);
-  const sessionDates = useRef({});
+// ── AcedLog ──────────────────────────────────────────────────────────────────
+// completedTopics comes from progress.completedTopics: [{ order, acedAt }],
+// populated server-side when the /api/progress/ace route fires (see
+// progress.js schema). Joined against `nodes` by `order` (not `id` or `seq` —
+// same reasoning as everywhere else in this file: order is the only field
+// both materials and progress agree on).
+// Until the backend actually pushes to completedTopics, done nodes will
+// still show up here with a "date not tracked yet" placeholder instead of
+// silently disappearing — makes the gap obvious instead of hiding it.
+export function AcedLog({ nodes, completedTopics = [] }) {
+  const dateByOrder = new Map(completedTopics.map((c) => [c.order, c.acedAt]));
+  
 
-  const activeCourse = courses[activeKey];
-
-  const handleSelectNode = useCallback((node) => {
-    setSelectedNode(activeCourse.nodes.find(n => n.id === node.id) ?? node);
-  }, [activeCourse]);
-
-  const handleAce = useCallback((node) => {
-    const date = todayStr();
-    setCourses(prev => {
-      const next = JSON.parse(JSON.stringify(prev));
-      const n = next[activeKey].nodes.find(n => n.id === node.id);
-      if (n) n.done = true;
-      return next;
-    });
-    if (!sessionDates.current[activeKey]) sessionDates.current[activeKey] = {};
-    sessionDates.current[activeKey][node.id] = date;
-    setAnimateId(node.id);
-    setTimeout(() => setAnimateId(null), 700);
-    setSelectedNode(prev => prev?.id === node.id ? { ...prev, done: true } : prev);
-  }, [activeKey]);
-
-  const completedDate = selectedNode
-    ? (sessionDates.current[activeKey]?.[selectedNode.id] ?? courses[activeKey]?.completedDates?.[selectedNode.id] ?? null)
-    : null;
-
-  return {
-    courses, activeKey, setActiveKey,
-    activeNodes: activeCourse.nodes,
-    activeEdges: activeCourse.edges,
-    selectedNode, completedDate, animateId,
-    handleSelectNode, handleAce,
-  };
-}
-
-// ── RevisionTree (all-in-one) ────────────────────────────────────────────────
-export function RevisionTree({ courses: initialCourses, title = "revision tree" }) {
-  const {
-    courses, activeKey, setActiveKey,
-    activeNodes, activeEdges,
-    selectedNode, completedDate, animateId,
-    handleSelectNode, handleAce,
-  } = useRevisionTree(initialCourses);
+  const rows = nodes
+    .filter((n) => n.done)
+    .sort((a, b) => b.order - a.order) // most recently aced first
+    .map((n) => ({ id: n.id, topic: n.topic, date: dateByOrder.get(n.order) }));
+  console.log(rows,'putkiiiii')
+  console.log("nodes", nodes);
+console.log("done nodes", nodes.filter(n => n.done));
+console.log("completedTopics", completedTopics);
+console.log("dateByOrder", [...dateByOrder.entries()]);
+  
 
   return (
-    <div className="rt-root" style={{minWidth:'88%'}}>
-      <style>{CSS}</style>
-      <div className="rt-wrap">
-        <div className="rt-header">
-          <span className="rt-title">{title}</span>
-          <hr className="rt-rule" />
-          <span className="rt-date">{formatDate()}</span>
+    <div className="rt-acedlog">
+      <span className="rt-acedlog-title">aced log</span>
+      {rows.length === 0 ? (
+        <div className="rt-acedlog-empty">nothing aced yet — get to it!</div>
+      ) : (
+        <div className="rt-acedlog-list">
+          {rows.map((r) => (
+
+            <div className="rt-acedlog-row" key={r.id}>
+              <span className="rt-acedlog-topic">{r.topic}</span>
+              <span className="rt-acedlog-date">
+                {r.date ? formatAcedDate(r.date) : "date not tracked yet"}
+              </span>
+            </div>
+          ))}
         </div>
-        <CourseTabs courses={courses} activeKey={activeKey} onChange={setActiveKey} />
-        <StatsBar nodes={activeNodes} />
-        <div className="rt-tree-wrap">
-          <TreeSVG nodes={activeNodes} edges={activeEdges} animateId={animateId} onSelectNode={handleSelectNode} />
-        </div>
-        <NodeDetail node={selectedNode} completedDate={completedDate} onAce={handleAce} />
-      </div>
+      )}
     </div>
   );
 }
 
-// ── Sample data + default export (preview entry point) ───────────────────────
-const SAMPLE_COURSES = {
-  CSE221: {
-    label: "Algorithms",
-    nodes: [
-      {id:1,label:"Intro", topic:"Introduction to Algorithms",level:0,pos:0,done:true},
-      {id:2,label:"D&C",  topic:"Divide & Conquer",          level:1,pos:0,done:true},
-      {id:3,label:"Sort", topic:"Merge & Quick Sort",        level:1,pos:1,done:true},
-      {id:4,label:"Heap", topic:"Heaps & Priority Queues",   level:2,pos:0,done:true},
-      {id:5,label:"Hash", topic:"Hashing",                   level:2,pos:1,done:true},
-      {id:6,label:"BST",  topic:"Binary Search Trees",       level:2,pos:2,done:false},
-      {id:7,label:"Grph", topic:"Graph Basics",              level:2,pos:3,done:false},
-      {id:8,label:"BFS",  topic:"Breadth First Search",      level:3,pos:0,done:false},
-      {id:9,label:"DFS",  topic:"Depth First Search",        level:3,pos:1,done:false},
-      {id:10,label:"DP",  topic:"Dynamic Programming",       level:3,pos:2,done:false},
-      {id:11,label:"Grdy",topic:"Greedy Algorithms",         level:3,pos:3,done:false},
-      {id:12,label:"Flow",topic:"Network Flow",              level:3,pos:4,done:false},
-      {id:13,label:"NP",  topic:"NP Completeness",           level:3,pos:5,done:false},
-      {id:14,label:"Apx", topic:"Approximation Algorithms",  level:3,pos:6,done:false},
-      {id:15,label:"Revw",topic:"Final Review",              level:3,pos:7,done:false},
-    ],
-    edges:[[1,2],[1,3],[2,4],[2,5],[3,6],[3,7],[4,8],[4,9],[5,10],[5,11],[6,12],[6,13],[7,14],[7,15]],
-    completedDates:{1:"May 2",2:"May 8",3:"May 14",4:"May 21",5:"May 28"},
-  },
-  CSE331: {
-    label: "Data Structures",
-    nodes: [
-      {id:1,label:"Array",topic:"Arrays & Strings",    level:0,pos:0,done:true},
-      {id:2,label:"List", topic:"Linked Lists",        level:1,pos:0,done:true},
-      {id:3,label:"Stack",topic:"Stacks & Queues",     level:1,pos:1,done:true},
-      {id:4,label:"Tree", topic:"Binary Trees",        level:2,pos:0,done:true},
-      {id:5,label:"BST",  topic:"BST Operations",      level:2,pos:1,done:false},
-      {id:6,label:"Heap", topic:"Heap Operations",     level:2,pos:2,done:false},
-      {id:7,label:"Hash", topic:"Hash Tables",         level:2,pos:3,done:false},
-      {id:8,label:"AVL",  topic:"AVL Trees",           level:3,pos:0,done:false},
-      {id:9,label:"RBT",  topic:"Red-Black Trees",     level:3,pos:1,done:false},
-      {id:10,label:"Trie",topic:"Tries",               level:3,pos:2,done:false},
-      {id:11,label:"Seg", topic:"Segment Trees",       level:3,pos:3,done:false},
-      {id:12,label:"Grph",topic:"Graph Structures",    level:3,pos:4,done:false},
-      {id:13,label:"Dijk",topic:"Dijkstra's Algorithm",level:3,pos:5,done:false},
-      {id:14,label:"Unin",topic:"Union Find",          level:3,pos:6,done:false},
-      {id:15,label:"Revw",topic:"Final Review",        level:3,pos:7,done:false},
-    ],
-    edges:[[1,2],[1,3],[2,4],[2,5],[3,6],[3,7],[4,8],[4,9],[5,10],[5,11],[6,12],[6,13],[7,14],[7,15]],
-    completedDates:{1:"May 3",2:"May 10",3:"May 17",4:"Jun 1"},
-  },
-};
+function formatAcedDate(dateLike) {
+  const d = new Date(dateLike);
+  if (Number.isNaN(d.getTime())) return "date not tracked yet";
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+}
+
+
+
+const COURSE_CODES = ["CSE221"]; 
 
 export default function Dashboard() {
+  const [activeKey, setActiveKey] = useState(COURSE_CODES[0]);
+
   return (
-  <div style={{ display: "flex", minHeight: "100vh",minWidth:"100vw", background: "#F7F6F2", flexDirection:"row" }}>
-    <SideNav/>
-    <RevisionTree courses={SAMPLE_COURSES} />
-  </div>)
-  
+    <div style={{ display: "flex", minHeight: "100vh", minWidth: "100vw", background: "#F7F6F2", flexDirection: "row" }}>
+      <SideNav />
+      <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+        <div className="rt-tabs" style={{ padding: "1rem 1rem 0" }}>
+          {COURSE_CODES.map((code) => (
+            <button
+              key={code}
+              className={`rt-tab${code === activeKey ? " active" : ""}`}
+              onClick={() => setActiveKey(code)}
+            >
+              {code}
+            </button>
+          ))}
+        </div>
+        <LiveRevisionTree courseCode={activeKey} />
+      </div>
+    </div>
+  );
 }
