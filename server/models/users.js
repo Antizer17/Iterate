@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    confusedVault: [{ moduleId:{type: mongoose.Schema.Types.ObjectId, ref: 'generatedModules'}, addedAt:{type:Date, default:Date.now} }] ,
 })
 const users = mongoose.model("User", userSchema)
 export default users;
