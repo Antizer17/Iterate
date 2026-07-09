@@ -182,8 +182,12 @@ export const runDailyEmailJob = async () => {
 
             <div style="text-align: center; margin-top: 35px; border-top: 1px dashed #cbd5e1; padding-top: 25px;">
               <a href="${BASE_URL}/api/streak/sync?token=${linkToken}" 
-                 style="display: inline-block; background-color: #0f172a; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                 style="display: inline-block; background-color: #02261a; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
                  Aced It!
+              </a>
+              <a href="${BASE_URL}/api/streak/confused?token=${linkToken}" 
+                 style="display: inline-block; background-color: #3a0404; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                Confused...
               </a>
             </div>
           </div>

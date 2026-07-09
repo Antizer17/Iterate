@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Dashboard from "./RevisionTree.jsx";
-import {Routes, Route, Navigate, useNavigate} from "react-router-dom" 
+import {Routes, Route, Navigate, useNavigate, useLocation} from "react-router-dom" 
 import Topics from "./Topics.jsx"
 import { TopicPage } from "./Topics.jsx";
 import ConfusedVaultDemo from "./confusedVault.jsx";
@@ -39,12 +39,18 @@ function IterateLogo({ size = 36, spin = true }) {
 }
 
 // ─── Side Nav ────────────────────────────────────────────────────────────────
-function SideNav({ page, setPage }) {
+// Previously took page/setPage props that Dashboard never actually passed in
+// (it renders <SideNav /> with no props), so the active-item highlight could
+// never fire. Also navigate(`/${l.label}`) sent you to "/Progress" etc while
+// the real routes are lowercase ("/progress") — case mismatch, wrong page.
+// Now derives the current page from the URL directly via useLocation, and
+// paths match the actual <Routes> exactly.
+function SideNav() {
   const links = [
-    { id: "topics",    label: "Courses",    icon: "" },
-    { id: "progress", label: "Progress", icon: "" },
-    { id: "sessions",  label: "Confused",  icon: "" },
-    { id: "settings",  label: "Settings",  icon: "" },
+    { path: "/courses",  label: "Courses" },
+    { path: "/progress", label: "Progress" },
+    { path: "/vault",    label: "Vault" },
+    { path: "/settings", label: "Settings" }, // ⚠️ no <Route path="/settings"> exists yet — add one or this 404s
   ];
   const [user, setUser] = useState(null);
   useEffect(() => {
@@ -63,24 +69,24 @@ function SideNav({ page, setPage }) {
   },[])
     
   
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
   return (
     <nav style={styles.nav}>
-      <div style={styles.navLogo} onClick={() => setPage("landing")}>
+      <div style={styles.navLogo} onClick={() => navigate("/")}>
         <IterateLogo size={28} spin />
         <span style={styles.navBrand}>iterate</span>
       </div>
       <div style={styles.navLinks}>
         {links.map(l => (
           <button
-            key={l.id}
-            onClick={() => navigate(`/${l.label}`)}
+            key={l.path}
+            onClick={() => navigate(l.path)}
             style={{
               ...styles.navLink,
-              ...(page === l.id ? styles.navLinkActive : {}),
+              ...(location.pathname === l.path ? styles.navLinkActive : {}),
             }}
           >
-            <span style={styles.navIcon}>{l.icon}</span>
             {l.label}
           </button>
         ))}
@@ -359,7 +365,7 @@ export default function App() {
         <Route path="/" element={ <Landing/>} />
         <Route path="/progress" element={ <Dashboard/>} />
         <Route path="/courses" element={<TopicPage />} />
-        <Route path="/confused" element={<ConfusedVaultDemo/>} />
+        <Route path="/vault" element={<ConfusedVaultDemo/>} />
       </Routes>
 
       {/* <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>
@@ -384,8 +390,8 @@ const styles = {
   nav: {
     minWidth: "12%",
     minHeight: "100vh",
-    background: "#EFEDE8",
-    borderRight: "1px solid #DDD9D0",
+    background: "#e3ded0",
+    borderRight: "1.5px solid #9c9a8f",
     display: "flex",
     flexDirection: "column",
     padding: "24px 0",
@@ -414,18 +420,17 @@ const styles = {
     border: "none",
     cursor: "pointer",
     fontSize: 13,
-    color: "#666",
+    color: "#4a4845",
     fontFamily: "'Inter', sans-serif",
     fontWeight: 500,
     textAlign: "left",
     borderRadius: 0,
     transition: "background 0.1s, color 0.1s",
   },
-  navLinkActive: { background: "#E3E0D8", color: "#1A1A1A" },
-  navIcon: { fontSize: 15, width: 18, textAlign: "center" },
+  navLinkActive: { background: "#1a1a18", color: "#faf8f4" },
   navFooter: {
     padding: "16px 20px",
-    borderTop: "1px solid #DDD9D0",
+    borderTop: "1.5px solid #9c9a8f",
     display: "flex",
     alignItems: "center",
     gap: 8,

@@ -27,7 +27,13 @@ async function syncConfusion(req, res) {
     if (!topic) {
       return res.status(404).send("The topic being sent could not be found.");
     }
-    
+    const user = await users.findById(
+      id
+    ).populate("confusedVault.moduleId")
+    if(user.confusedVault.some(obj=> obj.moduleId.topic===topic.topic)){
+      console.log("Topic already added to the vault!")
+      return res.redirect('http://localhost:5173/vault')
+    }
     const updated = await users.findOneAndUpdate(
       { _id: id  },
       {
@@ -38,6 +44,15 @@ async function syncConfusion(req, res) {
       return res.status(404).send("User record not found.");
     }
     console.log(`🎯 Added to the vault!`);
+    const userProgress = await progress.findOneAndUpdate(
+          { user: id, courseCode: courseCode, currentOrderStep:currentOrder  },
+          {$inc: { currentOrderStep: 1 },
+          $push: {completedTopics: {order: currentOrder, acedAt: new Date()} },},
+          { new: true }
+        );
+          if (!updated) {
+          return res.status(404).send("Progress record not found.");
+        }
     
 
     res.cookie('token', token, {

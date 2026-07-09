@@ -11,7 +11,6 @@ courseCode: { type: String, required: true, enum: ['CSE111','CSE220','CSE221','C
 confidenceScore: {type: Number, default: 1, min: 1, max: 10 },
 currentOrderStep: { type: Number, default: 1 }, 
 lastServedAt: { type: Date, default: Date.now }, 
-confusedVault: [{ type: mongoose.Schema.Types.ObjectId, ref: 'generatedModules' }] ,
 completedTopics: [{
   order: { type: Number, required: true },
   acedAt: { type: Date, default: Date.now },

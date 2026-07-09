@@ -230,7 +230,6 @@ export default function Topics() {
         }
         if (progressRes?.data){
           setConfidenceArray(progressRes.data)
-          console.log("progreeeeeeeeees :D ",progressRes)
         }
       }catch(err){
         console.error(`Error fetching data: ${err}`)
