@@ -3,6 +3,7 @@ import Dashboard from "./RevisionTree.jsx";
 import {Routes, Route, Navigate, useNavigate} from "react-router-dom" 
 import Topics from "./Topics.jsx"
 import { TopicPage } from "./Topics.jsx";
+import ConfusedVaultDemo from "./confusedVault.jsx";
 
 // ─── Logo: spinning arrow loop ───────────────────────────────────────────────
 function IterateLogo({ size = 36, spin = true }) {
@@ -40,10 +41,10 @@ function IterateLogo({ size = 36, spin = true }) {
 // ─── Side Nav ────────────────────────────────────────────────────────────────
 function SideNav({ page, setPage }) {
   const links = [
-    { id: "progress", label: "Progress", icon: "◈" },
-    { id: "sessions",  label: "Sessions",  icon: "⊞" },
-    { id: "topics",    label: "Courses",    icon: "⊟" },
-    { id: "settings",  label: "Settings",  icon: "⊙" },
+    { id: "topics",    label: "Courses",    icon: "" },
+    { id: "progress", label: "Progress", icon: "" },
+    { id: "sessions",  label: "Confused",  icon: "" },
+    { id: "settings",  label: "Settings",  icon: "" },
   ];
   const [user, setUser] = useState(null);
   useEffect(() => {
@@ -358,6 +359,7 @@ export default function App() {
         <Route path="/" element={ <Landing/>} />
         <Route path="/progress" element={ <Dashboard/>} />
         <Route path="/courses" element={<TopicPage />} />
+        <Route path="/confused" element={<ConfusedVaultDemo/>} />
       </Routes>
 
       {/* <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>
