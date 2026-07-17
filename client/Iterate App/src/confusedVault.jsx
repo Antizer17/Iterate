@@ -1,17 +1,19 @@
 import { useState, useMemo, useCallback, useRef, useEffect, useLayoutEffect } from "react";
 import {SideNav} from "./iterate-app.jsx"
+
  
 // ── Design tokens (scoped to .cv-root) ──────────────────────────────────────
 // Shares the same variable names / font as RevisionTree.jsx's CSS export so
 // this page feels like the same app. Safe to render alongside rt-root CSS —
 // selectors are all cv- prefixed.
+
 export const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
 .cv-root *{box-sizing:border-box;margin:0;padding:0}
 .cv-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
-  --amber:#b5842a;
+  --amber:#b5842a;--ok:#5f8d63;
   --font:'Caveat',cursive;
   background:var(--paper);color:var(--ink);font-family:var(--font);
   position:relative;overflow:hidden;
@@ -106,13 +108,28 @@ export const CSS = `
 @keyframes cv-popIn{0%{transform:scale(.6) rotate(var(--r,0deg));opacity:0}60%{transform:scale(1.06) rotate(var(--r,0deg))}100%{transform:scale(1) rotate(var(--r,0deg));opacity:1}}
 @keyframes cv-crumple{0%{transform:scale(1) rotate(var(--r,0deg));opacity:1}40%{transform:scale(.85) rotate(calc(var(--r,0deg) + 8deg));opacity:.9}100%{transform:scale(.2) rotate(calc(var(--r,0deg) + 45deg));opacity:0}}
 @keyframes cv-jitter{0%,100%{transform:translate(0,0) rotate(var(--r,0deg))}25%{transform:translate(0.6px,-0.4px) rotate(calc(var(--r,0deg) - 0.3deg))}75%{transform:translate(-0.5px,0.5px) rotate(calc(var(--r,0deg) + 0.3deg))}}
-.cv-card{--r:0deg;background:var(--paper);border:1.5px solid var(--gray4);padding:1.8rem 0.9rem;
-  position:relative;transform:rotate(var(--r));animation:cv-popIn .3s ease both}
+.cv-card{--r:0deg;background:linear-gradient(178deg, var(--paper) 0%, var(--paper2) 100%);
+  border:1.5px solid var(--gray4);border-radius:2px 14px 4px 12px;padding:1rem 1rem 0.85rem;
+  position:relative;transform:rotate(var(--r));animation:cv-popIn .3s ease both;
+  display:flex;flex-direction:column;min-height:172px;
+  box-shadow:2px 3px 0 rgba(26,26,24,0.05), 0 8px 18px -10px rgba(26,26,24,0.25);
+  transition:box-shadow .15s ease, transform .15s ease}
+.cv-card:hover{box-shadow:3px 5px 0 rgba(26,26,24,0.07), 0 12px 24px -10px rgba(26,26,24,0.28)}
 .cv-card::before{content:'';position:absolute;top:-1px;right:-1px;width:9px;height:9px;
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
 .cv-card.high{animation:cv-popIn .3s ease both, cv-jitter 3.2s ease-in-out infinite}
 .cv-card.cracking{animation:cv-crumple .45s ease forwards !important}
-.cv-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:16px}
+.cv-card.solved{border-color:var(--ok);border-style:solid;background:linear-gradient(178deg, var(--paper) 0%, #f1f6f1 100%)}
+.cv-solved-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:3px;font-size:12px;
+  color:var(--ok);background:rgba(95,141,99,0.14);border:1px solid rgba(95,141,99,0.5);
+  padding:1px 8px 1px 6px;border-radius:20px;margin-bottom:8px;transform:rotate(-1.5deg)}
+.cv-remove-btn{position:absolute;top:-9px;right:-9px;width:23px;height:23px;border-radius:50%;
+  border:1.5px solid var(--gray4);background:var(--paper);color:var(--gray2);font-size:14px;
+  line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 5px rgba(26,26,24,0.15);transition:all .12s}
+.cv-remove-btn:hover{background:#c0433d;border-color:#c0433d;color:#fff;transform:rotate(90deg) scale(1.08)}
+.cv-remove-btn:active{transform:rotate(90deg) scale(0.92)}
+.cv-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:10px}
 .cv-card-topic{font-family:var(--font);font-size:19px;font-weight:700;line-height:1.15}
 .cv-scribble{flex-shrink:0}
 /* Draws the path in (0→55%), holds it fully drawn, flicks invisible to
@@ -128,17 +145,37 @@ export const CSS = `
   100%{stroke-dashoffset:var(--dash-len);opacity:1}
 }
 .cv-scribble-path{animation:cv-scribble-draw 2.6s ease-in-out infinite}
-.cv-card-course{display:inline-block;font-size:13px;padding:1px 8px;background:var(--paper2);
-  border:1px solid var(--gray4);color:var(--gray1);margin-bottom:6px}
-.cv-card-note{font-size:15px;color:var(--gray1);font-style:italic;margin-bottom:8px;
+.cv-card-course{display:inline-block;font-size:12.5px;padding:2px 10px;background:var(--paper3);
+  border:1px solid var(--gray4);border-radius:20px;color:var(--gray1);margin-bottom:8px;
+  align-self:flex-start;letter-spacing:.2px}
+.cv-card-note{font-size:14.5px;color:var(--gray1);font-style:italic;margin:0 0 10px;
+  padding-left:8px;border-left:2px solid var(--gray4);
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.cv-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.cv-card-date{font-size:13px;color:var(--gray3)}
-.cv-crack-btn{font-family:var(--font);font-size:14px;font-weight:700;padding:3px 12px;
+.cv-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  margin-top:auto;padding-top:8px;border-top:1px dashed var(--gray4)}
+.cv-card-date{font-size:12.5px;color:var(--gray3)}
+.cv-crack-btn{font-family:var(--font);font-size:14.5px;font-weight:700;padding:4px 14px;
   background:var(--paper);border:1.5px dashed var(--gray2);color:var(--gray1);cursor:pointer;
-  transition:all .12s}
-.cv-crack-btn:hover{background:var(--ink);color:var(--paper);border-style:solid;border-color:var(--ink)}
+  border-radius:3px;transition:all .12s}
+.cv-crack-btn:hover{background:var(--ink);color:var(--paper);border-style:solid;border-color:var(--ink);transform:translateY(-1px)}
 .cv-crack-btn:active{transform:scale(0.94)}
+
+/* ── Flipped face: resources list ── */
+.cv-card-back-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;
+  padding-bottom:8px;border-bottom:1px dashed var(--gray4);width:100%}
+.cv-card-back-title{font-size:22px;font-weight:700}
+.cv-resource-list{display:flex;flex-direction:column;gap:6px;width:100%;flex:1}
+.cv-resource-row{display:flex;align-items:center;gap:8px;padding:6px 9px;border:1px solid var(--gray4);
+  background:var(--paper2);border-radius:9px;text-decoration:none;color:var(--ink);font-size:14.5px;
+  transition:all .12s;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.cv-resource-row:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:translateX(2px)}
+.cv-resource-row .cv-play{flex-shrink:0;width:15px;height:15px;display:flex;align-items:center;justify-content:center}
+.cv-resource-empty{font-size:14px;color:var(--gray3);font-style:italic;text-align:center;
+  padding:18px 8px;flex:1;display:flex;align-items:center;justify-content:center}
+.cv-back-btn{align-self:center;font-family:var(--font);font-size:14.5px;font-weight:700;
+  padding:4px 18px;margin-top:12px;background:transparent;border:1.5px solid var(--gray3);
+  color:var(--gray2);border-radius:14px;cursor:pointer;transition:all .12s}
+.cv-back-btn:hover{border-color:var(--ink);color:var(--ink)}
  
 .cv-empty{border:1.5px dashed var(--gray3);padding:2rem 1rem;text-align:center;
   color:var(--gray2);font-style:italic;font-size:17px;transform:rotate(-0.2deg)}
@@ -332,21 +369,48 @@ function AddTopicForm({ onAdd, onCancel, defaultCourse }) {
 function getTopicText(item) { return item.moduleId?.topic ?? item.topic ?? ""; }
 function getCourseCode(item) { return item.moduleId?.courseCode ?? item.courseCode ?? ""; }
 function getConfusionLevel(item) { return item.moduleId?.confusionLevel ?? item.confusionLevel ?? 0; }
+function getId(item) {
+  return item.id ?? item._id ?? item.moduleId?._id ?? getTopicText(item);
+}
+function getNote(item) { return item.note ?? item.moduleId?.note ?? ""; }
+function getResolved(item) { return item.resolved ?? item.moduleId?.resolved ?? false; }
 
 // ── Card ─────────────────────────────────────────────────────────────────────
-function ConfusedCard({ item, cracking, viewMode = null, onToggle }) {
+function PlayIcon() {
+  return (
+    <svg className="cv-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M4 2.5v11l10-5.5z" />
+    </svg>
+  );
+}
+
+function ConfusedCard({ item, cracking, viewMode = null, onToggle, resolved = false, onRemove }) {
   // Keying the inner face on `viewMode` re-triggers cv-popIn (already used
   // for cards entering the grid) every time it flips, so the swap between
   // "topic" and "resources" gets the same snappy little bounce instead of
   // an instant, jarring content swap.
-  if (viewMode === false) {
+  const cardClass = `cv-card${cracking ? " cracking" : ""}${resolved ? " solved" : ""}`;
+
+  if (!viewMode) {
     return (
-      <div className={'cv-card'} key="topic-face" style={{ animation: "cv-popIn .28s ease both" }}>
+      <div className={cardClass} style={cracking ? undefined : { animation: "cv-popIn .28s ease both" }}>
+        {resolved && (
+          <button
+            className="cv-remove-btn"
+            onClick={onRemove}
+            title="clear this — it's solved"
+            aria-label="remove solved topic"
+          >
+            ×
+          </button>
+        )}
+        {resolved && <span className="cv-solved-badge">✓ solved</span>}
         <div className="cv-card-top">
-          <span className="cv-card-topic">{item.moduleId.topic}</span>
-          <ConfusionScribble />
+          <span className="cv-card-topic">{getTopicText(item)}</span>
+          <ConfusionScribble level={getConfusionLevel(item)} />
         </div>
-        <span className="cv-card-course">{item.moduleId.courseCode}</span>
+        <span className="cv-card-course">{getCourseCode(item)}</span>
+        {getNote(item) && <p className="cv-card-note">{getNote(item)}</p>}
         <div className="cv-card-foot">
           <span className="cv-card-date">{timeAgo(item.addedAt)}</span>
           <button className="cv-crack-btn" onClick={onToggle}>resources</button>
@@ -354,31 +418,26 @@ function ConfusedCard({ item, cracking, viewMode = null, onToggle }) {
       </div>
     );
   } else {
+    const resources = item.resources ?? [];
     return (
-      <div
-        className={'cv-card'} key="resources-face"
-        style={{ display: "flex", flexDirection: "column", alignItems: "center", animation: "cv-popIn .28s ease both" }}
-      >
-        <div className="cv-card-top" style={{display:"flex", flexDirection:"row"}}>
-          <span className="cv-card-topic" style={{fontSize:"32px"}}>Resources</span>
-          <ConfusionScribble />
+      <div className={cardClass} style={cracking ? undefined : { alignItems: "center", animation: "cv-popIn .28s ease both" }}>
+        <div className="cv-card-back-head">
+          <span className="cv-card-back-title">resources</span>
+          <ConfusionScribble level={getConfusionLevel(item)} />
         </div>
-        <div style={{display:"flex", flexDirection:"row", columnGap:"32px"}}>
-          <div style={{display:"flex", flexDirection:"column"}}>
-           <span className="cv-card-topic" style={{fontSize:"24px"}}>Videos</span>
-           <a href="https://www.youtube.com/watch?v=CnS1Ckb9HY8&t=2103s" target="_blank" style={{fontSize:"16px"}}>B+ trees</a>
-           <a href="https://www.youtube.com/watch?v=CnS1Ckb9HY8&t=2103s" target="_blank" style={{fontSize:"16px"}}>Binary trees</a>
-        </div>
-          <div style={{display:"flex", flexDirection:"column"}}>
-           <span className="cv-card-topic">Articles</span>
-           <a href="https://www.youtube.com/watch?v=CnS1Ckb9HY8&t=2103s">B+ trees</a>
-           <a href="https://www.youtube.com/watch?v=CnS1Ckb9HY8&t=2103s">Binary trees</a>
-        </div>
-
-
-        </div>
-        <button className="cv-crack-btn" style={{marginTop:"16px"}} onClick={onToggle}>back</button>
-
+        {resources.length > 0 ? (
+          <div className="cv-resource-list">
+            {resources.map((res, i) => (
+              <a className="cv-resource-row" key={res.url ?? i} href={res.url} target="_blank" rel="noreferrer">
+                <PlayIcon />
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{res.title}</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div className="cv-resource-empty">no videos found yet</div>
+        )}
+        <button className="cv-back-btn" onClick={onToggle}>← back</button>
       </div>
     );
   }
@@ -394,6 +453,8 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
   const [localTopics, setLocalTopics] = useState(() => topicsProp );
   const topics = isControlled ? topicsProp : localTopics;
   const [loading, setLoading] = useState(true)
+
+  const[objs,setObjs] =useState({})
  
   const [doorsOpen, setDoorsOpen] = useState(false);
   const [vaultTopics, setVaultTopics] = useState([]);
@@ -408,12 +469,33 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
   // rather than one global flag, so each card's toggle state is independent.
   const [flippedIds, setFlippedIds] = useState(() => new Set());
   const toggleView = useCallback((id) => {
+    console.log("iddd", id, flippedIds)
+
     setFlippedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
-  }, []);
+  }, [flippedIds]);
+
+  // Solved topics get a × on their card. Clicking it plays the existing
+  // crumple animation (cv-crumple, already defined for the "cracking" state)
+  // and then actually removes the item once the animation finishes, rather
+  // than yanking it out instantly.
+  const handleRemove = useCallback((item) => {
+    const id = getId(item);
+    setCrackingIds((prev) => new Set(prev).add(id));
+    setTimeout(() => {
+      setVaultTopics((prev) => prev.filter((t) => getId(t) !== id));
+      setCrackingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      setCrackedCount((c) => c + 1);
+      onResolveProp?.(id);
+    }, 460); // matches cv-crumple's .45s duration
+  }, [onResolveProp]);
  
   useEffect(() => {
     // Wheel spins for ~1.05s, then settles/fades (~0.35s), then the doors
@@ -512,6 +594,7 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
  
         {visible.length === 0 ? (
           <div className="cv-empty">
+            {console.log(`testiiiing ${visible}`)}
             {vaultTopics.length === 0
               ? "vault's empty — nothing to crack yet"
               : "nothing matches that search"}
@@ -519,12 +602,15 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
         ) : (
           <div className="cv-grid">
             {visible.map((item) => (
+  
               <ConfusedCard
-                key={item.id}
+                key={getId(item)}
                 item={item}
-                cracking={crackingIds.has(item.id)}
-                viewMode={flippedIds.has(item.id)}
-                onToggle={() => toggleView(item.id)}
+                cracking={crackingIds.has(getId(item))}
+                viewMode={flippedIds.has(getId(item))}
+                onToggle={() => toggleView(getId(item))}
+                resolved={getResolved(item)}
+                onRemove={() => handleRemove(item)}
               />
             ))}
           </div>

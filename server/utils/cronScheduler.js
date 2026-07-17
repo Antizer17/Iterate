@@ -2,7 +2,7 @@ import cron from "node-cron"
 import { runDailyEmailJob } from "./mailer.js"
 
 const cronSchedular = ()=>{
- cron.schedule("02 02 * * *", async ()=>{
+ cron.schedule("58 19 * * *", async ()=>{
     try{
         console.log("Dispatching revision content...")
         await runDailyEmailJob()
