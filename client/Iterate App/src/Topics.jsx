@@ -1,28 +1,106 @@
 import { useEffect, useState } from "react";
 import { SideNav } from "./iterate-app";
 
+// ── Design tokens (scoped to .tp-root) ──────────────────────────────────────
+// Shares variable names / font with RevisionTree.jsx and confusedVault.jsx's
+// CSS exports so this page feels like the same app, not a bolted-on screen.
+export const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+.tp-root *{box-sizing:border-box;margin:0;padding:0}
+.tp-root{
+  --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
+  --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
+  --font:'Caveat',cursive;
+  background:var(--paper);color:var(--ink);font-family:var(--font);
+  width:100%;
+}
+.tp-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto}
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-// const COURSES = [
-//   { id: "CSE101", name: "Intro to Computer Science", topics: 12, desc: "Core programming concepts, problem-solving, and computational thinking." },
-//   { id: "CSE221", name: "Algorithm Design & Analysis", topics: 15, desc: "Divide & conquer, dynamic programming, graph algorithms, and NP-completeness." },
-//   { id: "CSE331", name: "Data Structures", topics: 15, desc: "Arrays, trees, heaps, hash tables, graphs — and when to reach for each." },
-//   { id: "CSE341", name: "Operating Systems", topics: 11, desc: "Processes, threads, memory management, file systems, and concurrency." },
-//   { id: "CSE351", name: "Computer Networks", topics: 10, desc: "TCP/IP, routing, DNS, HTTP, and the full network stack." },
-//   { id: "CSE461", name: "Database Systems", topics: 13, desc: "Relational algebra, SQL, indexing, transactions, and query optimisation." },
-//   { id: "CSE471", name: "Machine Learning", topics: 14, desc: "Supervised & unsupervised learning, neural networks, and model evaluation." },
-//   { id: "MAT201", name: "Discrete Mathematics",topics: 10, desc:  "Logic, proofs, combinatorics, graph theory, and probability basics." },
-//   { id: "MAT301", name: "Linear Algebra", topics: 9, desc: "Vectors, matrices, eigenvalues, and applications in ML and graphics." },
-//   { id: "CSE481", name: "Compilers & Languages", topics: 12, desc: "Lexing, parsing, semantic analysis, IR generation, and code optimisation." },
-// ];
+.tp-header{text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
+.tp-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.6deg)}
+.tp-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:2px}
 
+.tp-tabs{display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center;justify-content:center}
+.tp-tab{font-family:var(--font);font-size:15px;font-weight:600;padding:4px 14px;background:var(--paper);
+  color:var(--gray2);border:1.5px solid var(--gray4);cursor:pointer;transition:all .12s;transform:rotate(-0.3deg)}
+.tp-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:rotate(0.2deg)}
+.tp-tab:hover:not(.active){background:var(--paper3);color:var(--gray1)}
+.tp-tabs-divider{width:1.5px;height:20px;background:var(--gray4);margin:0 4px}
+
+/* ── Cards grid ── */
+.tp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:1.5rem}
+@keyframes tp-popIn{0%{transform:scale(.6) rotate(var(--r,0deg));opacity:0}60%{transform:scale(1.05) rotate(var(--r,0deg))}100%{transform:scale(1) rotate(var(--r,0deg));opacity:1}}
+.tp-card{--r:0deg;
+  background-color:var(--paper);
+  background-image:linear-gradient(178deg, var(--paper) 0%, var(--paper2) 100%),
+    repeating-linear-gradient(to bottom, transparent, transparent 24px, var(--gray4) 24px, var(--gray4) 25px);
+  background-position:0 0, 0 4px;
+  border:1.5px solid var(--gray4);border-radius:2px 14px 4px 12px;padding:1.1rem 1.1rem 1rem;
+  position:relative;transform:rotate(var(--r));animation:tp-popIn .3s ease both;
+  display:flex;flex-direction:column;gap:14px;min-height:250px;
+  box-shadow:2px 3px 0 rgba(26,26,24,0.05), 0 8px 18px -10px rgba(26,26,24,0.25);
+  transition:box-shadow .15s ease, transform .15s ease}
+.tp-card:hover{box-shadow:3px 5px 0 rgba(26,26,24,0.07), 0 12px 24px -10px rgba(26,26,24,0.28)}
+.tp-card::before{content:'';position:absolute;top:-1px;right:-1px;width:9px;height:9px;
+  border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
+.tp-card.enrolled{border-color:var(--ink);border-style:solid}
+.tp-card.rating{border-color:var(--ink);background-image:linear-gradient(178deg, var(--paper) 0%, var(--paper2) 100%)}
+
+.tp-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.tp-card-code{font-family:var(--font);font-size:13px;font-weight:600;padding:2px 10px;background:var(--paper3);
+  border:1px solid var(--gray4);border-radius:20px;color:var(--gray1);letter-spacing:.2px;align-self:flex-start}
+.tp-card-title{font-family:var(--font);font-size:24px;font-weight:700;line-height:1.15}
+
+.tp-card-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tp-card-tag{font-family:var(--font);font-size:13px;padding:1px 10px;border:1px dashed var(--gray3);
+  border-radius:14px;color:var(--gray2)}
+
+.tp-enrolled-row{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--gray1);
+  padding-top:8px;border-top:1px dashed var(--gray4)}
+.tp-enrolled-dot{width:7px;height:7px;border-radius:50%;background:var(--ink);flex-shrink:0}
+.tp-enrolled-conf{margin-left:auto;font-size:14px;color:var(--gray2)}
+
+.tp-cta{font-family:var(--font);font-size:16px;font-weight:700;padding:6px 14px;margin-top:auto;
+  background:var(--paper);border:1.5px dashed var(--gray2);color:var(--gray1);cursor:pointer;
+  border-radius:14px;transition:all .12s;width:100%;text-align:center}
+.tp-cta:hover{background:var(--ink);color:var(--paper);border-style:solid;border-color:var(--ink);transform:translateY(-1px)}
+.tp-cta:active{transform:scale(0.97)}
+.tp-cta.done{background:var(--ink);color:var(--paper);border-color:var(--ink);border-style:solid;cursor:default}
+.tp-cta.done:hover{transform:none}
+
+/* ── Rating mode ── */
+.tp-rate-prompt{text-align:center}
+.tp-rate-q{font-family:var(--font);font-size:19px;font-weight:700;line-height:1.25}
+.tp-rate-q em{color:var(--gray1);font-style:italic}
+.tp-rate-id{font-size:13px;color:var(--gray3);margin-top:2px}
+.tp-dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.tp-dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--gray4);background:var(--paper);
+  color:var(--gray2);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .1s}
+.tp-dot.filled{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.tp-bar-track{height:4px;background:var(--paper3);border-radius:2px;overflow:hidden;margin:0 2px}
+.tp-bar-fill{height:100%;background:var(--ink);border-radius:2px;transition:width .25s}
+.tp-bar-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--gray3);margin-top:3px;font-style:italic}
+.tp-rate-cancel{background:none;border:none;cursor:pointer;font-family:var(--font);font-size:14px;
+  color:var(--gray2);text-decoration:underline;text-underline-offset:2px}
+.tp-rate-cancel:hover{color:var(--ink)}
+
+.tp-empty{grid-column:1/-1;font-family:var(--font);font-size:17px;color:var(--gray2);font-style:italic;
+  text-align:center;padding:2.5rem 0}
+
+/* ── Toast ── */
+.tp-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);padding:8px 20px;border-radius:2px 10px 2px 10px;font-family:var(--font);
+  font-size:16px;font-weight:600;white-space:nowrap;z-index:999;animation:tp-toastIn .2s ease;
+  border:1.5px solid var(--ink)}
+@keyframes tp-toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+`;
 
 const DEPTS  = ["All", "CSE", "MAT"];
 const LEVELS = ["All levels", "Foundation", "Intermediate", "Advanced"];
 
-// ─── CourseCard ───────────────────────────────────────────────────────────────
-function CourseCard({ course, onEnroll, user, state, courseConfidence }) {
-  console.log(`courseCode is ${course.courseCode}`)
+// ─── CourseCard ─────────────────────────────────────────────────────────────
+function CourseCard({ course, onEnroll, user, state, courseConfidence, rot }) {
   // state: 'default' | 'rating' | 'enrolled'
   const [cardState, setCardState] = useState(state);
   const [confidence, setConfidence] = useState(courseConfidence);
@@ -38,161 +116,72 @@ function CourseCard({ course, onEnroll, user, state, courseConfidence }) {
     onEnroll({ userID:user, course:course, courseCode: course.courseCode, confidenceScore: confidence });
   }
 
-  // lined paper background shared with the rest of the app
-  const linedBg = {
-    backgroundImage: "repeating-linear-gradient(to bottom, transparent, transparent 23px, #EAE8E2 23px, #EAE8E2 24px)",
-    backgroundPositionY: "8px",
-  };
-
-  const cardBase = {
-    background: "#fff",
-    border: `1px solid ${cardState === "enrolled" ? "#1A1A1A" : cardState === "rating" ? "#1A1A1A" : "#E0DDD5"}`,
-    borderRadius: 8,
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
-    transition: "box-shadow 0.15s, border-color 0.15s",
-    position: "relative",
-    ...(cardState === "rating" ? {} : linedBg),
-  };
+  const cardClass = `tp-card${cardState === "enrolled" ? " enrolled" : ""}${cardState === "rating" ? " rating" : ""}`;
+  const style = { "--r": `${rot}deg` };
 
   // ── Rating mode ──
   if (cardState === "rating") {
     return (
-      <div style={cardBase}>
-        <div style={{ textAlign: "center" }}>
-          <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: 17, color: "#1A1A1A", lineHeight: 1.3, marginBottom: 4 }}>
-            How confident are you in<br /><em>{course.courseCode}</em>?
-          </p>
-          <p style={{ fontSize: 11, color: "#AAA" }}>{course.id}</p>
+      <div className={cardClass} style={style}>
+        <div className="tp-rate-prompt">
+          <p className="tp-rate-q">How confident are you in<br /><em>{course.courseCode}</em>?</p>
+          <p className="tp-rate-id">{course.id}</p>
         </div>
 
-        {/* 1–10 scale */}
-        <div style={{ display: "flex", gap: 5, justifyContent: "center", flexWrap: "wrap" }}>
+        <div className="tp-dots">
           {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
             <button
               key={n}
+              className={`tp-dot${confidence === n ? " filled" : ""}`}
               onClick={() => setConfidence(n)}
-              style={{
-                width: 34, height: 34, borderRadius: "50%",
-                border: `1.5px solid ${confidence === n ? "#1A1A1A" : "#DDD9D0"}`,
-                background: confidence === n ? "#1A1A1A" : "#F7F6F2",
-                color: confidence === n ? "#fff" : "#888",
-                fontSize: 12, fontWeight: 600,
-                fontFamily: "'Inter', sans-serif",
-                cursor: "pointer", transition: "all 0.1s",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}
             >
               {n}
             </button>
           ))}
         </div>
 
-        {/* bar */}
-        <div style={{ padding: "0 4px" }}>
-          <div style={{ height: 3, background: "#EAE8E2", borderRadius: 2, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${confidence * 10}%`, background: "#1A1A1A", borderRadius: 2, transition: "width 0.25s" }} />
+        <div>
+          <div className="tp-bar-track">
+            <div className="tp-bar-fill" style={{ width: `${confidence * 10}%` }} />
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#AAA", marginTop: 4 }}>
+          <div className="tp-bar-labels">
             <span>not at all</span><span>total expert</span>
           </div>
         </div>
 
-        <button
-          onClick={confirm}
-          disabled={!confidence}
-          style={{
-            width: "100%", padding: "9px",
-            borderRadius: 5, border: "1.5px solid #1A1A1A",
-            background: "#1A1A1A", color: "#fff",
-            fontSize: 13, fontWeight: 600, fontFamily: "'Inter', sans-serif",
-            cursor: confidence ? "pointer" : "not-allowed",
-            opacity: confidence ? 1 : 0.35, transition: "opacity 0.15s",
-          }}
-        >
-          Confirm enrolment
+        <button className="tp-cta" disabled={!confidence} onClick={confirm} style={{ opacity: confidence ? 1 : 0.4 }}>
+          confirm enrolment
         </button>
-
-        <button
-          onClick={cancel}
-          style={{
-            background: "none", border: "none", cursor: "pointer",
-            fontSize: 11, color: "#AAA", textDecoration: "underline",
-            textUnderlineOffset: 2, fontFamily: "'Inter', sans-serif",
-          }}
-        >
-          cancel
-        </button>
+        <button className="tp-rate-cancel" onClick={cancel}>cancel</button>
       </div>
     );
   }
 
   // ── Default & Enrolled ──
   return (
-    <div style={cardBase}>
-      {/* top row */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <span style={{
-          fontSize: 10, fontWeight: 600, color: "#888",
-          letterSpacing: "0.08em", textTransform: "uppercase",
-          background: "#F7F6F2", border: "1px solid #E0DDD5",
-          borderRadius: 3, padding: "2px 7px",
-        }}>{course.courseCode}</span>
-        {/* <span style={{ fontSize: 10, color: "#AAA", fontWeight: 500 }}>{course.dept}</span> */}
+    <div className={cardClass} style={style}>
+      <div className="tp-card-top">
+        <span className="tp-card-code">{course.courseCode}</span>
       </div>
 
-      <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 17, color: "#1A1A1A", lineHeight: 1.25, letterSpacing: "-0.2px" }}>
-        {course.course}
+      <div className="tp-card-title">{course.course}</div>
+
+      <div className="tp-card-tags">
+        <span className="tp-card-tag">{course.courseCode} topics</span>
       </div>
 
-      <div style={{ fontSize: 11, color: "#888", lineHeight: 1.6 }}>{course.desc}</div>
-
-      {/* meta tags */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        {[`${course.courseCode} topics`].map(t => (
-          <span key={t} style={{ fontSize: 10, border: "1px solid #DDD9D0", borderRadius: 3, padding: "2px 8px", color: "#666" }}>{t}</span>
-        ))}
-      </div>
-
-      {/* enrolled badge */}
       {cardState === "enrolled" && (
-        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#888" }}>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#1A1A1A", flexShrink: 0 }} />
-          <span>Enrolled</span>
-          <span style={{ marginLeft: "auto", fontSize: 10, color: "#666" }}>confidence {enrolledConf || courseConfidence}/10</span>
+        <div className="tp-enrolled-row">
+          <div className="tp-enrolled-dot" />
+          <span>enrolled</span>
+          <span className="tp-enrolled-conf">confidence {enrolledConf || courseConfidence}/10</span>
         </div>
       )}
 
-      {/* CTA button */}
       {cardState === "enrolled" ? (
-        <button
-          disabled
-          style={{
-            width: "100%", padding: "9px", borderRadius: 5,
-            border: "1.5px solid #1A1A1A", background: "#1A1A1A",
-            color: "#fff", fontSize: 13, fontWeight: 600,
-            fontFamily: "'Inter', sans-serif", cursor: "default", marginTop: "auto",
-          }}
-        >
-          ✓ Enrolled
-        </button>
+        <button className="tp-cta done" disabled>✓ enrolled</button>
       ) : (
-        <button
-          onClick={startRating}
-          style={{
-            width: "100%", padding: "9px", borderRadius: 5,
-            border: "1.5px solid #1A1A1A", background: "transparent",
-            color: "#1A1A1A", fontSize: 13, fontWeight: 600,
-            fontFamily: "'Inter', sans-serif", cursor: "pointer",
-            transition: "background 0.15s, color 0.15s", marginTop: "auto",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "#fff"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}
-        >
-          Enroll →
-        </button>
+        <button className="tp-cta" onClick={startRating}>enroll →</button>
       )}
     </div>
   );
@@ -238,14 +227,7 @@ export default function Topics() {
       }
     }
     callApis()
-
-      
-      
   },[])
-  console.log(courses)
-  console.log(`${user} yooo`)
-  console.log(`${enrolled} enrolled courses baby :D`)
-  console.log("confidenceArray baby :D", confidenceArray)
 
   function showToast(msg) {
     setToast(msg);
@@ -253,7 +235,6 @@ export default function Topics() {
   }
 
   function handleEnroll(data) {
-    
     try{
       fetch("/api/users/enroll",{
       credentials: "include",
@@ -265,8 +246,6 @@ export default function Topics() {
           courseCode: data.courseCode,
           confidenceScore: data.confidenceScore       // Or grab this from a form input state
         })}) 
-      
-    
     }catch(err){
       console.error(err)
     }
@@ -290,136 +269,53 @@ export default function Topics() {
     }
   }
 
-  // const filtered = courses.filter(c =>
-  //   (activeDept  === "All"        || c.dept  === activeDept) &&
-  //   (activeLevel === "All levels" || c.level === activeLevel)
-  // );
-
-  // const enrolledIds  = new Set(enrollments.map(e => e.courseId));
-  // const enrolledCount = enrolledIds.size;
-  // const topicsUnlocked = enrollments.reduce((a, e) => {
-  //   const c = courses.find(x => x.courseCode === e.courseId);
-  //   return a + (c?.topics ?? 0);
-  // }, 0);
-  // const avgConf = enrolledCount
-  //   ? (enrollments.reduce((a, e) => a + e.confidence, 0) / enrolledCount).toFixed(1)
-  //   : "—";
-
-  // ── Filter pill ──
-  const FilterBtn = ({ label, active, onClick }) => (
-    <button
-      onClick={onClick}
-      style={{
-        padding: "6px 14px",
-        border: `1px solid ${active ? "#1A1A1A" : "#C8C5BC"}`,
-        borderRadius: 4,
-        background: active ? "#1A1A1A" : "#F7F6F2",
-        color: active ? "#fff" : "#666",
-        fontSize: 12, fontWeight: 500,
-        fontFamily: "'Inter', sans-serif",
-        cursor: "pointer", transition: "all 0.12s",
-      }}
-    >
-      {label}
-    </button>
-  );
+  // Small deterministic wobble per card, same spirit as the vault's --r tilt —
+  // keeps cards from looking like a rigid grid without being random each render.
+  const rotFor = (i) => [-0.5, 0.3, -0.2, 0.4, -0.35, 0.25][i % 6];
 
   return (
-    <div style={{ padding: "32px 36px",minWidth:"88%", maxWidth: 860, margin: "0 auto" }}>
+    <div className="tp-root">
+      <style>{CSS}</style>
+      <div className="tp-wrap">
 
-      {/* Page header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 30, color: "#1A1A1A", letterSpacing: "-0.4px", marginBottom: 4 }}>
-          Topics
-        </h1>
-        <p style={{ fontSize: 13, color: "#888", lineHeight: 1.6 }}>
-          Enroll in courses and rate your confidence — we'll calibrate your revision tree accordingly.
-        </p>
-      </div>
-
-      {/* Summary bar */}
-      {/* <div style={{
-        background: "#fff", border: "1px solid #E0DDD5", borderRadius: 6,
-        padding: "14px 20px", marginBottom: 20,
-        display: "flex", gap: 24, alignItems: "center",
-      }}>
-        {[
-          { val: enrolledCount, lbl: "enrolled" },
-          { val: avgConf,       lbl: "avg confidence" },
-          { val: topicsUnlocked, lbl: "topics unlocked" },
-        ].map(({ val, lbl }, i) => (
-          <div key={lbl} style={{ display: "flex", alignItems: "center", gap: 24 }}>
-            {i > 0 && <div style={{ width: 1, height: 32, background: "#E0DDD5" }} />}
-            <div>
-              <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: "#1A1A1A", lineHeight: 1 }}>{val}</div>
-              <div style={{ fontSize: 10, color: "#999", textTransform: "lowercase", letterSpacing: "0.05em", marginTop: 2 }}>{lbl}</div>
-            </div>
-          </div>
-        ))}
-        <button
-          onClick={syncToBackend}
-          disabled={enrolledCount === 0 || syncing}
-          style={{
-            marginLeft: "auto", padding: "8px 16px",
-            border: "1.5px solid #1A1A1A", borderRadius: 5,
-            background: "transparent", color: "#1A1A1A",
-            fontSize: 12, fontWeight: 600, fontFamily: "'Inter', sans-serif",
-            cursor: enrolledCount === 0 || syncing ? "not-allowed" : "pointer",
-            opacity: enrolledCount === 0 ? 0.35 : 1,
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={e => { if (enrolledCount > 0 && !syncing) { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "#fff"; }}}
-          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}
-        >
-          {syncing ? "Syncing…" : "Sync to backend ↗"}
-        </button>
-      </div> */}
-
-      {/* Filter row */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
-        {DEPTS.map(d => (
-          <FilterBtn key={d} label={d} active={activeDept === d} onClick={() => setActiveDept(d)} />
-        ))}
-        <div style={{ width: 1, height: 24, background: "#DDD9D0", margin: "0 4px" }} />
-        {LEVELS.map(l => (
-          <FilterBtn key={l} label={l} active={activeLevel === l} onClick={() => setActiveLevel(l)} />
-        ))}
-      </div>
-
-      {/* Cards grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
-        {courses.map(course => 
-          { const isEnrolled = enrolled.includes(course.courseCode);
-            const currentConfidence = confidenceArray.filter(obj=>obj.courseCode===course.courseCode);
-            return isEnrolled ? <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="enrolled" courseConfidence={currentConfidence[0].confidenceScore}/> :
-            <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="default" />
-            
-          }
-        )}
-        {courses.length === 0 && (
-          <p style={{ gridColumn: "1/-1", fontSize: 13, color: "#AAA", textAlign: "center", padding: "40px 0" }}>
-            No courses match this filter.
-          </p>
-        )}
-      </div>
-
-      {/* Toast */}
-      {toast && (
-        <div style={{
-          position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
-          background: "#1A1A1A", color: "#fff", padding: "10px 20px", borderRadius: 6,
-          fontSize: 13, fontWeight: 500, fontFamily: "'Inter', sans-serif",
-          whiteSpace: "nowrap", zIndex: 999,
-          animation: "fadeIn 0.2s ease",
-        }}>
-          {toast}
+        <div className="tp-header">
+          <span className="tp-title">courses</span>
+          <p className="tp-sub">enroll and rate your confidence — we'll calibrate your revision tree accordingly</p>
         </div>
-      )}
 
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }`}</style>
+        <div className="tp-tabs">
+          {DEPTS.map(d => (
+            <button key={d} className={`tp-tab${activeDept === d ? " active" : ""}`} onClick={() => setActiveDept(d)}>{d}</button>
+          ))}
+          <div className="tp-tabs-divider" />
+          {LEVELS.map(l => (
+            <button key={l} className={`tp-tab${activeLevel === l ? " active" : ""}`} onClick={() => setActiveLevel(l)}>{l}</button>
+          ))}
+        </div>
+
+        <div className="tp-grid">
+          {courses.map((course, i) => {
+            const isEnrolled = enrolled.includes(course.courseCode);
+            const currentConfidence = confidenceArray.filter(obj => obj.courseCode === course.courseCode);
+            return isEnrolled ? (
+              <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="enrolled" courseConfidence={currentConfidence[0].confidenceScore} rot={rotFor(i)} />
+            ) : (
+              <CourseCard key={course.courseCode} course={course} onEnroll={handleEnroll} user={user} state="default" rot={rotFor(i)} />
+            );
+          })}
+          {courses.length === 0 && (
+            <p className="tp-empty">
+              {loading ? "loading courses…" : "no courses match this filter"}
+            </p>
+          )}
+        </div>
+
+        {toast && <div className="tp-toast">{toast}</div>}
+      </div>
     </div>
   );
 }
+
 function TopicPage(){
   return(
     <div style={{display:"flex", flexDirection:"row"}}>

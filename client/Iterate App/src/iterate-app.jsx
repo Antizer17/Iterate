@@ -4,6 +4,9 @@ import {Routes, Route, Navigate, useNavigate, useLocation} from "react-router-do
 import Topics from "./Topics.jsx"
 import { TopicPage } from "./Topics.jsx";
 import ConfusedVaultDemo from "./confusedVault.jsx";
+import {InterviewPageWithNav} from "./interviewPage.jsx";
+import { CompanyGuidePageWithNav } from "./companyGuidePage.jsx"
+import { ProtectedRoute } from "./protectedRoute.jsx";
 
 // ─── Logo: spinning arrow loop ───────────────────────────────────────────────
 function IterateLogo({ size = 36, spin = true }) {
@@ -14,7 +17,7 @@ function IterateLogo({ size = 36, spin = true }) {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={spin ? { animation: "spin 3s linear infinite" } : {}}
+      style={spin ? { animation: "spin 3s linear infinite", animationDirection: 'reverse' } : {}}
     >
       <circle cx="18" cy="18" r="15" stroke="#1A1A1A" strokeWidth="2.5" fill="none" />
       {/* Arrow going clockwise around the circle */}
@@ -50,7 +53,7 @@ function SideNav() {
     { path: "/courses",  label: "Courses" },
     { path: "/progress", label: "Progress" },
     { path: "/vault",    label: "Vault" },
-    { path: "/settings", label: "Settings" }, // ⚠️ no <Route path="/settings"> exists yet — add one or this 404s
+    { path: "/interview", label: "interview" },
   ];
   const [user, setUser] = useState(null);
   useEffect(() => {
@@ -363,9 +366,13 @@ export default function App() {
       `}</style>
       <Routes>
         <Route path="/" element={ <Landing/>} />
-        <Route path="/progress" element={ <Dashboard/>} />
-        <Route path="/courses" element={<TopicPage />} />
-        <Route path="/vault" element={<ConfusedVaultDemo/>} />
+        <Route path="/login" element={ <Landing/>} />
+        <Route path="/progress" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
+        <Route path="/courses" element={<ProtectedRoute><TopicPage /></ProtectedRoute>} />
+        <Route path="/vault" element={<ProtectedRoute><ConfusedVaultDemo/></ProtectedRoute>} />
+        <Route path="/interview" element={<InterviewPageWithNav/>} />
+        <Route path="/interview/:company" element={<CompanyGuidePageWithNav/>} />
+      
       </Routes>
 
       {/* <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>
