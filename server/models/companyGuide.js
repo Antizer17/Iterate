@@ -1,4 +1,4 @@
-
+import mongoose from 'mongoose'
 const CompanyGuideSchema = new mongoose.Schema({
   company: { type: String, required: true, unique: true },
   introduction: { type: String, default: "" },

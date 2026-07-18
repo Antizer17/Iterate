@@ -10,4 +10,14 @@ async function getCompanies(req,res){
         console.error(err)
     }
 }
-export default getCompanies;
+async function getCompany(req,res){
+    try{
+        console.log('Controller hit!')
+        const {company} = req.params
+        const companyData= await CompanyGuide.findOne({company:company.toUpperCase()})
+        return res.status(200).json({"success":"true","data":companyData})
+    }catch(err){
+        console.error(err)
+    }
+}
+export {getCompanies,getCompany};

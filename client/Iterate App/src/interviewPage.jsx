@@ -15,7 +15,7 @@ export const CSS = `
   background:var(--paper);color:var(--ink);font-family:var(--font);
   width:100%;
 }
-.ip-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:1000px;margin:0 auto}
+.ip-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto}
 
 .ip-header{text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .ip-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.6deg)}
@@ -48,8 +48,8 @@ export const CSS = `
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .ip-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;
   margin-top:auto;padding-top:8px;border-top:1px dashed var(--gray4)}
-.ip-card-count{font-family:var(--font);font-size:13px;padding:1px 10px;background:var(--paper3);
-  border:1px solid var(--gray4);border-radius:20px;color:var(--gray1)}
+.ip-card-count{font-family:var(--font);font-size:13px;padding:1px 10px;background:var(--ink);
+  border:1px solid var(--gray4);border-radius:20px;color:var(--paper3)}
 .ip-card-cta{font-family:var(--font);font-size:14.5px;font-weight:700;color:var(--gray1)}
 .ip-card:hover .ip-card-cta{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
