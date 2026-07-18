@@ -4,7 +4,7 @@ import {requireAuth} from '../middlewares/authMiddleware.js'
 
 const router=express.Router()
 console.log("materialRoutes.js loaded");
-router.get("/", getUniqueCourses)
-router.get("/:courseCode",getCourseTopics)
+router.get("/", requireAuth, getUniqueCourses)
+router.get("/:courseCode",requireAuth,getCourseTopics)
 
 export default router;

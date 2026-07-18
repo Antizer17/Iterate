@@ -5,8 +5,9 @@ import { requireAuth } from '../middlewares/authMiddleware.js';
 
 
 const router = express.Router();
-router.get("/sync", syncStreak);
-router.get("/confused", syncConfusion)
+router.get("/sync", requireAuth,syncStreak);
+router.get("/confused", requireAuth,syncConfusion)
 router.get("/getConfusedTopics",requireAuth, getConfusedTopics)
+// router.get("/getResources", getResources)
 
 export default router;

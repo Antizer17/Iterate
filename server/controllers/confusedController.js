@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import progress from "../models/progress.js";
 import users from "../models/users.js";
 import generatedModules from "../models/generatedModules.js";
+import processConfuseVault from "../engines/vaultProcessor.js";
 
 async function syncConfusion(req, res) {
   try {
@@ -11,7 +12,7 @@ async function syncConfusion(req, res) {
       return res.status(400).send("Missing or invalid link.");
     }
 
-    // Verify and decode the signed token from the email
+    // 1. Verify and decode the signed token from the email
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -20,52 +21,80 @@ async function syncConfusion(req, res) {
     }
 
     const { id, courseCode, currentOrder } = decoded;
+
+    // 2. Fetch the corresponding topic module
     const confusedTopics = await generatedModules.find({
-        courseCode:courseCode, 
-    }).sort({createdAt: 1})
-    const topic = confusedTopics[currentOrder-1]
+      courseCode: courseCode, 
+    }).sort({ createdAt: 1 });
+    
+    const topic = confusedTopics[currentOrder - 1];
     if (!topic) {
       return res.status(404).send("The topic being sent could not be found.");
     }
-    const user = await users.findById(
-      id
-    ).populate("confusedVault.moduleId")
-    if(user.confusedVault.some(obj=> obj.moduleId.topic===topic.topic)){
-      console.log("Topic already added to the vault!")
-      return res.redirect('http://localhost:5173/vault')
+
+    // 3. Find user and check if topic is already present in their vault
+    const user = await users.findById(id).populate("confusedVault.moduleId");
+    if (!user) {
+      return res.status(404).send("User record not found.");
     }
-    const updated = await users.findOneAndUpdate(
-      { _id: id  },
+
+    // Safe optional chaining guard to avoid crashes on null references
+    if (user.confusedVault.some(obj => obj.moduleId?.topic === topic.topic)) {
+      console.log("Topic already added to the vault!");
+      return res.redirect('http://localhost:5173/vault');
+    }
+
+    console.log(`Name of topic being sent to ollama: ${topic.topic}`);
+    
+    // 4. Trigger scrapeless execution pipeline to fetch up to 3 links
+    const videoArray = await processConfuseVault(topic.topic) || [];
+    console.log(videoArray)
+    
+    const resource1 = videoArray[0] || null;
+    const resource2 = videoArray[1] || null;
+    const resource3 = videoArray[2] || null;
+
+    // 5. Save module reference and video resources to user model
+    const updatedUser = await users.findOneAndUpdate(
+      { _id: id },
       {
-      $push: {confusedVault: {moduleId:topic._id} }},
+        $push: {
+          confusedVault: { moduleId: topic._id, resources: [resource1, resource2, resource3].filter(Boolean) },
+        }
+      },
       { new: true }
     );
-      if (!updated) {
+
+    if (!updatedUser) {
       return res.status(404).send("User record not found.");
     }
     console.log(`🎯 Added to the vault!`);
+
+    // 6. Update user course progress step tracking
     const userProgress = await progress.findOneAndUpdate(
-          { user: id, courseCode: courseCode, currentOrderStep:currentOrder  },
-          {$inc: { currentOrderStep: 1 },
-          $push: {completedTopics: {order: currentOrder, acedAt: new Date()} },},
-          { new: true }
-        );
-          if (!updated) {
-          return res.status(404).send("Progress record not found.");
-        }
-    
+      { user: id, courseCode: courseCode, currentOrderStep: currentOrder },
+      {
+        $inc: { currentOrderStep: 1 },
+        $push: { completedTopics: { order: currentOrder, acedAt: new Date() } }
+      },
+      { new: true }
+    );
 
+    if (!userProgress) {
+      return res.status(404).send("Progress record not found.");
+    }
+
+    // 7. Refresh token context cookie and redirect home
     res.cookie('token', token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
-  maxAge: 7 * 24 * 60 * 60 * 1000, // match your JWT's expiry
-});
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, 
+    });
 
-return res.redirect(`http://localhost:5173/vault`); 
+    return res.redirect(`http://localhost:5173/vault`); 
     
-    // Redirect the user to the progress page 
-    } catch (err) {
+  } catch (err) {
     console.error(`❌ Error syncing streak: ${err}`);
     return res.status(500).send("Something went wrong.");
   }
@@ -84,10 +113,11 @@ async function getConfusedTopics(req, res) {
     return res.status(200).json(user.confusedVault);
 
   } catch (err) {
-    console.error(` Error fetching confused vault: ${err}`);
+    console.error(`Error fetching confused vault: ${err}`);
     return res.status(500).json({ message: "Something went wrong." });
   }
 }
 
 
-export {syncConfusion,getConfusedTopics};
+
+export { syncConfusion, getConfusedTopics };

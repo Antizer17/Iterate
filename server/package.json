@@ -13,11 +13,14 @@
     "mail": "node --env-file=.env ./utils/mailer.js",
     "seedUser": "node --env-file=.env ./utils/seedUserProgress.js",
     "generateSyllabus": "node --env-file=.env ./engines/generateSyllabus.js",
-    "generateContent": "node --env-file=.env ./engines/fetchGenerate.js"
+    "generateContent": "node --env-file=.env ./engines/fetchGenerate.js",
+    "vault": "node --env-file=.env ./engines/vaultProcessor.js",
+    "interviewProcessor" : "node --env-file=.env ./engines/interviewProcessor.js"
   },
   "dependencies": {
     "@google/genai": "^2.8.0",
     "@google/generative-ai": "^0.24.1",
+    "axios": "^1.18.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.2.1",

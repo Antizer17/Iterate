@@ -1,3 +1,5 @@
+process.env.CUDA_VISIBLE_DEVICES = "-1";
+process.env.OLLAMA_MODIFIERS = "cpu";
 import express from 'express'
 import connectDB from './utils/dbConnect.js'
 import userRoute from './Routes/userRoutes.js'
@@ -11,6 +13,7 @@ import authRoutes from './Routes/authRoutes.js';
 import progressRouter from "./Routes/progressRoutes.js"
 import { requireAuth } from './middlewares/authMiddleware.js'
 import streakRouter from './Routes/streakRoutes.js'
+import interviewRoutes from './Routes/interviewRoutes.js'
 
 const port =process.env.PORT
 const app = express()
@@ -30,6 +33,7 @@ app.use('/api/users', userRoute)
 app.use("/api/progress", progressRouter)
 app.use('/api/materials', materialsRouter)
 app.use('/api/streak', streakRouter)
+app.use('/api/interview', interviewRoutes)
 
 app.listen(port || 1700,()=>{
     console.log(`Server is running on port ${port}`)
