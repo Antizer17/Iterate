@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import progress from "../models/progress.js";
+import users from "../models/users.js";
 
 export default async function syncStreak(req, res) {
   try {
@@ -18,9 +19,13 @@ export default async function syncStreak(req, res) {
     }
 
     const { id, courseCode, currentOrder } = decoded;
+    const courseProgress= await progress.findOne({user: id, courseCode:courseCode})
+        if(courseProgress.currentOrderStep !== courseProgress.targetOrderStep){
+          return res.status(409).send("Progress already synced.")
+        }
     const updated = await progress.findOneAndUpdate(
-      { user: id, courseCode: courseCode, currentOrderStep:currentOrder  },
-      {$inc: { currentOrderStep: 1 },
+      { user: id, courseCode: courseCode, },
+      {$inc: { targetOrderStep: 1 },
       $push: {completedTopics: {order: currentOrder, acedAt: new Date()} },},
       { new: true }
     );
@@ -28,6 +33,7 @@ export default async function syncStreak(req, res) {
       return res.status(404).send("Progress record not found.");
     }
     console.log(`🎯 Aced It! User ${id} advanced to step ${updated.currentOrderStep} for ${courseCode}`);
+    await users.findByIdAndUpdate(id, {isActive:true})
     
 
     res.cookie('token', token, {
