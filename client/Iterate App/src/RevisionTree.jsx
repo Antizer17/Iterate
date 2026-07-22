@@ -5,14 +5,14 @@ import { LiveRevisionTree } from "./LiveRevisionTree.jsx";
 // ── Design tokens (scoped to .rt-root) ──────────────────────────────────────
 export const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
-.rt-root *{box-sizing:border-box;margin:0;padding:0}
+.rt-root *{box-sizing:border-box;margin:0;padding:0;}
 .rt-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
   --font:'Caveat',cursive;
   background:var(--paper);color:var(--ink);font-family:var(--font);
 }
-.rt-wrap{padding:1.25rem 1rem 2rem}
+.rt-wrap{padding:1.25rem 1rem 2rem;}
 .rt-header{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem;border-bottom:1.5px solid var(--gray4);padding-bottom:8px}
 .rt-title{font-family:var(--font);font-size:22px;font-weight:700;transform:rotate(-0.4deg);display:inline-block}
 .rt-date{font-family:var(--font);font-size:14px;color:var(--gray2);margin-left:auto;font-style:italic}
@@ -27,7 +27,7 @@ export const CSS = `
 .rt-stat::before{content:'';position:absolute;top:-1px;right:-1px;width:8px;height:8px;border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
 .rt-stat-label{font-family:var(--font);font-size:13px;color:var(--gray2);margin-bottom:1px}
 .rt-stat-value{font-family:var(--font);font-size:26px;font-weight:700}
-.rt-tree-wrap{overflow-x:auto;padding:0.5rem 0 0.75rem;margin-bottom:0.75rem}
+.rt-tree-wrap{overflow-x:auto;padding:0.5rem 0 0.75rem;margin-bottom:0.75rem;width:100%;display:flex;}
 .rt-detail{background:var(--paper);border:1.5px solid var(--gray4);padding:0.9rem 1rem;margin-top:0.5rem;min-height:72px;position:relative;transform:rotate(-0.15deg);transition:border-color 0.3s}
 .rt-detail::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gray4)}
 .rt-detail.highlight{border-color:var(--ink)}.rt-detail.highlight::after{background:var(--ink)}
@@ -53,7 +53,7 @@ export const CSS = `
 `;
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const SVG_W = 660, NODE_R = 21;
+const SVG_W = 1500, NODE_R = 21;
 // Fallback defaults only — real trees get dynamic levelCounts/levelY from buildRevisionTree()
 const DEFAULT_LEVEL_Y = [32, 108, 196, 294];
 const DEFAULT_LEVEL_COUNTS = [1, 2, 4, 8];
@@ -294,7 +294,7 @@ function formatAcedDate(dateLike) {
 
 
 
-const COURSE_CODES = ["CSE221"]; 
+const COURSE_CODES = ["CSE221","CSE220"]; 
 
 export default function Dashboard() {
   const [activeKey, setActiveKey] = useState(COURSE_CODES[0]);
