@@ -1,76 +1,20 @@
 import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
 import progress from '../models/progress.js';
 import content from '../models/materials.js';
 import users from '../models/users.js'; 
 import connectDB from './dbConnect.js';
-import PDFDocument from 'pdfkit';
 import calculatePriority from '../engines/prioritySchedular.js';
 import fetchGenerate from '../engines/fetchGenerate.js'; 
 import { marked } from 'marked';
 import getLinkToken from './linkTokenGenerator.js';
+import generateSolutionPDF from '../engines/buildPDF.js';
+import transporter from '../config/transporterConfig.js';
 
 
 
 
 
-// 1. Configure your Nodemailer Transporter
-// For production, swap this with SMTP details (e.g., Resend, Mailgun, or Gmail App Passwords)
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS // Use a "Google App Password," not your real password
-  }
-});
-const generateSolutionPDF = (material, activeQuizArray) => {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 50 });
-    let buffers = [];
-    
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {
-      let pdfData = Buffer.concat(buffers);
-      resolve(pdfData);
-    });
-    doc.on('error', reject);
 
-    // PDF Header Style
-    doc.fillColor('#0f172a').fontSize(22).font('Helvetica-Bold').text('Iterate Prep // Official Solution Key', { underline: true });
-    doc.moveDown(0.5);
-    doc.fontSize(14).fillColor('#475569').font('Helvetica-Oblique').text(`Topic: ${material.topic}`);
-    doc.moveDown(1.5);
-
-    // Loop through questions to build structural text sheets
-    activeQuizArray.forEach((q) => {
-      const qNum = q.levelNumber || q.questionNumber;
-      
-      doc.fillColor('#0369a1').font('Helvetica-Bold').fontSize(12).text(`Concept Check #${qNum}`);
-      doc.fillColor('#0f172a').font('Helvetica').fontSize(11).text(`${q.questionBody}`);
-      doc.moveDown(0.5);
-
-      // Print available choices
-      q.options.forEach(opt => {
-        doc.fillColor('#334155').fontSize(10).text(`  ${opt}`);
-      });
-      doc.moveDown(0.5);
-
-      // Highlight the correct solution marker
-      doc.fillColor('#15803d').font('Helvetica-Bold').fontSize(11).text(`Correct Answer: Option ${q.correctAnswer}`);
-      doc.moveDown(0.3);
-      
-      // Print detailed design explanation
-      doc.fillColor('#1e293b').font('Helvetica-Oblique').fontSize(10).text(`Explanation: ${q.solutionExplanation}`, {
-        align: 'justify',
-        lineGap: 2
-      });
-      
-      doc.moveDown(2); // Spacing between questions
-    });
-
-    doc.end();
-  });
-};
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:1700";
 
@@ -79,9 +23,17 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:1700";
 export const runDailyEmailJob = async () => {
   try {
     await connectDB();
-    const userData = await users.find({});
+    const userData = await users.find({
+      isActive:true
+    });
     
     for (const user of userData) {
+      const checkerData = await progress.find({user:user._id});
+      const isCheck = checkerData.filter(obj => obj.currentOrderStep===obj.targetOrderStep);
+      if(isCheck.length>0){
+        await users.findOneAndUpdate(user._id,{isActive:false});
+        continue;
+      }
 
       const currentTopicData = await calculatePriority(user);
       
@@ -182,12 +134,16 @@ export const runDailyEmailJob = async () => {
 
             <div style="text-align: center; margin-top: 35px; border-top: 1px dashed #cbd5e1; padding-top: 25px;">
               <a href="${BASE_URL}/api/streak/sync?token=${linkToken}" 
-                 style="display: inline-block; background-color: #02261a; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                 style="display: inline-block; background-color: #000000; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
                  Aced It!
               </a>
               <a href="${BASE_URL}/api/streak/confused?token=${linkToken}" 
-                 style="display: inline-block; background-color: #3a0404; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                 style="display: inline-block; background-color: #000; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
                 Confused...
+              </a>
+              <a href="${BASE_URL}/api/streak/report?token=${linkToken}" 
+                 style="display: inline-block; background-color: #DC2626; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+               Report
               </a>
             </div>
           </div>
@@ -211,7 +167,8 @@ export const runDailyEmailJob = async () => {
         currentOrderStep: currentTopicData[2] 
       }, {
       
-    $set: { lastServedAt: new Date() },   // Update timestamp
+    $set: { lastServedAt: new Date() }, 
+    $inc: {currentOrderStep: 1}  
   
       })
       

@@ -1,4 +1,6 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect} from "react";
+import { useParams } from 'react-router-dom'
+import { useUser } from "./context/UserContext.jsx";
 import {SideNav} from "./iterate-app.jsx"
 import { LiveRevisionTree } from "./LiveRevisionTree.jsx";
 
@@ -257,11 +259,7 @@ export function AcedLog({ nodes, completedTopics = [] }) {
     .filter((n) => n.done)
     .sort((a, b) => b.order - a.order) // most recently aced first
     .map((n) => ({ id: n.id, topic: n.topic, date: dateByOrder.get(n.order) }));
-  console.log(rows,'putkiiiii')
-  console.log("nodes", nodes);
-console.log("done nodes", nodes.filter(n => n.done));
-console.log("completedTopics", completedTopics);
-console.log("dateByOrder", [...dateByOrder.entries()]);
+  
   
 
   return (
@@ -294,17 +292,19 @@ function formatAcedDate(dateLike) {
 
 
 
-const COURSE_CODES = ["CSE221","CSE220"]; 
+
 
 export default function Dashboard() {
-  const [activeKey, setActiveKey] = useState(COURSE_CODES[0]);
+  const { courseCode } = useParams();
+  const [activeKey, setActiveKey] = useState(courseCode);
+  const { user, loading } = useUser();
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", minWidth: "100vw", background: "#F7F6F2", flexDirection: "row" }}>
       <SideNav />
       <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
         <div className="rt-tabs" style={{ padding: "1rem 1rem 0" }}>
-          {COURSE_CODES.map((code) => (
+          {user.enRolledCourses.map((code) => (
             <button
               key={code}
               className={`rt-tab${code === activeKey ? " active" : ""}`}

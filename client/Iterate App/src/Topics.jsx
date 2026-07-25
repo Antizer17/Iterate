@@ -253,21 +253,21 @@ export default function Topics() {
     showToast(`✓ Enrolled in ${course?.courseCode} — confidence ${data.confidence}/10`);
   }
 
-  async function syncToBackend() {
-    setSyncing(true);
-    try {
-      await fetch("https://your-api.com/api/enrollments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ enrollments }),
-      });
-      showToast(`✓ ${enrollments.length} enrolment${enrollments.length !== 1 ? "s" : ""} synced`);
-    } catch {
-      showToast("Sync failed — check your connection");
-    } finally {
-      setSyncing(false);
-    }
-  }
+  // async function syncToBackend() {
+  //   setSyncing(true);
+  //   try {
+  //     await fetch("https://your-api.com/api/enrollments", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ enrollments }),
+  //     });
+  //     showToast(`✓ ${enrollments.length} enrolment${enrollments.length !== 1 ? "s" : ""} synced`);
+  //   } catch {
+  //     showToast("Sync failed — check your connection");
+  //   } finally {
+  //     setSyncing(false);
+  //   }
+  // }
 
   // Small deterministic wobble per card, same spirit as the vault's --r tilt —
   // keeps cards from looking like a rigid grid without being random each render.

@@ -18,3 +18,4 @@ npm-debug.log*
 .env.local
 .env.development.local
 client_secret_*.json 
+secret.json

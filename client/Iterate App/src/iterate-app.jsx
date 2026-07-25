@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import Dashboard from "./RevisionTree.jsx";
-import {Routes, Route, Navigate, useNavigate, useLocation} from "react-router-dom" 
+import {Routes, Route, Navigate, useNavigate, useLocation, useParams} from "react-router-dom" 
 import Topics from "./Topics.jsx"
 import { TopicPage } from "./Topics.jsx";
 import ConfusedVaultDemo from "./confusedVault.jsx";
 import {InterviewPageWithNav} from "./interviewPage.jsx";
 import { CompanyGuidePageWithNav } from "./companyGuidePage.jsx"
 import { ProtectedRoute } from "./protectedRoute.jsx";
+import { UserProvider, useUser } from "./context/UserContext.jsx";
+import { ReportedContentPageWithNav } from "./ReportedContentPage.jsx";
+import { SupportPageWithNav } from "./SupportPage.jsx";
 
 // ─── Logo: spinning arrow loop ───────────────────────────────────────────────
 function IterateLogo({ size = 36, spin = true }) {
@@ -49,20 +52,25 @@ function IterateLogo({ size = 36, spin = true }) {
 // Now derives the current page from the URL directly via useLocation, and
 // paths match the actual <Routes> exactly.
 function SideNav() {
+  const { courseCode} = useParams()
+  const {user, loading} = useUser()
   const links = [
     { path: "/courses",  label: "Courses" },
-    { path: "/progress", label: "Progress" },
+    { path: `/progress/${courseCode ?? user?.enRolledCourses[0] ?? "CSE220"}`,  label: "Progress" },
     { path: "/vault",    label: "Vault" },
-    { path: "/interview", label: "interview" },
+    { path: "/interview", label: "Interview" },
+    { path: "/reports", label: "Reports" },
+    { path: "/support", label: "Support" }
+
   ];
-  const [user, setUser] = useState(null);
+  const [users, setUsers] = useState(null);
   useEffect(() => {
     async function callApi(){
       try{
       const userData = await fetch("http://localhost:1700/api/users/",{ credentials: 'include' }).then(res=>res.json())
       
       if (userData){
-        setUser(userData)
+        setUsers(userData)
       }
     }catch(err){
       console.error(err)
@@ -95,8 +103,8 @@ function SideNav() {
         ))}
       </div>
       <div style={styles.navFooter}>
-        <div style={styles.navAvatar}>A</div>
-        <span style={{ fontSize: 12, color: "#888" }}>{user?.data?.email || "User"}</span>
+        <div style={styles.navAvatar}>{user?.name[0]}</div>
+        <span style={{ fontSize: 12, color: "#888" }}>{users?.data?.email || "User"}</span>
       </div>
     </nav>
   );
@@ -358,22 +366,27 @@ export default function App() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #F7F6F2; font-family: 'Inter', sans-serif; width:100vw;}
+        body { background: #F7F6F2; font-family: 'Inter', sans-serif; width:99vw;}
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         input:focus { outline: 2px solid #1A1A1A; outline-offset: 2px; }
         button:focus-visible { outline: 2px solid #1A1A1A; outline-offset: 2px; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #D4D0C8; border-radius: 3px; }
       `}</style>
+
+      <UserProvider>
       <Routes>
         <Route path="/" element={ <Landing/>} />
         <Route path="/login" element={ <Landing/>} />
-        <Route path="/progress" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
+        <Route path="/progress/:courseCode" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
         <Route path="/courses" element={<ProtectedRoute><TopicPage /></ProtectedRoute>} />
         <Route path="/vault" element={<ProtectedRoute><ConfusedVaultDemo/></ProtectedRoute>} />
         <Route path="/interview" element={<InterviewPageWithNav/>} />
         <Route path="/interview/:company" element={<CompanyGuidePageWithNav/>} />
-      
-      </Routes>
+        <Route path="/reports" element={<ReportedContentPageWithNav/>} />
+        <Route path="/support" element={<SupportPageWithNav/>} />
+        
+      </Routes>   
+      </UserProvider>
 
       {/* <div style={{ display: "flex", minHeight: "100vh", background: "#F7F6F2" }}>
         {page!=="landing" && <SideNav page={page} setPage={setPage} />}
@@ -395,14 +408,19 @@ export default function App() {
 const styles = {
   // Nav
   nav: {
+    position:"sticky",
+    top: 0,
     minWidth: "12%",
     minHeight: "100vh",
+    maxHeight: "100vh",
     background: "#e3ded0",
     borderRight: "1.5px solid #9c9a8f",
     display: "flex",
     flexDirection: "column",
     padding: "24px 0",
     flexShrink: 0,
+    
+
   },
   navLogo: {
     display: "flex",

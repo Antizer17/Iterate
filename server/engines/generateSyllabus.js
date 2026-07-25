@@ -9,6 +9,43 @@ import Materials from '../models/materials.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const cse220Roadmap = [
+  { order: 1, topic: "Array Fundamentals & Memory Access", fileName: "9.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 3 },
+  { order: 2, topic: "Linear Arrays: Creation & Core Operations (Iteration, Resize, Copy, Shift, Rotate, Reverse)", fileName: "10.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 3 },
+  { order: 3, topic: "Linear Arrays: Size, Insertion & Deletion", fileName: "10.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 3, endPage: 5 },
+
+  { order: 4, topic: "Multidimensional Arrays: Numpy Matrix Operations (Sum, Swap, Diagonal, Multiply)", fileName: "12.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 5, endPage: 13 },
+
+  { order: 5, topic: "Linked List: Motivation, Creation & Traversal", fileName: "14.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 5 },
+  { order: 6, topic: "Linked List: Insertion, Removal & Copying", fileName: "14.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 6, endPage: 7 },
+  { order: 7, topic: "Linked List: Reverse & Rotate", fileName: "14.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 8, endPage: 9 },
+
+  { order: 8, topic: "Dummy-Headed Doubly Circular Linked List: Operations", fileName: "13.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 5, endPage: 8 },
+
+  { order: 9, topic: "Stack: Concept & Core Operations (Push/Pop/Peek)", fileName: "11.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 2 },
+  { order: 10, topic: "Stack: Real-World Applications", fileName: "11.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 2, endPage: 6 },
+  { order: 11, topic: "Stack: Linked List Implementation", fileName: "11.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 6, endPage: 8 },
+
+  { order: 12, topic: "Queue: Concept & Core Operations (Enqueue/Dequeue/Peek)", fileName: "18.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 2 },
+  { order: 13, topic: "Queue: Linked List & Circular Array Implementation + Simulation", fileName: "18.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 2, endPage: 6 },
+
+  { order: 14, topic: "Hashing: Concept & Collision Handling (Chaining, Linear Probing, Double Hashing)", fileName: "16.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 2 },
+  { order: 15, topic: "Hashing: Worked Example (Forward Chaining Walkthrough)", fileName: "16.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 2, endPage: 3 },
+
+  { order: 16, topic: "Tree Basics (Terminology, Levels, Depth, Height)", fileName: "20.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 5 },
+  { order: 17, topic: "Binary Trees (Traversal & Representation)", fileName: "20.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 6, endPage: 11 },
+  { order: 18, topic: "Binary Search Trees (Properties, Insert/Delete/Search, Balancing)", fileName: "20.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 12, endPage: 20 },
+
+  { order: 19, topic: "Tree & Binary Tree Fundamentals (Height/Depth Formulas)", fileName: "17.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 2, endPage: 3 },
+  { order: 20, topic: "Heap Structure & Array Representation", fileName: "17.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 3, endPage: 4 },
+  { order: 21, topic: "Heap Insert (swim / HeapIncreaseKey)", fileName: "17.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 4, endPage: 6 },
+  { order: 22, topic: "Heap Delete (sink / MaxHeapify), Heap Sort & Build Max Heap", fileName: "17.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 7, endPage: 10 },
+
+  { order: 23, topic: "Recursion Fundamentals: Factorial & Fibonacci", fileName: "19.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 1, endPage: 5 },
+  { order: 24, topic: "Recursive Traversal & Search (Linked List, Strings, Arrays)", fileName: "19.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 6, endPage: 14 },
+  { order: 25, topic: "Recursive Sorting (Selection & Insertion) & Exponentiation", fileName: "19.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 15, endPage: 22 },
+  { order: 26, topic: "Memoization & Dynamic Programming (Bottom-Up)", fileName: "19.pdf", course: "Data Structures", courseCode: "CSE220", startPage: 23, endPage: 29 }
+]
 
 const cse221Roadmap = [
   // { order: 1, topic: "Introduction to Algorithms",           fileName: "1.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 1,  endPage: 5  },
@@ -25,6 +62,15 @@ const cse221Roadmap = [
 { order: 12, topic: "Breadth First Search (BFS)", fileName: "8.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 22, endPage: 28 },
 { order: 13, topic: "Depth First Search (DFS)", fileName: "8.pdf", course: "Algorithms", courseCode: "CSE221", startPage: 29, endPage: 31 },
 ];
+
+async function generateRoadMap(topic){
+  
+}
+
+
+
+
+
 
 function extractPages(text, startPage, endPage) {
   const pages = text['pages'].filter(obj => obj.num >= startPage && obj.num <= endPage);
@@ -96,7 +142,7 @@ const runSyllabusFactory = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected safely to database.');
 
-    for (const step of cse221Roadmap) {
+    for (const step of cse220Roadmap) {
       console.log(`\n🚀 Processing Step ${step.order}: ${step.topic}`);
       
       const pdfPath = path.join(__dirname, '..', 'etl-processor', 'raw-slides', step.fileName);

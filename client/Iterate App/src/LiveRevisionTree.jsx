@@ -112,7 +112,7 @@ const handleSelectNode = useCallback(
     return (
       <div className="rt-root">
         <style>{CSS}</style>
-        <div className="rt-wrap">couldn't load progress — try refreshing</div>
+        <div className="rt-wrap">couldn't load progress — try enrolling in a course first.</div>
       </div>
     );
   }
