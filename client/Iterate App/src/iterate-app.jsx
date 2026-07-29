@@ -296,7 +296,7 @@ function Landing({ setPage }) {
 
  const handleSubmit = () => {
     setIsLoading(true); 
-    window.location.href = "http://localhost:1700/api/auth/google";
+    window.location.href = "/api/auth/google";
   };
 
   return (
