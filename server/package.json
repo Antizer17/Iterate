@@ -7,15 +7,16 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --env-file=.env index.js ",
-    "seedContent": "node --env-file=.env seed.js",
-    "mail": "node --env-file=.env ./utils/mailer.js",
-    "seedUser": "node --env-file=.env ./utils/seedUserProgress.js",
-    "generateSyllabus": "node --env-file=.env ./engines/generateSyllabus.js",
-    "generateContent": "node --env-file=.env ./engines/fetchGenerate.js",
-    "vault": "node --env-file=.env ./engines/vaultProcessor.js",
-    "interviewProcessor" : "node --env-file=.env ./engines/interviewProcessor.js"
+    "dev": "nodemon index.js ",
+    "seedContent": "node seed.js",
+    "mail": "node ./utils/mailer.js",
+    "seedUser": "node ./utils/seedUserProgress.js",
+    "generateSyllabus": "node ./engines/generateSyllabus.js",
+    "generateContent": "node ./engines/fetchGenerate.js",
+    "vault": "node ./engines/vaultProcessor.js",
+    "interviewProcessor" : "node ./engines/interviewProcessor.js"
   },
   "dependencies": {
     "@google/genai": "^2.8.0",
