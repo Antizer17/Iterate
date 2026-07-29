@@ -16,7 +16,7 @@
     "generateSyllabus": "node ./engines/generateSyllabus.js",
     "generateContent": "node ./engines/fetchGenerate.js",
     "vault": "node ./engines/vaultProcessor.js",
-    "interviewProcessor" : "node ./engines/interviewProcessor.js"
+    "interviewProcessor": "node ./engines/interviewProcessor.js"
   },
   "dependencies": {
     "@google/genai": "^2.8.0",
@@ -25,6 +25,8 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "googleapis": "^173.0.0",
+    "jsonwebtoken": "^9.0.3",
     "marked": "^18.0.5",
     "mongoose": "^9.6.2",
     "node-cron": "^4.2.1",
@@ -32,6 +34,8 @@
     "nodemon": "^3.1.14",
     "ollama": "^0.6.3",
     "openai": "^6.42.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.18.0"
   }
