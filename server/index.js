@@ -24,6 +24,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 cronSchedular()
+app.set('trust proxy', 1); 
 app.use(express.json())
 app.use(cookieParser())
 app.use(passport.initialize());

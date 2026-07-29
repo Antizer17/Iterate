@@ -17,7 +17,7 @@ router.get('/google/callback',
     
     // Set it in a secure HTTP-only cookie and send them to the React frontend dashboard
     res.cookie('token', sessionToken, { httpOnly: true, secure: false }); 
-    res.redirect('http://localhost:5173/courses'); 
+    res.redirect('/courses'); 
   }
 );
 
