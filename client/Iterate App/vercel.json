@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://iterate-gy7v.onrender.com/:path*"
+      "destination": "https://iterate-gy7v.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
