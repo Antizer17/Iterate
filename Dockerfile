@@ -17,4 +17,4 @@ COPY server/ .
 EXPOSE 1700
 
 # 7. Start your server
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start",]
