@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './iterate-app.jsx'
-import {BrowserRouter, Link, useNavigate} from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 import {AuthProvider} from '../src/context/AuthContext.jsx'
 
 
