@@ -205,9 +205,9 @@ export default function Topics() {
       try{
         console.log("initiating connection")
         const [userRes, materialsRes, progressRes] = await Promise.all([
-          fetch("/api/users/",{ credentials: 'include' }).then(res=>res.json()),
-          fetch("/api/materials/",{ credentials: 'include' }).then(res => res.json()),
-          fetch("/api/progress/user",{ credentials: 'include' }).then(res => res.json())
+          fetch("https://iterate-gy7v.onrender.com/api/users/",{ credentials: 'include' }).then(res=>res.json()),
+          fetch("https://iterate-gy7v.onrender.com/api/materials/",{ credentials: 'include' }).then(res => res.json()),
+          fetch("https://iterate-gy7v.onrender.com/api/progress/user",{ credentials: 'include' }).then(res => res.json())
         ])
         if (materialsRes?.data?.allTopics) {
           setCourses(materialsRes.data.allTopics);
@@ -236,7 +236,7 @@ export default function Topics() {
 
   function handleEnroll(data) {
     try{
-      fetch("/api/users/enroll",{
+      fetch("https://iterate-gy7v.onrender.com/api/users/enroll",{
       credentials: "include",
       method: 'put',
       headers:{'Content-Type':'application/json'},

@@ -8,7 +8,7 @@ export function UserProvider({ children }) {
 
   const refetchUser = useCallback(async () => {
     try {
-      const res = await fetch("/api/users/", { credentials: "include" }).then(r => r.json());
+      const res = await fetch("https://iterate-gy7v.onrender.com/api/users/", { credentials: "include" }).then(r => r.json());
       setUser(res?.data ?? null);
     } catch (err) {
       console.error(err);

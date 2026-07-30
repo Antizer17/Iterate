@@ -12,7 +12,7 @@ export function useMaterials(courseCode) {
     setLoading(true);
     setError(null);
 
-    fetch(`/api/materials/${courseCode}`, { credentials: 'include' })
+    fetch(`https://iterate-gy7v.onrender.com/api/materials/${courseCode}`, { credentials: 'include' })
       .then((res) => {
         
         if (!res.ok) {

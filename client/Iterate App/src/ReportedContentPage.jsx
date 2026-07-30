@@ -61,7 +61,7 @@ export default function ReportedContentPage() {
     async function fetchReports() {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:1700/api/streak/getReportedContents", { credentials: "include" });
+        const res = await fetch("https://iterate-gy7v.onrender.com/api/streak/getReportedContents", { credentials: "include" });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
         console.log(data)

@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
 
     async function checkSession() {
       try {
-        const res = await fetch("/api/users/", { credentials: "include" });
+        const res = await fetch("https://iterate-gy7v.onrender.com/api/users/", { credentials: "include" });
         if (!res.ok) throw new Error("Not authenticated");
         const data = await res.json();
         if (!cancelled) setUser(data.data);

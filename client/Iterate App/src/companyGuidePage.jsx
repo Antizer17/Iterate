@@ -87,7 +87,7 @@ export default function CompanyGuidePage() {
     async function fetchGuide() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/interview/${company}`, { credentials: "include" });
+        const res = await fetch(`https://iterate-gy7v.onrender.com/api/interview/${company}`, { credentials: "include" });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
         if (!cancelled) setGuide(data);

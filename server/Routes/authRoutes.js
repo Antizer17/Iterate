@@ -16,7 +16,12 @@ router.get('/google/callback',
     const sessionToken = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     
     // Set it in a secure HTTP-only cookie and send them to the React frontend dashboard
-    res.cookie('token', sessionToken, { httpOnly: true, secure: false }); 
+    res.cookie('token', sessionToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    }); 
     res.redirect(`${process.env.CLIENT_URL}/courses`); 
   }
 );
