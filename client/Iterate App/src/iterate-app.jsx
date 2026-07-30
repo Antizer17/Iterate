@@ -67,7 +67,7 @@ function SideNav() {
   useEffect(() => {
     async function callApi(){
       try{
-      const userData = await fetch("http://localhost:1700/api/users/",{ credentials: 'include' }).then(res=>res.json())
+      const userData = await fetch("/api/users/",{ credentials: 'include' }).then(res=>res.json())
       
       if (userData){
         setUsers(userData)
