@@ -19,7 +19,7 @@ const port =process.env.PORT
 const app = express()
 connectDB()
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.CLIENT_URL,
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -37,7 +37,7 @@ app.use('/api/streak', streakRouter)
 app.use('/api/interview', interviewRoutes)
 
 app.listen(port || 1700,()=>{
-    console.log(`Server is running on port ${port}`)
+    console.log(`Server is running on port 1700`)
 })
 
 
