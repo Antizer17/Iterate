@@ -1,4 +1,4 @@
-import { runDailyEmailJob } from "./mailer.js"
+import { runDailyEmailJob } from "../utils/mailer.js"
 async function runTask(req,res){
   const authHeader = req.headers['authorization'];
   const expectedHeader = `Bearer ${process.env.CRON_SECRET}`;
