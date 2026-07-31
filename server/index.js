@@ -14,6 +14,7 @@ import progressRouter from "./Routes/progressRoutes.js"
 import { requireAuth } from './middlewares/authMiddleware.js'
 import streakRouter from './Routes/streakRoutes.js'
 import interviewRoutes from './Routes/interviewRoutes.js'
+import cronRoutes from './Routes/cronRoutes.js'
 
 const port =process.env.PORT
 const app = express()
@@ -35,6 +36,7 @@ app.use("/api/progress", progressRouter)
 app.use('/api/materials', materialsRouter)
 app.use('/api/streak', streakRouter)
 app.use('/api/interview', interviewRoutes)
+app.use('/api/cron',cronRoutes)
 
 app.listen(port || 1700,()=>{
     console.log(`Server is running on port 1700`)
