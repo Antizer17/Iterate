@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "https://iterate-gy7v.onrender.com/api/cron/invoke",
-      "schedule": "55 07 * * *"
+      "schedule": "15 21 * * *"
     }
   ]
 }
