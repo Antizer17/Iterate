@@ -2,7 +2,13 @@
   "crons": [
     {
       "path": "/api/cron/trigger-email",
-      "schedule": "40 16 * * *"
+      "schedule": "05 17 * * *"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ]
 }
