@@ -8,8 +8,7 @@ import fetchGenerate from '../engines/fetchGenerate.js';
 import { marked } from 'marked';
 import getLinkToken from './linkTokenGenerator.js';
 import generateSolutionPDF from '../engines/buildPDF.js';
-import apiInstance from '../config/transporterConfig.js';
-import * as brevo from '@getbrevo/brevo';
+import brevo from '../config/transporterConfig.js';
 
 
 
@@ -61,11 +60,11 @@ export const runDailyEmailJob = async () => {
       const lessonBodyHTML = marked.parse(material.lessonBody);
 
       // 2. Build the Email Configuration
-      const sendSmtpEmail = new brevo.SendSmtpEmail();
-      sendSmtpEmail.sender = { name: "Iterate", email: "study@iterate-app.com" };
-      sendSmtpEmail.to = [{ email: userEmail }];
-      sendSmtpEmail.subject = `Daily Revision: ${material.topic}`;
-      sendSmtpEmail.htmlContent = `
+      const emailParams = {
+        sender: { name: "Iterate", email: "study@iterate-app.me" },
+        to: [{ email: userEmail }],
+        subject: `Daily Revision: ${material.topic}`,
+        htmlContent: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; line-height: 1.6;">
             
             <span style="color: #6c757d; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
@@ -148,17 +147,17 @@ export const runDailyEmailJob = async () => {
               </a>
             </div>
           </div>
-        `;
+        `,
+        // 🌟 ATTACH THE GENERATED IN-MEMORY BUFFER DIRECTLY (Brevo wants base64 string content)
+        attachment: [
+          {
+            name: `${material.topic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_solutions.pdf`,
+            content: pdfBuffer.toString('base64')
+          }
+        ]
+      };
 
-      // 🌟 ATTACH THE GENERATED IN-MEMORY BUFFER DIRECTLY (Brevo wants base64 string content)
-      sendSmtpEmail.attachment = [
-        {
-          name: `${material.topic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_solutions.pdf`,
-          content: pdfBuffer.toString('base64')
-        }
-      ];
-
-      await apiInstance.sendTransacEmail(sendSmtpEmail);
+      await brevo.transactionalEmails.sendTransacEmail(emailParams);
       console.log(`✅ Dispatched email with PDF Attachment to: ${userEmail}`);
 
       await progress.findOneAndUpdate({
