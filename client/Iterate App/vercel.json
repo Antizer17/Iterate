@@ -1,8 +1,8 @@
 {
   "crons": [
     {
-      "path": "https://iterate-gy7v.onrender.com/api/cron/invoke",
-      "schedule": "15 21 * * *"
+      "path": "/api/cron/trigger-email",
+      "schedule": "25 21 * * *"
     }
   ]
 }
