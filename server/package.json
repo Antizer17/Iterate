@@ -19,6 +19,7 @@
     "interviewProcessor": "node ./engines/interviewProcessor.js"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^6.0.2",
     "@google/genai": "^2.8.0",
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.18.1",

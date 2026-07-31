@@ -8,7 +8,8 @@ import fetchGenerate from '../engines/fetchGenerate.js';
 import { marked } from 'marked';
 import getLinkToken from './linkTokenGenerator.js';
 import generateSolutionPDF from '../engines/buildPDF.js';
-import transporter from '../config/transporterConfig.js';
+import apiInstance from '../config/transporterConfig.js';
+import * as brevo from '@getbrevo/brevo';
 
 
 
@@ -60,11 +61,11 @@ export const runDailyEmailJob = async () => {
       const lessonBodyHTML = marked.parse(material.lessonBody);
 
       // 2. Build the Email Configuration
-      const mailOptions = {
-        from: '"Iterate Prep" <noreply@iterateplatform.com>',
-        to: userEmail,
-        subject: `Daily Revision: ${material.topic}`,
-        html: `
+      const sendSmtpEmail = new brevo.SendSmtpEmail();
+      sendSmtpEmail.sender = { name: "Iterate", email: "study@iterate-app.com" };
+      sendSmtpEmail.to = [{ email: userEmail }];
+      sendSmtpEmail.subject = `Daily Revision: ${material.topic}`;
+      sendSmtpEmail.htmlContent = `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; line-height: 1.6;">
             
             <span style="color: #6c757d; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
@@ -147,18 +148,17 @@ export const runDailyEmailJob = async () => {
               </a>
             </div>
           </div>
-        `,
-        // 🌟 ATTACH THE GENERATED IN-MEMORY BUFFER DIRECTLY
-        attachments: [
-          {
-            filename: `${material.topic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_solutions.pdf`,
-            content: pdfBuffer,
-            contentType: 'application/pdf'
-          }
-        ]
-      };
+        `;
 
-      await transporter.sendMail(mailOptions);
+      // 🌟 ATTACH THE GENERATED IN-MEMORY BUFFER DIRECTLY (Brevo wants base64 string content)
+      sendSmtpEmail.attachment = [
+        {
+          name: `${material.topic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_solutions.pdf`,
+          content: pdfBuffer.toString('base64')
+        }
+      ];
+
+      await apiInstance.sendTransacEmail(sendSmtpEmail);
       console.log(`✅ Dispatched email with PDF Attachment to: ${userEmail}`);
 
       await progress.findOneAndUpdate({
@@ -177,4 +177,3 @@ export const runDailyEmailJob = async () => {
     console.error("❌ Critical execution crash context:", err);
   }
 };
-
