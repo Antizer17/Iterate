@@ -15,6 +15,9 @@ import { requireAuth } from './middlewares/authMiddleware.js'
 import streakRouter from './Routes/streakRoutes.js'
 import interviewRoutes from './Routes/interviewRoutes.js'
 import cronRoutes from './Routes/cronRoutes.js'
+import dns from "node:dns";
+
+dns.setDefaultResultOrder("ipv4first");
 
 const port =process.env.PORT
 const app = express()
