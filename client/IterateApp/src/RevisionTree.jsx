@@ -14,7 +14,7 @@ export const CSS = `
   --font:'Caveat',cursive;
   background:var(--paper);color:var(--ink);font-family:var(--font);
 }
-.rt-wrap{padding:1.25rem 1rem 2rem; min-width:auto;}
+.rt-wrap{padding:1.25rem 1rem 2rem;}
 .rt-header{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem;border-bottom:1.5px solid var(--gray4);padding-bottom:8px}
 .rt-title{font-family:var(--font);font-size:22px;font-weight:700;transform:rotate(-0.4deg);display:inline-block}
 .rt-date{font-family:var(--font);font-size:14px;color:var(--gray2);margin-left:auto;font-style:italic}
@@ -299,23 +299,12 @@ export default function Dashboard() {
   const [activeKey, setActiveKey] = useState(courseCode);
   const { user, loading } = useUser();
 
-  if (loading) {
-    return (
-      <div className="page-shell" style={{ background: "#F7F6F2" }}>
-        <SideNav />
-        <div style={{ flex: 1, padding: "1.5rem" }}>loading…</div>
-      </div>
-    );
-  }
-
-  const enrolledCourses = user?.enRolledCourses ?? [];
-
   return (
-    <div className="page-shell" style={{ background: "#F7F6F2" }}>
+    <div style={{ display: "flex", minHeight: "100vh", minWidth: "100vw", background: "#F7F6F2", flexDirection: "row" }}>
       <SideNav />
-      <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
         <div className="rt-tabs" style={{ padding: "1rem 1rem 0" }}>
-          {enrolledCourses.map((code) => (
+          {user.enRolledCourses.map((code) => (
             <button
               key={code}
               className={`rt-tab${code === activeKey ? " active" : ""}`}

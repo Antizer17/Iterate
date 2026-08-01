@@ -67,7 +67,7 @@ function SideNav() {
   useEffect(() => {
     async function callApi(){
       try{
-      const userData = await fetch("api.iterate-app.me/api/users/",{ credentials: 'include' }).then(res=>res.json())
+      const userData = await fetch("https://api.iterate-app.me/api/users/",{ credentials: 'include' }).then(res=>res.json())
       
       if (userData){
         setUsers(userData)
@@ -296,7 +296,7 @@ function Landing({ setPage }) {
 
  const handleSubmit = () => {
     setIsLoading(true); 
-    window.location.href = "api.iterate-app.me/api/auth/google";
+    window.location.href = "https://api.iterate-app.me/api/auth/google";
   };
 
   return (
@@ -410,7 +410,7 @@ const styles = {
   nav: {
     position:"sticky",
     top: 0,
-    minWidth: "auto",
+    minWidth: "12%",
     minHeight: "100vh",
     maxHeight: "100vh",
     background: "#e3ded0",
