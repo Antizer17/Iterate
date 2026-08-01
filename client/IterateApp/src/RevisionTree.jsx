@@ -29,7 +29,7 @@ export const CSS = `
 .rt-stat::before{content:'';position:absolute;top:-1px;right:-1px;width:8px;height:8px;border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
 .rt-stat-label{font-family:var(--font);font-size:13px;color:var(--gray2);margin-bottom:1px}
 .rt-stat-value{font-family:var(--font);font-size:26px;font-weight:700}
-.rt-tree-wrap{overflow-x:auto;padding:0.5rem 0 0.75rem;margin-bottom:0.75rem;width:100%;display:flex;}
+.rt-tree-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0.5rem 0 0.75rem;margin-bottom:0.75rem;width:100%;display:flex;}
 .rt-detail{background:var(--paper);border:1.5px solid var(--gray4);padding:0.9rem 1rem;margin-top:0.5rem;min-height:72px;position:relative;transform:rotate(-0.15deg);transition:border-color 0.3s}
 .rt-detail::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gray4)}
 .rt-detail.highlight{border-color:var(--ink)}.rt-detail.highlight::after{background:var(--ink)}
@@ -52,6 +52,20 @@ export const CSS = `
 .rt-acedlog-topic{font-family:var(--font);font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rt-acedlog-date{font-family:var(--font);font-size:14px;color:var(--gray2);font-style:italic;white-space:nowrap}
 .rt-acedlog-empty{font-family:var(--font);font-size:15px;color:var(--gray2);font-style:italic;padding:0.4rem 0.1rem}
+
+@media (max-width: 768px) {
+  .rt-wrap { padding: 1rem 0.75rem 1.5rem; }
+  .rt-header { flex-direction: column; align-items: flex-start; margin-bottom: 1rem; }
+  .rt-date { margin-left: 0; margin-top: 0.5rem; }
+  .rt-stats { grid-template-columns: 1fr; gap: 8px; }
+  .rt-tree-wrap { margin-bottom: 1rem; }
+  svg { max-width: 100%; height: auto !important; }
+  .rt-detail { min-height: 60px; padding: 0.75rem 0.8rem; }
+  .rt-detail-name { font-size: 18px; }
+  .rt-chips { gap: 6px; }
+  .rt-chip { font-size: 12px; padding: 1px 8px; }
+  .rt-acedlog-topic { max-width: 200px; }
+}
 `;
 
 // ── Constants ────────────────────────────────────────────────────────────────

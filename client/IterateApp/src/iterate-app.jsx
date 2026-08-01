@@ -104,7 +104,7 @@ function SideNav() {
       </div>
       <div style={styles.navFooter}>
         <div style={styles.navAvatar}>{user?.name[0]}</div>
-        <span style={{ fontSize: 12, color: "#888" }}>{user?.name|| "User"}</span>
+        <span style={styles.navUsername} className="sidenav-username">{user?.name|| "Ahmad Sameer"}</span>
       </div>
     </nav>
   );
@@ -371,6 +371,17 @@ export default function App() {
         input:focus { outline: 2px solid #1A1A1A; outline-offset: 2px; }
         button:focus-visible { outline: 2px solid #1A1A1A; outline-offset: 2px; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #D4D0C8; border-radius: 3px; }
+
+        /* Mobile Sidenav Footer Adjustments */
+        @media (max-width: 768px) {
+          .sidenav-username {
+            display: none; /* Hide username completely on mobile, showing only the avatar */
+          }
+          .sidenav-footer {
+            padding: 12px 10px !important;
+            justify-content: center;
+          }
+        }
       `}</style>
 
       <UserProvider>
@@ -460,6 +471,13 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: 8,
+  },
+  navUsername: {
+    fontSize: 12,
+    color: "#888",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
   navAvatar: {
     width: 28,
