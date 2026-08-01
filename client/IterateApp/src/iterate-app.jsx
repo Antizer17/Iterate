@@ -104,7 +104,7 @@ function SideNav() {
       </div>
       <div style={styles.navFooter}>
         <div style={styles.navAvatar}>{user?.name[0]}</div>
-        <span style={{ fontSize: 12, color: "#888" }}>{users?.data?.email || "User"}</span>
+        <span style={{ fontSize: 12, color: "#888" }}>{user?.name|| "User"}</span>
       </div>
     </nav>
   );
@@ -454,6 +454,7 @@ const styles = {
   },
   navLinkActive: { background: "#1a1a18", color: "#faf8f4" },
   navFooter: {
+    minWidth:'10%',
     padding: "16px 20px",
     borderTop: "1.5px solid #9c9a8f",
     display: "flex",
