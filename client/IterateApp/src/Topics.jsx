@@ -16,11 +16,11 @@ export const CSS = `
 }
 .tp-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto}
 
-.tp-header{text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
+.tp-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .tp-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.6deg)}
 .tp-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:2px}
 
-.tp-tabs{display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center;justify-content:center}
+.tp-tabs{display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center;justify-content:flex-start}
 .tp-tab{font-family:var(--font);font-size:15px;font-weight:600;padding:4px 14px;background:var(--paper);
   color:var(--gray2);border:1.5px solid var(--gray4);cursor:pointer;transition:all .12s;transform:rotate(-0.3deg)}
 .tp-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:rotate(0.2deg)}
@@ -280,7 +280,7 @@ export default function Topics() {
 
         <div className="tp-header">
           <span className="tp-title">courses</span>
-          <p className="tp-sub">enroll and rate your confidence — we'll calibrate your revision tree accordingly</p>
+          <p className="tp-sub">enroll and rate your confidence to receive revision refreshers in your email!</p>
         </div>
 
         <div className="tp-tabs">
