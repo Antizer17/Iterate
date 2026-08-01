@@ -503,7 +503,7 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
     // happening at once.
     async function loadVaultData(){
       try{
-        const response = await fetch("https://iterate-gy7v.onrender.com/api/streak/getConfusedTopics", { credentials: "include" })
+        const response = await fetch("api.iterate-app.me/api/streak/getConfusedTopics", { credentials: "include" })
         if(!response.ok){
         throw new Error("Failed to load vault data.")
       }

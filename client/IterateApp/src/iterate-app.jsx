@@ -67,7 +67,7 @@ function SideNav() {
   useEffect(() => {
     async function callApi(){
       try{
-      const userData = await fetch("https://iterate-gy7v.onrender.com/api/users/",{ credentials: 'include' }).then(res=>res.json())
+      const userData = await fetch("api.iterate-app.me/api/users/",{ credentials: 'include' }).then(res=>res.json())
       
       if (userData){
         setUsers(userData)
@@ -296,7 +296,7 @@ function Landing({ setPage }) {
 
  const handleSubmit = () => {
     setIsLoading(true); 
-    window.location.href = "https://iterate-gy7v.onrender.com/api/auth/google";
+    window.location.href = "api.iterate-app.me/api/auth/google";
   };
 
   return (

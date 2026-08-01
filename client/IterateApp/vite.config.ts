@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://iterate-gy7v.onrender.com/',
+        target: 'api.iterate-app.me',
         changeOrigin: true,
       },
     },

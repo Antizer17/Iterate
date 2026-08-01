@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   try {
     // This is where you safely call your Render backend URL!
-    const response = await fetch("https://iterate-gy7v.onrender.com/api/cron/invoke", {
+    const response = await fetch("api.iterate-app.me/api/cron/invoke", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.CRON_SECRET}`,

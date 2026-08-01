@@ -19,7 +19,7 @@ export function useProgress(courseCode) {
     const headers = {};
    
    
-    fetch(`https://iterate-gy7v.onrender.com/api/progress/user`, { credentials: 'include' })
+    fetch(`api.iterate-app.me/api/progress/user`, { credentials: 'include' })
       .then((res) => {
         if (!res.ok) throw new Error(`Progress fetch failed with status ${res.status}`);
         return res.json();
