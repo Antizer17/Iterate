@@ -72,7 +72,7 @@ export default function InterviewPage() {
 
     async function fetchCompanies() {
       try {
-        const res = await fetch("api.iterate-app.me/api/interview/companies", { credentials: "include" });
+        const res = await fetch("https://api.iterate-app.me/api/interview/companies", { credentials: "include" });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
         if (!cancelled) setCards(data.data);

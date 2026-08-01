@@ -87,7 +87,7 @@ export default function CompanyGuidePage() {
     async function fetchGuide() {
       setLoading(true);
       try {
-        const res = await fetch(`api.iterate-app.me/api/interview/${company}`, { credentials: "include" });
+        const res = await fetch(`https://api.iterate-app.me/api/interview/${company}`, { credentials: "include" });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
         if (!cancelled) setGuide(data);

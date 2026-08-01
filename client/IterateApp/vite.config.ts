@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'api.iterate-app.me',
+        target: "https://api.iterate-app.me",
         changeOrigin: true,
       },
     },

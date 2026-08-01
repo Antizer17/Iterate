@@ -5,7 +5,7 @@ import User from '../models/users.js'; // Your MongoDB User Schema
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "api.iterate-app.me/api/auth/google/callback"
+    callbackURL: "https://api.iterate-app.me/api/auth/google/callback"
   },
   async (accessToken, refreshToken, profile, done) => {
     try {

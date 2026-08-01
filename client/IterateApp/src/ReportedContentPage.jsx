@@ -61,7 +61,7 @@ export default function ReportedContentPage() {
     async function fetchReports() {
       setLoading(true);
       try {
-        const res = await fetch("api.iterate-app.me/api/streak/getReportedContents", { credentials: "include" });
+        const res = await fetch("https://api.iterate-app.me/api/streak/getReportedContents", { credentials: "include" });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
         console.log(data)
