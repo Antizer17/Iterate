@@ -563,8 +563,8 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
       <div className="cv-wrap">
         <VaultDoors open={doorsOpen} wheelSettle={wheelSettle} />
         <div className="cv-header">
-          <span className="cv-title">confused vault</span>
-          <p className="cv-sub">everything you weren't sure about, in one place</p>
+          <span className="cv-title">Confused Vault</span>
+          <p className="cv-sub">All your confused topics across all enrolled courses, in one place</p>
         </div>
  
         <div className="cv-controls">

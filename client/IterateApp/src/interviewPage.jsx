@@ -17,11 +17,11 @@ export const CSS = `
 }
 .ip-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto}
 
-.ip-header{text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
+.ip-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .ip-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.6deg)}
 .ip-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:2px}
 
-.ip-search{display:flex;justify-content:center;margin-bottom:1.5rem}
+.ip-search{display:flex;justify-content:flex-start;margin-bottom:1.5rem}
 .ip-search input{font-family:var(--font);font-size:16px;padding:5px 14px;background:var(--paper);
   border:1.5px solid var(--gray4);color:var(--ink);width:100%;max-width:340px;transform:rotate(-0.2deg)}
 .ip-search input:focus{outline:none;border-color:var(--ink)}
@@ -100,8 +100,8 @@ export default function InterviewPage() {
       <style>{CSS}</style>
       <div className="ip-wrap">
         <div className="ip-header">
-          <span className="ip-title">interview guides</span>
-          <p className="ip-sub">company-by-company breakdowns — stages, questions, and what to expect</p>
+          <span className="ip-title">Interview Guides</span>
+          <p className="ip-sub">company-by-company breakdowns of local firms — stages, questions, and what to expect</p>
         </div>
 
         <div className="ip-search">

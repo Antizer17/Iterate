@@ -279,7 +279,7 @@ export default function Topics() {
       <div className="tp-wrap">
 
         <div className="tp-header">
-          <span className="tp-title">courses</span>
+          <span className="tp-title">Courses</span>
           <p className="tp-sub">enroll and rate your confidence to receive revision refreshers in your email!</p>
         </div>
 

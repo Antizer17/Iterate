@@ -85,7 +85,7 @@ export default function ReportedContentPage() {
       <style>{CSS}</style>
       <div className="rc-wrap">
         <div className="rc-header">
-          <span className="rc-title">reported content</span>
+          <span className="rc-title">Reported Content</span>
           <p className="rc-sub">{reports.length} item{reports.length === 1 ? "" : "s"} flagged for review</p>
         </div>
 

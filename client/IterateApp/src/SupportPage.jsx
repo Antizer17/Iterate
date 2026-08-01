@@ -113,7 +113,7 @@ export default function SupportPage() {
       <style>{CSS}</style>
       <div className="sp-wrap">
         <div className="sp-header">
-          <span className="sp-title">support iterate</span>
+          <span className="sp-title">Support Iterate</span>
           <p className="sp-sub">Help us keep this free!</p>
         </div>
 
