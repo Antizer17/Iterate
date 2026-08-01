@@ -23,7 +23,7 @@ export const CSS = `
 .cg-back:hover{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
 .cg-header{margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
-.cg-title{font-family:var(--font);font-size:42px;font-weight:700;display:inline-block;transform:rotate(-0.5deg)}
+.cg-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.5deg)}
 .cg-intro{font-size:16.5px;color:var(--gray1);font-style:italic;margin-top:8px;
   padding-left:10px;border-left:2px solid var(--gray4)}
 

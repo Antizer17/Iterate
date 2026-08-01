@@ -15,9 +15,9 @@ export const CSS = `
   background:var(--paper);color:var(--ink);font-family:var(--font);
   width:100%;
 }
-.sp-wrap{padding:1.5rem 1.5rem 3rem;max-width:640px;margin:0 auto}
+.sp-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto}
 
-.sp-header{text-align:center;margin-bottom:1.75rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
+.sp-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .sp-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.5deg)}
 .sp-sub{font-family:var(--font);font-size:17px;color:var(--gray2);font-style:italic;margin-top:4px}
 

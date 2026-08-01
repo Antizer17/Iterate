@@ -18,7 +18,7 @@ export const CSS = `
   background:var(--paper);color:var(--ink);font-family:var(--font);
   position:relative;overflow:hidden;
 }
-.cv-wrap{padding:1.25rem 1rem 2rem;position:relative;min-height:200px}
+.cv-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto;position:relative;min-height:200px}
  
 /* ── Vault door intro ── */
 .cv-doors{position:fixed;inset:0;z-index:20;display:flex;pointer-events:none}
@@ -57,11 +57,11 @@ export const CSS = `
   100%{opacity:0;width:6px}
 }
  
-.cv-header{display:flex;align-items:center;gap:12px;margin-bottom:1.1rem;border-bottom:1.5px solid var(--gray4);padding-bottom:8px;flex-wrap:wrap}
-.cv-title{font-family:var(--font);font-size:22px;font-weight:700;transform:rotate(-0.4deg);display:inline-block}
-.cv-sub{font-family:var(--font);font-size:14px;color:var(--gray2);font-style:italic}
+.cv-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
+.cv-title{font-family:var(--font);font-size:44px;font-weight:700;transform:rotate(-0.5deg);display:inline-block}
+.cv-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:8px}
 .cv-rule{flex:1;border:none;border-top:1px dashed var(--gray4);margin:0 8px}
-.cv-cracked-tally{font-family:var(--font);font-size:15px;color:var(--gray2);white-space:nowrap}
+.cv-cracked-tally{font-family:var(--font);font-size:15px;color:var(--gray2);white-space:nowrap;margin-left:auto}
 .cv-cracked-tally b{color:var(--ink)}
  
 .cv-controls{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
@@ -564,9 +564,7 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
         <VaultDoors open={doorsOpen} wheelSettle={wheelSettle} />
         <div className="cv-header">
           <span className="cv-title">confused vault</span>
-          <span className="cv-sub">everything you weren't sure about, in one place</span>
-          <hr className="cv-rule" />
-          <span className="cv-cracked-tally"><b>{crackedCount}</b> cracked this session</span>
+          <p className="cv-sub">everything you weren't sure about, in one place</p>
         </div>
  
         <div className="cv-controls">
@@ -578,7 +576,7 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
             <option value="confusion">most confused first</option>
             <option value="recent">most recent first</option>
           </select>
-
+          <span className="cv-cracked-tally"><b>{crackedCount}</b> cracked this session</span>
         </div>
  
   

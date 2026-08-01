@@ -14,9 +14,9 @@ export const CSS = `
   --font:'Caveat',cursive;
   background:var(--paper);color:var(--ink);font-family:var(--font);
 }
-.rt-wrap{padding:1.25rem 1rem 2rem;}
-.rt-header{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem;border-bottom:1.5px solid var(--gray4);padding-bottom:8px}
-.rt-title{font-family:var(--font);font-size:22px;font-weight:700;transform:rotate(-0.4deg);display:inline-block}
+.rt-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto;}
+.rt-header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;border-bottom:1.5px solid var(--gray4);padding-bottom:1rem}
+.rt-title{font-family:var(--font);font-size:44px;font-weight:700;transform:rotate(-0.4deg);display:inline-block}
 .rt-date{font-family:var(--font);font-size:14px;color:var(--gray2);margin-left:auto;font-style:italic}
 .rt-rule{flex:1;border:none;border-top:1px dashed var(--gray4);margin:0 8px}
 .rt-tabs{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
