@@ -19,10 +19,18 @@ export const CSS = `
 .rt-title{font-family:var(--font);font-size:44px;font-weight:700;transform:rotate(-0.4deg);display:inline-block}
 .rt-date{font-family:var(--font);font-size:14px;color:var(--gray2);margin-left:auto;font-style:italic}
 .rt-rule{flex:1;border:none;border-top:1px dashed var(--gray4);margin:0 8px}
-.rt-tabs{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
-.rt-tab{font-family:var(--font);font-size:16px;font-weight:600;padding:4px 14px;background:var(--paper);color:var(--gray2);border:1.5px solid var(--gray4);cursor:pointer;transition:all 0.12s;transform:rotate(-0.3deg)}
-.rt-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:rotate(0.2deg)}
-.rt-tab:hover:not(.active){background:var(--paper3);color:var(--gray1)}
+.rt-tabs{display:flex;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
+button.rt-tab{font-family:var(--font);font-size:18px;font-weight:600;padding:8px 22px;
+  background-color:var(--paper);color:var(--gray2);border:1.5px solid var(--gray4);
+  border-radius:2px 12px 4px 10px;outline:none;cursor:pointer;
+  box-shadow:2px 3px 0 rgba(26,26,24,0.05);
+  transition:transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+  transform:rotate(-0.3deg)}
+button.rt-tab.active{background-color:var(--ink);color:var(--paper);border-color:var(--ink);
+  box-shadow:2px 3px 0 rgba(26,26,24,0.12);transform:rotate(0.2deg)}
+button.rt-tab:hover:not(.active){background-color:var(--paper3);color:var(--gray1);
+  transform:translateY(-1px) rotate(-0.3deg);box-shadow:3px 5px 0 rgba(26,26,24,0.08)}
+button.rt-tab:active{transform:scale(0.97) rotate(-0.3deg)}
 .rt-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
 .rt-stat{background:var(--paper);border:1.5px solid var(--gray4);padding:0.65rem 0.85rem;position:relative}
 .rt-stat:nth-child(1){transform:rotate(-0.5deg)}.rt-stat:nth-child(2){transform:rotate(0.3deg)}.rt-stat:nth-child(3){transform:rotate(-0.2deg)}
@@ -316,7 +324,8 @@ export default function Dashboard() {
   return (
     <div style={{ display: "flex", minHeight: "100vh", minWidth: "100vw", background: "#F7F6F2", flexDirection: "row" }}>
       <SideNav />
-      <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1 }} className="rt-root">
+        <style>{CSS}</style>
         <div className="rt-tabs" style={{ padding: "1rem 1rem 0" }}>
           {user.enRolledCourses.map((code) => (
             <button
