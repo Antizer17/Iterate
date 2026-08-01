@@ -55,10 +55,10 @@ export const CSS = `
 .tp-card-tag{font-family:var(--font);font-size:13px;padding:1px 10px;border:1px dashed var(--gray3);
   border-radius:14px;color:var(--gray2)}
 
-.tp-enrolled-row{display:flex;align-items:center;gap:6px;font-size:20px;color:var(--gray1);
+.tp-enrolled-row{display:flex;align-items:center;gap:6px;font-size:16px;color:var(--gray1);
   padding-top:8px;border-top:1px dashed var(--gray4)}
 .tp-enrolled-dot{width:7px;height:7px;border-radius:50%;background:var(--ink);flex-shrink:0}
-.tp-enrolled-conf{margin-left:auto;font-size:20px;color:var(--gray2)}
+.tp-enrolled-conf{margin-left:auto;font-size:16px;color:var(--gray2)}
 
 .tp-cta{font-family:var(--font);font-size:16px;font-weight:700;padding:6px 14px;margin-top:auto;
   background:var(--paper);border:1.5px dashed var(--gray2);color:var(--gray1);cursor:pointer;
