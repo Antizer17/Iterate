@@ -149,7 +149,7 @@ export default function HomePage() {
 
       <div className="hm-topbar">
         <div className="hm-brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <IterateLogo />
+          <IterateLogo spin/>
           <span className="hm-brand-name">iterate</span>
         </div>
         <button className="hm-login-btn" onClick={() => navigate("/login")}>log in →</button>
