@@ -117,7 +117,7 @@ function SideNav() {
       <div className="nav-footer sidenav-footer">
         <div className="nav-avatar">{user?.name[0]}</div>
         <div className="nav-footer-info sidenav-footer-info">
-          <span className="nav-username sidenav-username">{user?.name || "Ahmad Sameer"}</span>
+          <span className="nav-username sidenav-username">{user?.name || "Logged out"}</span>
           <button
             className={`nav-auth-btn ${isLoggedIn ? "nav-auth-btn-out" : "nav-auth-btn-in"}`}
             onClick={handleAuthClick}
