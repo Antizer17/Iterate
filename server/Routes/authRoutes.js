@@ -2,6 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { googleCallback, logoutUser } from '../controllers/authController.js'
+import requireAuth from '../middlewares/authMiddleware.js'
 
 const router = express.Router();
 
@@ -12,6 +13,6 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get('/google/callback', 
   passport.authenticate('google', { session: false, failureRedirect: '/login' }), googleCallback);
 
-router.post('/logout', logoutUser);
+router.post('/logout', requireAuth, logoutUser);
 
 export default router;
