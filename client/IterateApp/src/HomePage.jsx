@@ -7,12 +7,12 @@ import IterateLogo from "./logo";
 // SupportPage.jsx — colorless ink/paper palette, no accent colors, so this
 // reads as the front door of the same app rather than a separate marketing site.
 export const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 .hm-root *{box-sizing:border-box;margin:0;padding:0}
 .hm-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
-  --font:'Caveat',cursive;
+  --font:'Caveat',cursive;--font-body:'Inter',sans-serif;
   background:var(--paper);color:var(--ink);font-family:var(--font);
   width:100%;min-height:100vh;
 }
@@ -22,7 +22,7 @@ export const CSS = `
   padding:1.25rem 1.75rem;border-bottom:1.5px solid var(--gray4)}
 .hm-brand{display:flex;align-items:center;gap:8px;cursor:pointer}
 .hm-brand-name{font-family:var(--font);font-size:22px;font-weight:700}
-.hm-login-btn{font-family:var(--font);font-size:16px;font-weight:600;padding:5px 16px;
+.hm-login-btn{font-family:var(--font-body);font-size:14.5px;font-weight:600;padding:5px 16px;
   background:var(--paper);border:1.5px solid var(--ink);color:var(--ink);cursor:pointer;
   border-radius:4px;transition:all .12s}
 .hm-login-btn:hover{background:var(--ink);color:var(--paper)}
@@ -33,24 +33,24 @@ export const CSS = `
 .hm-hero{text-align:center;padding:4rem 0 3rem;border-bottom:1.5px solid var(--gray4)}
 .hm-hero-title{font-family:var(--font);font-size:56px;font-weight:700;line-height:1.1;
   display:inline-block;transform:rotate(-0.5deg)}
-.hm-hero-sub{font-size:20px;color:var(--gray1);font-style:italic;max-width:560px;
-  margin:1rem auto 0;line-height:1.4}
+.hm-hero-sub{font-family:var(--font-body);font-size:17px;color:var(--gray1);max-width:560px;
+  margin:1rem auto 0;line-height:1.55}
 .hm-hero-ctas{display:flex;gap:14px;justify-content:center;align-items:center;margin-top:1.75rem;flex-wrap:wrap}
-.hm-cta-primary{font-family:var(--font);font-size:19px;font-weight:700;padding:10px 26px;
+.hm-cta-primary{font-family:var(--font-body);font-size:16px;font-weight:600;padding:10px 26px;
   background:var(--ink);color:var(--paper);border:1.5px solid var(--ink);cursor:pointer;
   border-radius:4px;transition:transform .12s ease, box-shadow .12s ease}
 .hm-cta-primary:hover{transform:translateY(-2px);box-shadow:0 8px 18px -8px rgba(26,26,24,0.4)}
-.hm-cta-secondary{font-family:var(--font);font-size:16px;color:var(--gray2);background:none;
+.hm-cta-secondary{font-family:var(--font-body);font-size:14.5px;color:var(--gray2);background:none;
   border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .hm-cta-secondary:hover{color:var(--ink)}
-.hm-fine-print{font-size:14px;color:var(--gray3);font-style:italic;margin-top:12px}
+.hm-fine-print{font-family:var(--font-body);font-size:13px;color:var(--gray3);margin-top:12px}
 
 /* ── Section headers ── */
 .hm-section{padding:3rem 0;border-bottom:1.5px solid var(--gray4)}
 .hm-section:last-of-type{border-bottom:none}
 .hm-section-title{font-family:var(--font);font-size:32px;font-weight:700;
   display:inline-block;transform:rotate(-0.4deg);margin-bottom:0.5rem}
-.hm-section-sub{font-size:16.5px;color:var(--gray2);font-style:italic;margin-bottom:2rem;max-width:560px}
+.hm-section-sub{font-family:var(--font-body);font-size:15px;color:var(--gray2);margin-bottom:2rem;max-width:560px}
 
 /* ── How it works: numbered steps ── */
 .hm-steps{list-style:none;display:flex;flex-direction:column;gap:12px}
@@ -58,17 +58,17 @@ export const CSS = `
   border:1.5px solid var(--gray4);padding:0.9rem 1.1rem;position:relative;transform:rotate(-0.15deg)}
 .hm-step::before{content:'';position:absolute;top:-1px;right:-1px;width:8px;height:8px;
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
-.hm-step-num{font-family:var(--font);font-size:17px;font-weight:700;color:var(--paper);
+.hm-step-num{font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--paper);
   background:var(--ink);width:28px;height:28px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;margin-top:2px}
 .hm-step-body{flex:1}
 .hm-step-title{font-family:var(--font);font-size:21px;font-weight:700;margin-bottom:2px}
-.hm-step-text{font-size:16px;color:var(--gray1);line-height:1.45}
+.hm-step-text{font-family:var(--font-body);font-size:15px;color:var(--gray1);line-height:1.55}
 
 .hm-why-email{margin-top:1.25rem;padding:0.9rem 1.1rem;border-left:2px solid var(--gray4);
   background:var(--paper2)}
 .hm-why-email-label{font-family:var(--font);font-size:16px;font-weight:700;margin-bottom:3px}
-.hm-why-email-text{font-size:15.5px;color:var(--gray1);font-style:italic;line-height:1.45}
+.hm-why-email-text{font-family:var(--font-body);font-size:14.5px;color:var(--gray1);line-height:1.55}
 
 /* ── Three pillars ── */
 .hm-pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
@@ -86,7 +86,7 @@ export const CSS = `
 .hm-pillar-icon{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--gray4);
   display:flex;align-items:center;justify-content:center;color:var(--ink);margin-bottom:10px}
 .hm-pillar-title{font-family:var(--font);font-size:23px;font-weight:700;margin-bottom:6px}
-.hm-pillar-text{font-size:15.5px;color:var(--gray1);line-height:1.45}
+.hm-pillar-text{font-family:var(--font-body);font-size:14.5px;color:var(--gray1);line-height:1.55}
 
 /* ── Closing CTA ── */
 .hm-closing{text-align:center;padding:3.5rem 0}
@@ -94,13 +94,13 @@ export const CSS = `
   display:inline-block;transform:rotate(-0.4deg);margin-bottom:1.25rem}
 
 /* ── Footer ── */
-.hm-footer{text-align:center;padding:1.75rem 0 2.5rem;font-size:14.5px;color:var(--gray3);font-style:italic}
+.hm-footer{text-align:center;padding:1.75rem 0 2.5rem;font-family:var(--font-body);font-size:13.5px;color:var(--gray3)}
 .hm-footer a{color:var(--gray1);text-decoration:underline;text-underline-offset:2px}
 
 @media (max-width:640px){
   .hm-hero{padding:3rem 0 2.25rem}
   .hm-hero-title{font-size:38px}
-  .hm-hero-sub{font-size:17px}
+  .hm-hero-sub{font-size:15.5px}
   .hm-section-title{font-size:26px}
 }
 `;

@@ -1,178 +1,273 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { SideNav } from "./iterate-app";
+import { useNavigate } from "react-router-dom";
+import IterateLogo from "./logo";
 
-// ── Design tokens (scoped to .cg-root) ──────────────────────────────────────
-// Same variable names / font as RevisionTree.jsx / confusedVault.jsx /
-// Topics.jsx / InterviewPage.jsx.
+// ── Design tokens (scoped to .hm-root) ──────────────────────────────────────
+// Same variable names / font as Topics.jsx, confusedVault.jsx, RevisionTree.jsx,
+// interviewPage.jsx, companyGuidePage.jsx, ReportedContentPage.jsx,
+// SupportPage.jsx — colorless ink/paper palette, no accent colors, so this
+// reads as the front door of the same app rather than a separate marketing site.
 export const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
-.cg-root *{box-sizing:border-box;margin:0;padding:0}
-.cg-root{
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+.hm-root *{box-sizing:border-box;margin:0;padding:0}
+.hm-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
-  --ok:#5f8d63;--amber:#b5842a;--danger:#c0433d;
-  --font:'Caveat',cursive;
+  --font:'Caveat',cursive;--font-body:'Inter',sans-serif;
   background:var(--paper);color:var(--ink);font-family:var(--font);
-  width:100%;
+  width:100%;min-height:100vh;
 }
-.cg-wrap{padding:1.5rem 1.5rem 2.5rem;max-width:90%;margin:0 auto}
 
-.cg-back{font-family:var(--font);font-size:15px;color:var(--gray2);background:none;border:none;
-  cursor:pointer;margin-bottom:1rem;padding:2px 0}
-.cg-back:hover{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
+/* ── Top bar ── */
+.hm-topbar{display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.75rem;border-bottom:1.5px solid var(--gray4)}
+.hm-brand{display:flex;align-items:center;gap:8px;cursor:pointer}
+.hm-brand-name{font-family:var(--font);font-size:22px;font-weight:700}
+.hm-login-btn{font-family:var(--font-body);font-size:14.5px;font-weight:600;padding:5px 16px;
+  background:var(--paper);border:1.5px solid var(--ink);color:var(--ink);cursor:pointer;
+  border-radius:4px;transition:all .12s}
+.hm-login-btn:hover{background:var(--ink);color:var(--paper)}
 
-.cg-header{margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
-.cg-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.5deg)}
-.cg-intro{font-size:16.5px;color:var(--gray1);font-style:italic;margin-top:8px;
-  padding-left:10px;border-left:2px solid var(--gray4)}
+.hm-wrap{max-width:900px;margin:0 auto;padding:0 1.5rem}
 
-.cg-section-title{font-family:var(--font);font-size:24px;font-weight:700;margin-bottom:0.75rem;
-  display:inline-block;transform:rotate(-0.3deg)}
+/* ── Hero ── */
+.hm-hero{text-align:center;padding:4rem 0 3rem;border-bottom:1.5px solid var(--gray4)}
+.hm-hero-title{font-family:var(--font);font-size:56px;font-weight:700;line-height:1.1;
+  display:inline-block;transform:rotate(-0.5deg)}
+.hm-hero-sub{font-family:var(--font-body);font-size:17px;color:var(--gray1);max-width:560px;
+  margin:1rem auto 0;line-height:1.55}
+.hm-hero-ctas{display:flex;gap:14px;justify-content:center;align-items:center;margin-top:1.75rem;flex-wrap:wrap}
+.hm-cta-primary{font-family:var(--font-body);font-size:16px;font-weight:600;padding:10px 26px;
+  background:var(--ink);color:var(--paper);border:1.5px solid var(--ink);cursor:pointer;
+  border-radius:4px;transition:transform .12s ease, box-shadow .12s ease}
+.hm-cta-primary:hover{transform:translateY(-2px);box-shadow:0 8px 18px -8px rgba(26,26,24,0.4)}
+.hm-cta-secondary{font-family:var(--font-body);font-size:14.5px;color:var(--gray2);background:none;
+  border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.hm-cta-secondary:hover{color:var(--ink)}
+.hm-fine-print{font-family:var(--font-body);font-size:13px;color:var(--gray3);margin-top:12px}
 
-.cg-stages{list-style:none;margin-bottom:2rem}
-.cg-stage{display:flex;align-items:baseline;gap:10px;background:var(--paper);
-  border:1.5px solid var(--gray4);padding:0.55rem 0.85rem;margin-bottom:8px;
-  position:relative;transform:rotate(-0.15deg)}
-.cg-stage::before{content:'';position:absolute;top:-1px;right:-1px;width:7px;height:7px;
+/* ── Section headers ── */
+.hm-section{padding:3rem 0;border-bottom:1.5px solid var(--gray4)}
+.hm-section:last-of-type{border-bottom:none}
+.hm-section-title{font-family:var(--font);font-size:32px;font-weight:700;
+  display:inline-block;transform:rotate(-0.4deg);margin-bottom:0.5rem}
+.hm-section-sub{font-family:var(--font-body);font-size:15px;color:var(--gray2);margin-bottom:2rem;max-width:560px}
+
+/* ── How it works: numbered steps ── */
+.hm-steps{list-style:none;display:flex;flex-direction:column;gap:12px}
+.hm-step{display:flex;gap:14px;align-items:flex-start;background:var(--paper);
+  border:1.5px solid var(--gray4);padding:0.9rem 1.1rem;position:relative;transform:rotate(-0.15deg)}
+.hm-step::before{content:'';position:absolute;top:-1px;right:-1px;width:8px;height:8px;
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
-.cg-stage-num{font-family:var(--font);font-size:15px;font-weight:700;color:var(--paper);
-  background:var(--ink);width:22px;height:22px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center}
-.cg-stage-text{font-size:16.5px;color:var(--gray1)}
+.hm-step-num{font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--paper);
+  background:var(--ink);width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;margin-top:2px}
+.hm-step-body{flex:1}
+.hm-step-title{font-family:var(--font);font-size:21px;font-weight:700;margin-bottom:2px}
+.hm-step-text{font-family:var(--font-body);font-size:15px;color:var(--gray1);line-height:1.55}
 
-.cg-questions{display:flex;flex-direction:column;gap:14px}
-@keyframes cg-popIn{0%{transform:scale(.6) rotate(var(--r,0deg));opacity:0}60%{transform:scale(1.03) rotate(var(--r,0deg))}100%{transform:scale(1) rotate(var(--r,0deg));opacity:1}}
-.cg-qcard{--r:0deg;background:linear-gradient(178deg, var(--paper) 0%, var(--paper2) 100%);
-  border:1.5px solid var(--gray4);border-radius:2px 14px 4px 12px;padding:1rem 1.1rem;
-  position:relative;transform:rotate(var(--r));animation:cg-popIn .3s ease both;
-  box-shadow:2px 3px 0 rgba(26,26,24,0.05), 0 8px 18px -10px rgba(26,26,24,0.25)}
-.cg-qcard::before{content:'';position:absolute;top:-1px;right:-1px;width:9px;height:9px;
+.hm-why-email{margin-top:1.25rem;padding:0.9rem 1.1rem;border-left:2px solid var(--gray4);
+  background:var(--paper2)}
+.hm-why-email-label{font-family:var(--font);font-size:16px;font-weight:700;margin-bottom:3px}
+.hm-why-email-text{font-family:var(--font-body);font-size:14.5px;color:var(--gray1);line-height:1.55}
+
+/* ── Three pillars ── */
+.hm-pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.hm-pillar{--r:0deg;background-color:var(--paper);
+  background-image:linear-gradient(178deg, var(--paper) 0%, var(--paper2) 100%),
+    repeating-linear-gradient(to bottom, transparent, transparent 24px, var(--gray4) 24px, var(--gray4) 25px);
+  background-position:0 0, 0 4px;
+  border:1.5px solid var(--gray4);border-radius:2px 14px 4px 12px;padding:1.2rem 1.2rem 1.1rem;
+  position:relative;transform:rotate(var(--r));
+  box-shadow:2px 3px 0 rgba(26,26,24,0.05), 0 8px 18px -10px rgba(26,26,24,0.25);
+  transition:box-shadow .15s ease}
+.hm-pillar:hover{box-shadow:3px 5px 0 rgba(26,26,24,0.07), 0 12px 24px -10px rgba(26,26,24,0.28)}
+.hm-pillar::before{content:'';position:absolute;top:-1px;right:-1px;width:9px;height:9px;
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
-.cg-qcard-meta{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-.cg-chip{font-family:var(--font);font-size:13px;padding:1px 10px;background:var(--paper3);
-  border:1px solid var(--gray4);border-radius:20px;color:var(--gray1)}
-.cg-chip--easy{border-color:var(--ok);color:var(--ok);background:rgba(95,141,99,0.1)}
-.cg-chip--medium{border-color:var(--amber);color:var(--amber);background:rgba(181,132,42,0.1)}
-.cg-chip--hard{border-color:var(--danger);color:var(--danger);background:rgba(192,67,61,0.1)}
-.cg-qcard-text{font-family:var(--font);font-size:19px;font-weight:700;line-height:1.25;margin-bottom:6px}
-.cg-qcard-details{font-size:14.5px;color:var(--gray1);font-style:italic;margin-bottom:8px;
-  padding-left:8px;border-left:2px solid var(--gray4)}
-.cg-qcard-code{font-family:'Courier New',monospace;font-size:13.5px;background:var(--ink);color:var(--paper);
-  padding:0.75rem 0.9rem;border-radius:2px;overflow-x:auto;white-space:pre}
+.hm-pillar-icon{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--gray4);
+  display:flex;align-items:center;justify-content:center;color:var(--ink);margin-bottom:10px}
+.hm-pillar-title{font-family:var(--font);font-size:23px;font-weight:700;margin-bottom:6px}
+.hm-pillar-text{font-family:var(--font-body);font-size:14.5px;color:var(--gray1);line-height:1.55}
 
-.cg-status{font-family:var(--font);font-size:19px;color:var(--gray2);font-style:italic;
-  text-align:center;padding:2.5rem 0}
-.cg-status--error{color:var(--danger)}
+/* ── Closing CTA ── */
+.hm-closing{text-align:center;padding:3.5rem 0}
+.hm-closing-title{font-family:var(--font);font-size:34px;font-weight:700;
+  display:inline-block;transform:rotate(-0.4deg);margin-bottom:1.25rem}
+
+/* ── Footer ── */
+.hm-footer{text-align:center;padding:1.75rem 0 2.5rem;font-family:var(--font-body);font-size:13.5px;color:var(--gray3)}
+.hm-footer a{color:var(--gray1);text-decoration:underline;text-underline-offset:2px}
+
+@media (max-width:640px){
+  .hm-hero{padding:3rem 0 2.25rem}
+  .hm-hero-title{font-size:38px}
+  .hm-hero-sub{font-size:15.5px}
+  .hm-section-title{font-size:26px}
+}
 `;
 
-function difficultyClass(difficulty) {
-  switch ((difficulty || "").toLowerCase()) {
-    case "easy": return "cg-chip--easy";
-    case "hard": return "cg-chip--hard";
-    default: return "cg-chip--medium";
-  }
+// ── Icons (small, monochrome, stroke-only — same style as the app's nav icons) ──
+function TreeIcon(props) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="5.5" r="2.1" />
+      <circle cx="6" cy="15.5" r="2.1" />
+      <circle cx="18" cy="15.5" r="2.1" />
+      <path d="M12 7.6 6 13.4M12 7.6l6 5.8" />
+    </svg>
+  );
+}
+function VaultIcon(props) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="4" y="10" width="16" height="10" rx="1.5" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      <circle cx="12" cy="15" r="1.3" />
+    </svg>
+  );
+}
+function BriefcaseIcon(props) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="3.5" y="7.5" width="17" height="12" rx="1.8" />
+      <path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5" />
+      <path d="M3.5 12.5h17" />
+    </svg>
+  );
 }
 
-export default function CompanyGuidePage() {
-  const { company } = useParams();
+
+export default function HomePage() {
   const navigate = useNavigate();
-  const [guide, setGuide] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchGuide() {
-      setLoading(true);
-      try {
-        const res = await fetch(`https://api.iterate-app.me/api/interview/${company}`, { credentials: "include" });
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        const data = await res.json();
-        if (!cancelled) setGuide(data);
-      } catch (err) {
-        if (!cancelled) setError(err.message);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    fetchGuide();
-    return () => { cancelled = true; };
-  }, [company]);
-
-  // Same deterministic wobble as the card grids elsewhere in the app.
-  const rotFor = (i) => [-0.4, 0.25, -0.15, 0.35, -0.3, 0.2][i % 6];
+  function scrollToHowItWorks() {
+    document.getElementById("hm-how-it-works")?.scrollIntoView({ behavior: "smooth" });
+  }
 
   return (
-    <div className="cg-root">
+    <div className="hm-root">
       <style>{CSS}</style>
-      <div className="cg-wrap">
-        <button className="cg-back" onClick={() => navigate("/interview")}>
-          ← back to all companies
-        </button>
 
-        {loading && <div className="cg-status">loading guide…</div>}
-        {error && <div className="cg-status cg-status--error">{error}</div>}
+      <div className="hm-topbar">
+        <div className="hm-brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+          <IterateLogo spin/>
+          <span className="hm-brand-name">iterate</span>
+        </div>
+        <button className="hm-login-btn" onClick={() => navigate("/login")}>log in →</button>
+      </div>
 
-        {guide && (
-          <>
-            <div className="cg-header">
-              <span className="cg-title">{guide.data.company}</span>
-              {guide.data.introduction && <p className="cg-intro">{guide.data.introduction}</p>}
+      <div className="hm-wrap">
+        {/* ── Hero ── */}
+        <div className="hm-hero">
+          <span className="hm-hero-title">Stop figuring out what to study. Just start studying.</span>
+          <p className="hm-hero-sub">Enroll in your courses, and we’ll slide high-yield, interview-relevant refreshers of topics you've already studied, straight into your inbox.
+          </p>
+          <div className="hm-hero-ctas">
+            <button className="hm-cta-primary" onClick={() => navigate("/login")}>
+              get started
+            </button>
+            <button className="hm-cta-secondary" onClick={scrollToHowItWorks}>
+              see how it works ↓
+            </button>
+          </div>
+          <p className="hm-fine-print">no clutter, just your student email</p>
+        </div>
+
+        {/* ── How it works ── */}
+        <div className="hm-section" id="hm-how-it-works">
+          <span className="hm-section-title">how it works</span>
+          <p className="hm-section-sub">three steps, then it runs itself.</p>
+
+          <ol className="hm-steps">
+            <li className="hm-step">
+              <span className="hm-step-num">1</span>
+              <div className="hm-step-body">
+                <div className="hm-step-title">enroll in your courses.</div>
+                <p className="hm-step-text">
+                  Pick the courses you want to keep sharp on.
+                </p>
+              </div>
+            </li>
+            <li className="hm-step">
+              <span className="hm-step-num">2</span>
+              <div className="hm-step-body">
+                <div className="hm-step-title">get a refresher in your inbox</div>
+                <p className="hm-step-text">
+                  Cutting out the fluff of the syllabus to deliver only what you actually learned in class that matters for interviews.
+
+Each one comes with 2 quick MCQs and a PDF holding the answers, so once it's in your inbox you don't need internet to revise. Bus, flight, stuck in traffic? doesn't matter.
+                </p>
+              </div>
+            </li>
+            <li className="hm-step">
+              <span className="hm-step-num">3</span>
+              <div className="hm-step-body">
+                <div className="hm-step-title">tap one button</div>
+                <p className="hm-step-text">
+                  "Aced" logs the topic and grows your binary revision tree in real time and shows your progress. "Confused"
+                  saves it to your vault with the top explainer videos already queued up.
+                </p>
+              </div>
+            </li>
+          </ol>
+
+          <div className="hm-why-email">
+            <div className="hm-why-email-label">why email, and not a notification?</div>
+            <p className="hm-why-email-text">
+              Because it nudges you to actually open your inbox,  a habit that pays off
+              well past revision, in uni life and later at work. And unlike a notification,
+              once it's there, it's fully yours: read it, answer it, and check your work,
+              all offline.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Three pillars ── */}
+        <div className="hm-section">
+          <span className="hm-section-title">what you get</span>
+          <p className="hm-section-sub">three features that work together.</p>
+
+          <div className="hm-pillars">
+            <div className="hm-pillar" style={{ "--r": "-0.3deg" }}>
+              <div className="hm-pillar-icon"><TreeIcon /></div>
+              <div className="hm-pillar-title">progress</div>
+              <p className="hm-pillar-text">
+                A living map for every course you're enrolled in, a revision tree in the shape of a binary tree
+                showing exactly what you've mastered, and when you aced it.
+              </p>
             </div>
-
-            {guide.data.interviewStages?.length > 0 && (
-              <>
-                <span className="cg-section-title">interview stages</span>
-                <ol className="cg-stages">
-                  {guide.data.interviewStages.map((stage, i) => (
-                    <li className="cg-stage" key={i}>
-                      <span className="cg-stage-num">{i + 1}</span>
-                      <span className="cg-stage-text">{stage}</span>
-                    </li>
-                  ))}
-                </ol>
-              </>
-            )}
-
-            <span className="cg-section-title">questions ({guide.data.questions?.length || 0})</span>
-            <div className="cg-questions" style={{ marginTop: "0.75rem" }}>
-              {guide.data.questions?.map((q, i) => (
-                <div className="cg-qcard" style={{ "--r": `${rotFor(i)}deg` }} key={i}>
-                  <div className="cg-qcard-meta">
-                    <span className="cg-chip">{q.category}</span>
-                    <span className={`cg-chip ${difficultyClass(q.difficulty)}`}>{q.difficulty}</span>
-                  </div>
-                  <p className="cg-qcard-text">{q.questionText}</p>
-                  {q.details && <p className="cg-qcard-details">{q.details}</p>}
-                  {q.solutionCode && (
-                   <details className="cg-solution-dropdown" style={{ marginTop: "1rem" }}>
-    <summary style={{ cursor: "pointer", fontWeight: "600", fontSize: "0.85rem", color: "var(--gray1)" }}>
-      View Solution Code
-    </summary>
-    <pre className="cg-qcard-code" style={{ marginTop: "0.5rem" }}>
-      <code>{q.solutionCode}</code>
-    </pre>
-  </details>
-                  )}
-                </div>
-              ))}
+            <div className="hm-pillar" style={{ "--r": "0.25deg" }}>
+              <div className="hm-pillar-icon"><VaultIcon /></div>
+              <div className="hm-pillar-title">confused vault</div>
+              <p className="hm-pillar-text">
+                Didn't understand? It's saved here automatically, with the 3 most-watched
+                YouTube explainers on that exact topic queued up so the confusion doesn't linger.
+              </p>
             </div>
-          </>
-        )}
+            <div className="hm-pillar" style={{ "--r": "-0.2deg" }}>
+              <div className="hm-pillar-icon"><BriefcaseIcon /></div>
+              <div className="hm-pillar-title">interview guides</div>
+              <p className="hm-pillar-text">
+                Real questions and stages that Bangladesh tech companies ask and their complete interview guide pulled from a crowd-sourced GitHub repo of
+                interview experiences, organized and readable.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Closing CTA ── */}
+        <div className="hm-closing">
+          <span className="hm-closing-title">ready to actually retain what you study?</span>
+          <div>
+            <button className="hm-cta-primary" onClick={() => navigate("/login")}>
+              get started — it's free
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="hm-footer">
+        built by a CS student, for CS students · <a href="/support">support iterate</a>
       </div>
     </div>
   );
 }
-
-function CompanyGuidePageWithNav() {
-  return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <SideNav />
-      <CompanyGuidePage />
-    </div>
-  );
-}
-export { CompanyGuidePageWithNav };
