@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import IterateLogo from "./logo";
 
 // ── Design tokens (scoped to .hm-root) ──────────────────────────────────────
 // Same variable names / font as Topics.jsx, confusedVault.jsx, RevisionTree.jsx,
@@ -133,15 +134,7 @@ function BriefcaseIcon(props) {
     </svg>
   );
 }
-function IterateLogo({ size = 32 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="18" cy="18" r="15" stroke="#1A1A1A" strokeWidth="2.5" fill="none" />
-      <path d="M18 3 A15 15 0 1 1 6.5 27" stroke="#1A1A1A" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      <path d="M3.5 24 L6.5 27 L9.5 24" stroke="#1A1A1A" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -156,7 +149,7 @@ export default function HomePage() {
 
       <div className="hm-topbar">
         <div className="hm-brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <IterateLogo size={26} />
+          <IterateLogo />
           <span className="hm-brand-name">iterate</span>
         </div>
         <button className="hm-login-btn" onClick={() => navigate("/login")}>log in →</button>
