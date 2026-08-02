@@ -94,7 +94,7 @@ export const CSS = `
 
 /* ── Footer ── */
 .hm-footer{text-align:center;padding:1.75rem 0 2.5rem;font-size:14.5px;color:var(--gray3);font-style:italic}
-.hm-footer a{color:var(--gray2);text-decoration:underline;text-underline-offset:2px}
+.hm-footer a{color:var(--gray1);text-decoration:underline;text-underline-offset:2px}
 
 @media (max-width:640px){
   .hm-hero{padding:3rem 0 2.25rem}
@@ -165,21 +165,18 @@ export default function HomePage() {
       <div className="hm-wrap">
         {/* ── Hero ── */}
         <div className="hm-hero">
-          <span className="hm-hero-title">revision that finds you</span>
-          <p className="hm-hero-sub">
-            Enroll in the courses you want to revise. We'll email you focused,
-            interview-relevant refreshers — no app to open, no wifi required
-            to actually study.
+          <span className="hm-hero-title">Stop figuring out what to study. Just start studying.</span>
+          <p className="hm-hero-sub">Enroll in your courses, and we’ll slide high-yield, interview-relevant refreshers of topics you've already studied, straight into your inbox.
           </p>
           <div className="hm-hero-ctas">
             <button className="hm-cta-primary" onClick={() => navigate("/login")}>
-              get started — it's free
+              get started
             </button>
             <button className="hm-cta-secondary" onClick={scrollToHowItWorks}>
               see how it works ↓
             </button>
           </div>
-          <p className="hm-fine-print">no credit card, no clutter — just your student email</p>
+          <p className="hm-fine-print">no clutter, just your student email</p>
         </div>
 
         {/* ── How it works ── */}
@@ -191,9 +188,9 @@ export default function HomePage() {
             <li className="hm-step">
               <span className="hm-step-num">1</span>
               <div className="hm-step-body">
-                <div className="hm-step-title">enroll in your courses</div>
+                <div className="hm-step-title">enroll in your courses.</div>
                 <p className="hm-step-text">
-                  Pick the courses you want to keep sharp on. That's the only setup — we take it from there.
+                  Pick the courses you want to keep sharp on.
                 </p>
               </div>
             </li>
@@ -202,10 +199,9 @@ export default function HomePage() {
               <div className="hm-step-body">
                 <div className="hm-step-title">get a refresher in your inbox</div>
                 <p className="hm-step-text">
-                  Timed to land right before you'd naturally forget, and focused on what
-                  actually comes up in interviews — not just what's on the syllabus.
-                  Each one comes with 2 quick MCQs and a PDF holding the answers, so once
-                  it's in your inbox you don't need internet to revise — bus, flight, dead zone, doesn't matter.
+                  Cutting out the fluff of the syllabus to deliver only what you actually learned in class that matters for interviews.
+
+Each one comes with 2 quick MCQs and a PDF holding the answers, so once it's in your inbox you don't need internet to revise. Bus, flight, stuck in traffic? doesn't matter.
                 </p>
               </div>
             </li>
@@ -214,7 +210,7 @@ export default function HomePage() {
               <div className="hm-step-body">
                 <div className="hm-step-title">tap one button</div>
                 <p className="hm-step-text">
-                  "Aced it ✓" logs the topic and grows your revision tree. "Confused 🤔"
+                  "Aced" logs the topic and grows your binary revision tree in real time and shows your progress. "Confused"
                   saves it to your vault with the top explainer videos already queued up.
                 </p>
               </div>
@@ -222,9 +218,9 @@ export default function HomePage() {
           </ol>
 
           <div className="hm-why-email">
-            <div className="hm-why-email-label">why email, not a notification?</div>
+            <div className="hm-why-email-label">why email, and not a notification?</div>
             <p className="hm-why-email-text">
-              Because it nudges you to actually open your inbox — a habit that pays off
+              Because it nudges you to actually open your inbox,  a habit that pays off
               well past revision, in uni life and later at work. And unlike a notification,
               once it's there, it's fully yours: read it, answer it, and check your work,
               all offline.
@@ -235,14 +231,14 @@ export default function HomePage() {
         {/* ── Three pillars ── */}
         <div className="hm-section">
           <span className="hm-section-title">what you get</span>
-          <p className="hm-section-sub">three tools that work together, not three separate apps.</p>
+          <p className="hm-section-sub">three features that work together.</p>
 
           <div className="hm-pillars">
             <div className="hm-pillar" style={{ "--r": "-0.3deg" }}>
               <div className="hm-pillar-icon"><TreeIcon /></div>
               <div className="hm-pillar-title">progress</div>
               <p className="hm-pillar-text">
-                A living map for every course you're enrolled in — a revision tree
+                A living map for every course you're enrolled in, a revision tree in the shape of a binary tree
                 showing exactly what you've mastered, and when you aced it.
               </p>
             </div>
@@ -250,7 +246,7 @@ export default function HomePage() {
               <div className="hm-pillar-icon"><VaultIcon /></div>
               <div className="hm-pillar-title">confused vault</div>
               <p className="hm-pillar-text">
-                Didn't land? It's saved here automatically, with the 3 most-watched
+                Didn't understand? It's saved here automatically, with the 3 most-watched
                 YouTube explainers on that exact topic queued up so the confusion doesn't linger.
               </p>
             </div>
@@ -258,8 +254,8 @@ export default function HomePage() {
               <div className="hm-pillar-icon"><BriefcaseIcon /></div>
               <div className="hm-pillar-title">interview guides</div>
               <p className="hm-pillar-text">
-                Real questions and stages pulled from a crowd-sourced GitHub repo of
-                interview experiences — organized and readable, not a wall of markdown.
+                Real questions and stages that Bangladesh tech companies ask and their complete interview guide pulled from a crowd-sourced GitHub repo of
+                interview experiences, organized and readable.
               </p>
             </div>
           </div>

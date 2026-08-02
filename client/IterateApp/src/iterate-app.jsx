@@ -277,7 +277,7 @@ export default function App() {
         <Route path="/vault" element={<ProtectedRoute><ConfusedVaultDemo/></ProtectedRoute>} />
         <Route path="/interview" element={<InterviewPageWithNav/>} />
         <Route path="/interview/:company" element={<CompanyGuidePageWithNav/>} />
-        <Route path="/reports" element={<ReportedContentPageWithNav/>} />
+        <Route path="/reports" element={<ProtectedRoute><ReportedContentPageWithNav/></ProtectedRoute>} />
         <Route path="/support" element={<SupportPageWithNav/>} />
         
       </Routes>   
