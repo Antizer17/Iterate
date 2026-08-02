@@ -10,6 +10,7 @@ import { UserProvider, useUser } from "./context/UserContext.jsx";
 import { ReportedContentPageWithNav } from "./ReportedContentPage.jsx";
 import { SupportPageWithNav } from "./SupportPage.jsx";
 import "./iterate-app.css";
+import HomePage from "./HomePage.jsx";
 
 // ─── Logo: spinning arrow loop ───────────────────────────────────────────────
 function IterateLogo({ size = 36, spin = true }) {
@@ -269,7 +270,7 @@ export default function App() {
     <>
       <UserProvider>
       <Routes>
-        <Route path="/" element={ <Landing/>} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={ <Landing/>} />
         <Route path="/progress/:courseCode" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
         <Route path="/courses" element={<ProtectedRoute><TopicPage /></ProtectedRoute>} />
