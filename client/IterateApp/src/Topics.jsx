@@ -5,12 +5,12 @@ import { SideNav } from "./iterate-app";
 // Shares variable names / font with RevisionTree.jsx and confusedVault.jsx's
 // CSS exports so this page feels like the same app, not a bolted-on screen.
 export const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 .tp-root *{box-sizing:border-box;margin:0;padding:0}
 .tp-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
-  --font:'Caveat',cursive;
+  --font:'Caveat',cursive;--font-body:'Inter',sans-serif;
   background:var(--paper);color:var(--ink);font-family:var(--font);
   width:100%;
 }
@@ -18,10 +18,10 @@ export const CSS = `
 
 .tp-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .tp-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.6deg)}
-.tp-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:2px}
+.tp-sub{font-family:var(--font-body);font-size:14.5px;color:var(--gray2);font-style:italic;margin-top:2px}
 
 .tp-tabs{display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center;justify-content:flex-start}
-.tp-tab{font-family:var(--font);font-size:15px;font-weight:600;padding:4px 14px;background:var(--paper);
+.tp-tab{font-family:var(--font-body);font-size:14px;font-weight:600;padding:4px 14px;background:var(--paper);
   color:var(--gray2);border:1.5px solid var(--gray4);cursor:pointer;transition:all .12s;transform:rotate(-0.3deg)}
 .tp-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:rotate(0.2deg)}
 .tp-tab:hover:not(.active){background:var(--paper3);color:var(--gray1)}
@@ -47,20 +47,20 @@ export const CSS = `
 .tp-card.rating{border-color:var(--ink);background-image:linear-gradient(178deg, var(--paper) 0%, var(--paper2) 100%)}
 
 .tp-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
-.tp-card-code{font-family:var(--font);font-size:13px;font-weight:600;padding:2px 10px;background:var(--paper3);
+.tp-card-code{font-family:var(--font-body);font-size:12.5px;font-weight:600;padding:2px 10px;background:var(--paper3);
   border:1px solid var(--gray4);border-radius:20px;color:var(--gray1);letter-spacing:.2px;align-self:flex-start}
 .tp-card-title{font-family:var(--font);font-size:24px;font-weight:700;line-height:1.15}
 
 .tp-card-tags{display:flex;gap:6px;flex-wrap:wrap}
-.tp-card-tag{font-family:var(--font);font-size:13px;padding:1px 10px;border:1px dashed var(--gray3);
+.tp-card-tag{font-family:var(--font-body);font-size:12.5px;padding:1px 10px;border:1px dashed var(--gray3);
   border-radius:14px;color:var(--gray2)}
 
-.tp-enrolled-row{display:flex;align-items:center;gap:6px;font-size:16px;color:var(--gray1);
+.tp-enrolled-row{display:flex;align-items:center;gap:6px;font-family:var(--font-body);font-size:14px;color:var(--gray1);
   padding-top:8px;border-top:1px dashed var(--gray4)}
 .tp-enrolled-dot{width:7px;height:7px;border-radius:50%;background:var(--ink);flex-shrink:0}
-.tp-enrolled-conf{margin-left:auto;font-size:16px;color:var(--gray2)}
+.tp-enrolled-conf{margin-left:auto;font-size:14px;color:var(--gray2)}
 
-.tp-cta{font-family:var(--font);font-size:16px;font-weight:700;padding:6px 14px;margin-top:auto;
+.tp-cta{font-family:var(--font-body);font-size:14.5px;font-weight:600;padding:6px 14px;margin-top:auto;
   background:var(--paper);border:1.5px dashed var(--gray2);color:var(--gray1);cursor:pointer;
   border-radius:14px;transition:all .12s;width:100%;text-align:center}
 .tp-cta:hover{background:var(--ink);color:var(--paper);border-style:solid;border-color:var(--ink);transform:translateY(-1px)}
@@ -72,26 +72,26 @@ export const CSS = `
 .tp-rate-prompt{text-align:center}
 .tp-rate-q{font-family:var(--font);font-size:19px;font-weight:700;line-height:1.25}
 .tp-rate-q em{color:var(--gray1);font-style:italic}
-.tp-rate-id{font-size:13px;color:var(--gray3);margin-top:2px}
+.tp-rate-id{font-family:var(--font-body);font-size:12px;color:var(--gray3);margin-top:2px}
 .tp-dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .tp-dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--gray4);background:var(--paper);
-  color:var(--gray2);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;
+  color:var(--gray2);font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;
   display:flex;align-items:center;justify-content:center;transition:all .1s}
 .tp-dot.filled{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 .tp-bar-track{height:4px;background:var(--paper3);border-radius:2px;overflow:hidden;margin:0 2px}
 .tp-bar-fill{height:100%;background:var(--ink);border-radius:2px;transition:width .25s}
-.tp-bar-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--gray3);margin-top:3px;font-style:italic}
-.tp-rate-cancel{background:none;border:none;cursor:pointer;font-family:var(--font);font-size:14px;
+.tp-bar-labels{display:flex;justify-content:space-between;font-family:var(--font-body);font-size:12px;color:var(--gray3);margin-top:3px;font-style:italic}
+.tp-rate-cancel{background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13.5px;
   color:var(--gray2);text-decoration:underline;text-underline-offset:2px}
 .tp-rate-cancel:hover{color:var(--ink)}
 
-.tp-empty{grid-column:1/-1;font-family:var(--font);font-size:17px;color:var(--gray2);font-style:italic;
+.tp-empty{grid-column:1/-1;font-family:var(--font-body);font-size:16px;color:var(--gray2);font-style:italic;
   text-align:center;padding:2.5rem 0}
 
 /* ── Toast ── */
 .tp-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);
-  color:var(--paper);padding:8px 20px;border-radius:2px 10px 2px 10px;font-family:var(--font);
-  font-size:16px;font-weight:600;white-space:nowrap;z-index:999;animation:tp-toastIn .2s ease;
+  color:var(--paper);padding:8px 20px;border-radius:2px 10px 2px 10px;font-family:var(--font-body);
+  font-size:14.5px;font-weight:600;white-space:nowrap;z-index:999;animation:tp-toastIn .2s ease;
   border:1.5px solid var(--ink)}
 @keyframes tp-toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 `;

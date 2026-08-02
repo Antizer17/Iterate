@@ -8,13 +8,13 @@ import {SideNav} from "./iterate-app.jsx"
 // selectors are all cv- prefixed.
 
 export const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 .cv-root *{box-sizing:border-box;margin:0;padding:0}
 .cv-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
   --amber:#b5842a;--ok:#5f8d63;
-  --font:'Caveat',cursive;
+  --font:'Caveat',cursive;--font-body:'Inter',sans-serif;
   background:var(--paper);color:var(--ink);font-family:var(--font);
   position:relative;overflow:hidden;
 }
@@ -59,25 +59,25 @@ export const CSS = `
  
 .cv-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .cv-title{font-family:var(--font);font-size:44px;font-weight:700;transform:rotate(-0.5deg);display:inline-block}
-.cv-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:8px}
+.cv-sub{font-family:var(--font-body);font-size:14.5px;color:var(--gray2);font-style:italic;margin-top:8px}
 .cv-rule{flex:1;border:none;border-top:1px dashed var(--gray4);margin:0 8px}
-.cv-cracked-tally{font-family:var(--font);font-size:15px;color:var(--gray2);white-space:nowrap;margin-left:auto}
+.cv-cracked-tally{font-family:var(--font-body);font-size:13.5px;color:var(--gray2);white-space:nowrap;margin-left:auto}
 .cv-cracked-tally b{color:var(--ink)}
  
 .cv-controls{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
-.cv-search{font-family:var(--font);font-size:16px;padding:5px 12px;background:var(--paper);
+.cv-search{font-family:var(--font-body);font-size:14.5px;padding:5px 12px;background:var(--paper);
   border:1.5px solid var(--gray4);color:var(--ink);flex:1;min-width:140px;transform:rotate(-0.2deg)}
 .cv-search:focus{outline:none;border-color:var(--ink)}
-.cv-sort{font-family:var(--font);font-size:15px;padding:5px 10px;background:var(--paper);
+.cv-sort{font-family:var(--font-body);font-size:13.5px;padding:5px 10px;background:var(--paper);
   border:1.5px solid var(--gray4);color:var(--gray1);cursor:pointer}
-.cv-addbtn{font-family:var(--font);font-size:16px;font-weight:700;padding:5px 16px;
+.cv-addbtn{font-family:var(--font-body);font-size:14.5px;font-weight:600;padding:5px 16px;
   background:var(--ink);color:var(--paper);border:1.5px solid var(--ink);cursor:pointer;
   transition:transform 0.12s;transform:rotate(-0.4deg)}
 .cv-addbtn:hover{transform:rotate(-0.4deg) scale(1.04)}
 .cv-addbtn:active{transform:rotate(-0.4deg) scale(0.96)}
  
 .cv-tabs{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-.cv-tab{font-family:var(--font);font-size:15px;font-weight:600;padding:3px 12px;background:var(--paper);
+.cv-tab{font-family:var(--font-body);font-size:14px;font-weight:600;padding:3px 12px;background:var(--paper);
   color:var(--gray2);border:1.5px solid var(--gray4);cursor:pointer;transition:all .12s;transform:rotate(-0.3deg)}
 .cv-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:rotate(0.2deg)}
 .cv-tab:hover:not(.active){background:var(--paper3);color:var(--gray1)}
@@ -87,19 +87,19 @@ export const CSS = `
   margin-bottom:1rem;transform:rotate(-0.15deg);animation:cv-popIn .25s ease}
 .cv-form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .cv-form input[type=text],.cv-form textarea,.cv-form select{
-  font-family:var(--font);font-size:16px;padding:5px 10px;background:var(--paper);
+  font-family:var(--font-body);font-size:14.5px;padding:5px 10px;background:var(--paper);
   border:1.5px solid var(--gray4);color:var(--ink)}
 .cv-form input[type=text]{flex:2;min-width:160px}
 .cv-form select{flex:1;min-width:100px}
-.cv-form textarea{width:100%;min-height:44px;resize:vertical;font-size:15px}
+.cv-form textarea{width:100%;min-height:44px;resize:vertical;font-size:14px}
 .cv-level-picker{display:flex;gap:6px;align-items:center}
-.cv-level-label{font-size:14px;color:var(--gray2);margin-right:4px}
+.cv-level-label{font-family:var(--font-body);font-size:13px;color:var(--gray2);margin-right:4px}
 .cv-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--gray3);cursor:pointer;background:var(--paper)}
 .cv-dot.filled{background:var(--ink);border-color:var(--ink)}
 .cv-form-actions{display:flex;gap:8px;justify-content:flex-end}
-.cv-form-submit{font-family:var(--font);font-weight:700;font-size:15px;padding:4px 14px;
+.cv-form-submit{font-family:var(--font-body);font-weight:600;font-size:14px;padding:4px 14px;
   background:var(--ink);color:var(--paper);border:1.5px solid var(--ink);cursor:pointer}
-.cv-form-cancel{font-family:var(--font);font-size:15px;padding:4px 14px;background:transparent;
+.cv-form-cancel{font-family:var(--font-body);font-size:14px;padding:4px 14px;background:transparent;
   color:var(--gray2);border:1.5px solid transparent;cursor:pointer}
 .cv-form-cancel:hover{color:var(--ink)}
  
@@ -120,7 +120,7 @@ export const CSS = `
 .cv-card.high{animation:cv-popIn .3s ease both, cv-jitter 3.2s ease-in-out infinite}
 .cv-card.cracking{animation:cv-crumple .45s ease forwards !important}
 .cv-card.solved{border-color:var(--ok);border-style:solid;background:linear-gradient(178deg, var(--paper) 0%, #f1f6f1 100%)}
-.cv-solved-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:3px;font-size:12px;
+.cv-solved-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:3px;font-family:var(--font-body);font-size:11.5px;
   color:var(--ok);background:rgba(95,141,99,0.14);border:1px solid rgba(95,141,99,0.5);
   padding:1px 8px 1px 6px;border-radius:20px;margin-bottom:8px;transform:rotate(-1.5deg)}
 .cv-remove-btn{position:absolute;top:-9px;right:-9px;width:23px;height:23px;border-radius:50%;
@@ -145,16 +145,16 @@ export const CSS = `
   100%{stroke-dashoffset:var(--dash-len);opacity:1}
 }
 .cv-scribble-path{animation:cv-scribble-draw 2.6s ease-in-out infinite}
-.cv-card-course{display:inline-block;font-size:12.5px;padding:2px 10px;background:var(--paper3);
+.cv-card-course{display:inline-block;font-family:var(--font-body);font-size:11.5px;padding:2px 10px;background:var(--paper3);
   border:1px solid var(--gray4);border-radius:20px;color:var(--gray1);margin-bottom:8px;
   align-self:flex-start;letter-spacing:.2px}
-.cv-card-note{font-size:14.5px;color:var(--gray1);font-style:italic;margin:0 0 10px;
+.cv-card-note{font-family:var(--font-body);font-size:13.5px;color:var(--gray1);font-style:italic;margin:0 0 10px;
   padding-left:8px;border-left:2px solid var(--gray4);
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .cv-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;
   margin-top:auto;padding-top:8px;border-top:1px dashed var(--gray4)}
-.cv-card-date{font-size:12.5px;color:var(--gray3)}
-.cv-crack-btn{font-family:var(--font);font-size:14.5px;font-weight:700;padding:4px 14px;
+.cv-card-date{font-family:var(--font-body);font-size:11.5px;color:var(--gray3)}
+.cv-crack-btn{font-family:var(--font-body);font-size:13.5px;font-weight:600;padding:4px 14px;
   background:var(--paper);border:1.5px dashed var(--gray2);color:var(--gray1);cursor:pointer;
   border-radius:3px;transition:all .12s}
 .cv-crack-btn:hover{background:var(--ink);color:var(--paper);border-style:solid;border-color:var(--ink);transform:translateY(-1px)}
@@ -163,22 +163,22 @@ export const CSS = `
 /* ── Flipped face: resources list ── */
 .cv-card-back-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;
   padding-bottom:8px;border-bottom:1px dashed var(--gray4);width:100%}
-.cv-card-back-title{font-size:22px;font-weight:700}
+.cv-card-back-title{font-family:var(--font);font-size:22px;font-weight:700}
 .cv-resource-list{display:flex;flex-direction:column;gap:6px;width:100%;flex:1}
 .cv-resource-row{display:flex;align-items:center;gap:8px;padding:6px 9px;border:1px solid var(--gray4);
-  background:var(--paper2);border-radius:9px;text-decoration:none;color:var(--ink);font-size:14.5px;
+  background:var(--paper2);border-radius:9px;text-decoration:none;color:var(--ink);font-family:var(--font-body);font-size:13.5px;
   transition:all .12s;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .cv-resource-row:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:translateX(2px)}
 .cv-resource-row .cv-play{flex-shrink:0;width:15px;height:15px;display:flex;align-items:center;justify-content:center}
-.cv-resource-empty{font-size:14px;color:var(--gray3);font-style:italic;text-align:center;
+.cv-resource-empty{font-family:var(--font-body);font-size:13px;color:var(--gray3);font-style:italic;text-align:center;
   padding:18px 8px;flex:1;display:flex;align-items:center;justify-content:center}
-.cv-back-btn{align-self:center;font-family:var(--font);font-size:14.5px;font-weight:700;
+.cv-back-btn{align-self:center;font-family:var(--font-body);font-size:13.5px;font-weight:600;
   padding:4px 18px;margin-top:12px;background:transparent;border:1.5px solid var(--gray3);
   color:var(--gray2);border-radius:14px;cursor:pointer;transition:all .12s}
 .cv-back-btn:hover{border-color:var(--ink);color:var(--ink)}
  
 .cv-empty{border:1.5px dashed var(--gray3);padding:2rem 1rem;text-align:center;
-  color:var(--gray2);font-style:italic;font-size:17px;transform:rotate(-0.2deg)}
+  font-family:var(--font-body);color:var(--gray2);font-style:italic;font-size:15.5px;transform:rotate(-0.2deg)}
 `;
  
 // ── Constants ────────────────────────────────────────────────────────────────

@@ -31,7 +31,7 @@ function SideNav() {
     { path: "/vault",    label: "Vault" },
     { path: "/interview", label: "Interview" },
     { path: "/reports", label: "Reports" },
-    { path: "/support", label: "Support" }
+  
 
   ];
   const [users, setUsers] = useState(null);

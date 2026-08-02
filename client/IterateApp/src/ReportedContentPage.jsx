@@ -5,13 +5,13 @@ import { SideNav } from "./iterate-app";
 // Same variable names / font as InterviewPage.jsx / CompanyGuidePage.jsx so
 // this reads as the same app.
 export const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 .rc-root *{box-sizing:border-box;margin:0;padding:0}
 .rc-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
   --danger:#c0433d;
-  --font:'Caveat',cursive;
+  --font:'Caveat',cursive;--font-body:'Inter',sans-serif;
   background:var(--paper);color:var(--ink);font-family:var(--font);
   width:100%;
 }
@@ -19,7 +19,7 @@ export const CSS = `
 
 .rc-header{margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .rc-title{font-family:var(--font);font-size:42px;font-weight:700;display:inline-block;transform:rotate(-0.5deg)}
-.rc-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:2px}
+.rc-sub{font-family:var(--font-body);font-size:14px;color:var(--gray2);font-style:italic;margin-top:2px}
 
 .rc-list{display:flex;flex-direction:column;gap:14px}
 @keyframes rc-popIn{0%{transform:scale(.6) rotate(var(--r,0deg));opacity:0}60%{transform:scale(1.02) rotate(var(--r,0deg))}100%{transform:scale(1) rotate(var(--r,0deg));opacity:1}}
@@ -33,20 +33,20 @@ export const CSS = `
 
 .rc-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
   flex-wrap:wrap;margin-bottom:8px}
-.rc-material{font-family:var(--font);font-size:20px;font-weight:700;line-height:1.2}
-.rc-material-type{font-size:13px;color:var(--gray2);font-style:italic;margin-top:2px}
-.rc-reporter{font-family:var(--font);font-size:14px;color:var(--gray1);
+.rc-material{font-family:var(--font);font-size:22px;font-weight:700;line-height:1.2}
+.rc-material-type{font-family:var(--font-body);font-size:12.5px;color:var(--gray2);font-style:italic;margin-top:2px}
+.rc-reporter{font-family:var(--font-body);font-size:13px;color:var(--gray1);
   background:var(--paper3);border:1px solid var(--gray4);border-radius:20px;
   padding:2px 12px;white-space:nowrap}
 
-.rc-message-label{font-size:13px;color:var(--gray2);font-style:italic;margin-bottom:2px}
-.rc-message{font-size:16.5px;color:var(--ink);padding-left:8px;border-left:2px solid var(--gray4)}
-.rc-no-message{font-size:15px;color:var(--gray3);font-style:italic;padding-left:8px}
+.rc-message-label{font-family:var(--font-body);font-size:12.5px;color:var(--gray2);font-style:italic;margin-bottom:2px}
+.rc-message{font-family:var(--font-body);font-size:15px;color:var(--ink);padding-left:8px;border-left:2px solid var(--gray4)}
+.rc-no-message{font-family:var(--font-body);font-size:14px;color:var(--gray3);font-style:italic;padding-left:8px}
 
-.rc-status{font-family:var(--font);font-size:19px;color:var(--gray2);font-style:italic;
+.rc-status{font-family:var(--font-body);font-size:16px;color:var(--gray2);font-style:italic;
   text-align:center;padding:2.5rem 0}
 .rc-status--error{color:var(--danger)}
-.rc-empty{font-family:var(--font);font-size:17px;color:var(--gray2);font-style:italic;
+.rc-empty{font-family:var(--font-body);font-size:15px;color:var(--gray2);font-style:italic;
   text-align:center;padding:2.5rem 0}
 `;
 
