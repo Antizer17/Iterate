@@ -47,7 +47,7 @@ export default async function syncStreak(req, res) {
   maxAge: 7 * 24 * 60 * 60 * 1000, // match your JWT's expiry
 });
 
-return res.redirect(`http://localhost:5173/progress/${courseCode}`); 
+return res.redirect(`${process.env.CLIENT_URL}/progress/${courseCode}`); 
     
     // Redirect the user to the progress page 
     } catch (err) {
@@ -98,7 +98,7 @@ async function syncConfusion(req, res) {
     // Safe optional chaining guard to avoid crashes on null references
     if (user.confusedVault.some(obj => obj.moduleId?.topic === topic.topic)) {
       console.log("Topic already added to the vault!");
-      return res.redirect('http://localhost:5173/vault');
+      return res.redirect(`${process.env.CLIENT_URL}/vault`);
     }
 
     console.log(`Name of topic being sent to ollama: ${topic.topic}`);
@@ -153,7 +153,7 @@ async function syncConfusion(req, res) {
       maxAge: 7 * 24 * 60 * 60 * 1000, 
     });
 
-    return res.redirect(`http://localhost:5173/vault`); 
+    return res.redirect(`${process.env.CLIENT_URL}/vault`); 
     
   } catch (err) {
     console.error(`❌ Error syncing streak: ${err}`);
