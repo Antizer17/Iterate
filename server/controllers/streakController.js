@@ -195,7 +195,6 @@ async function reportContent(req,res){
     }
 
     let { id, courseCode, currentOrder } = decoded;
-    currentOrder = currentOrder - 1
     console.log(currentOrder)
     const content = await materials.findOne({courseCode:courseCode, order: currentOrder })
     console.log(content)
