@@ -16,7 +16,7 @@ import brevo from '../config/transporterConfig.js';
 
 
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:1700";
+const BASE_URL = process.env.BASE_URL || "https://api.iterate-app.me";
 
 
 // 6. Dispatch the structured email
@@ -135,11 +135,11 @@ export const runDailyEmailJob = async () => {
             <div style="text-align: center; margin-top: 35px; border-top: 1px dashed #cbd5e1; padding-top: 25px;">
               <a href="${BASE_URL}/api/streak/sync?token=${linkToken}" 
                  style="display: inline-block; background-color: #000000; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
-                 Aced It!
+                 Aced
               </a>
               <a href="${BASE_URL}/api/streak/confused?token=${linkToken}" 
                  style="display: inline-block; background-color: #000; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
-                Confused...
+                Confused
               </a>
               <a href="${BASE_URL}/api/streak/report?token=${linkToken}" 
                  style="display: inline-block; background-color: #DC2626; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
