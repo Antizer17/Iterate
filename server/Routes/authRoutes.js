@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { googleCallback, logoutUser } from '../controllers/authController.js'
-import requireAuth from '../middlewares/authMiddleware.js'
+import {requireAuth} from '../middlewares/authMiddleware.js'
 
 const router = express.Router();
 
