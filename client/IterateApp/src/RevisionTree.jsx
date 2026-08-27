@@ -77,7 +77,7 @@ button.rt-tab:active{transform:scale(0.97) rotate(-0.3deg)}
 `;
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const SVG_W = 1500, NODE_R = 21;
+const NODE_R = 21;
 // Fallback defaults only — real trees get dynamic levelCounts/levelY from buildRevisionTree()
 const DEFAULT_LEVEL_Y = [32, 108, 196, 294];
 const DEFAULT_LEVEL_COUNTS = [1, 2, 4, 8];
@@ -87,7 +87,7 @@ const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Satur
 // ── Helpers ──────────────────────────────────────────────────────────────────
 // levelCounts must be sized to however many levels the current course actually has —
 // this is what makes node count/spacing dynamic instead of fixed at 15 (1+2+4+8).
-function xFor(level, pos, levelCounts) { return (SVG_W / (levelCounts[level] + 1)) * (pos + 1); }
+function xFor(level, pos, levelCounts, svgW) { return (svgW / (levelCounts[level] + 1)) * (pos + 1); }
 function findNode(nodes, seq) {
   if (seq === undefined || seq === null) {
     console.warn('findNode called with null/undefined seq — this should never happen');
@@ -116,8 +116,8 @@ function sketchCirclePath(cx, cy, r, seed = 0) {
 }
 
 // ── TreeNode ─────────────────────────────────────────────────────────────────
-function TreeNode({ node, nodes, edges, animateId, onSelect, levelCounts, levelY }) {
-  const x = xFor(node.level, node.pos, levelCounts), y = levelY[node.level];
+function TreeNode({ node, nodes, edges, animateId, onSelect, levelCounts, levelY, svgW }) {
+  const x = xFor(node.level, node.pos, levelCounts, svgW), y = levelY[node.level];
   const unlocked = isUnlocked(nodes, edges, node);
   const visible = node.done || unlocked;
   const seed = node.seq * 1.7;
@@ -176,16 +176,27 @@ function TreeNode({ node, nodes, edges, animateId, onSelect, levelCounts, levelY
 // so however many topics a course has, the tree grows/shrinks to match — nothing here
 // is hardcoded to a 15-node (1+2+4+8) shape anymore.
 export function TreeSVG({ nodes, edges, animateId, onSelectNode, levelCounts, levelY }) {
+  const [svgW, setSvgW] = useState(1500);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      setSvgW(window.innerWidth < 768 ? Math.max(window.innerWidth * 1.5, 600) : 1500);
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
   const counts = levelCounts?.length ? levelCounts : DEFAULT_LEVEL_COUNTS;
   const yPositions = levelY?.length ? levelY : DEFAULT_LEVEL_Y;
   const svgHeight = Math.max(...yPositions) + NODE_R + 32;
 
   const rules = [];
   for (let y = 18; y < svgHeight; y += 18)
-    rules.push(<line key={y} x1={0} y1={y} x2={SVG_W} y2={y} stroke="#e8e5dc" strokeWidth="0.6" />);
+    rules.push(<line key={y} x1={0} y1={y} x2={svgW} y2={y} stroke="#e8e5dc" strokeWidth="0.6" />);
 
   return (
-    <svg width={SVG_W} height={svgHeight} display="block">
+    <svg width={svgW} height={svgHeight} viewBox={`0 0 ${svgW} ${svgHeight}`} display="block" style={{ maxWidth: "100%", height: "auto" }}>
       {rules}
       <line x1={26} y1={0} x2={26} y2={svgHeight} stroke="#f0c0b0" strokeWidth="1" />
       {edges.map(([fromId, toId], i) => {
@@ -194,8 +205,8 @@ export function TreeSVG({ nodes, edges, animateId, onSelectNode, levelCounts, le
         console.warn('Edge lookup failed:', { fromId, toId, from, to });
         return null;
       } 
-        const x1=xFor(from.level,from.pos,counts), y1=yPositions[from.level]+NODE_R;
-        const x2=xFor(to.level,to.pos,counts),     y2=yPositions[to.level]-NODE_R;
+        const x1=xFor(from.level,from.pos,counts,svgW), y1=yPositions[from.level]+NODE_R;
+        const x2=xFor(to.level,to.pos,counts,svgW),     y2=yPositions[to.level]-NODE_R;
         return (
           <path key={i} d={wobbleLine(x1,y1,x2,y2,3,i)} fill="none"
             stroke={from.done&&to.done?"#7a7870":"#ccc9c0"}
@@ -206,7 +217,7 @@ export function TreeSVG({ nodes, edges, animateId, onSelectNode, levelCounts, le
       {nodes.map(node => (
         <TreeNode key={node.seq} node={node} nodes={nodes} edges={edges}
           animateId={animateId} onSelect={onSelectNode}
-          levelCounts={counts} levelY={yPositions} />
+          levelCounts={counts} levelY={yPositions} svgW={svgW} />
       ))}
     </svg>
   );

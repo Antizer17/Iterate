@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js ",
+    "dev": "nodemon --env-file=.env index.js ",
     "seedContent": "node seed.js",
     "mail": "node ./utils/mailer.js",
     "seedUser": "node ./utils/seedUserProgress.js",
