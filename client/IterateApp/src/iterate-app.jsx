@@ -25,6 +25,7 @@ import IterateLogo from "./logo.jsx";
 function SideNav() {
   const { courseCode} = useParams()
   const {user, loading} = useUser()
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const links = [
     { path: "/courses",  label: "Courses" },
     { path: `/progress/${courseCode ?? user?.enRolledCourses[0] ?? "CSE220"}`,  label: "Progress" },
@@ -69,7 +70,27 @@ function SideNav() {
     }
   }
   return (
-    <nav className="nav">
+    <>
+      <button 
+        className={`mobile-nav-toggle ${isMobileOpen ? "is-open" : ""}`} 
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        aria-label="Toggle Navigation"
+      >
+        {isMobileOpen ? (
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="toggle-icon close-icon">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        ) : (
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="toggle-icon menu-icon">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        )}
+      </button>
+      {isMobileOpen && <div className="nav-overlay" onClick={() => setIsMobileOpen(false)}></div>}
+      <nav className={`nav ${isMobileOpen ? "nav-open" : ""}`}>
       <div className="nav-logo" onClick={() => navigate("/")}>
         <IterateLogo size={28} spin />
         <span className="nav-brand">iterate</span>
@@ -98,6 +119,7 @@ function SideNav() {
         </div>
       </div>
     </nav>
+    </>
   );
 }
 
