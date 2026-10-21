@@ -14,4 +14,9 @@ async function runTask(req,res){
         res.status(500).json({error:err})
     }
 }
-export default runTask;
+
+function nudgeServer(req,res){
+return res.status(200).send('pong')
+}
+
+export { runTask, nudgeServer};
