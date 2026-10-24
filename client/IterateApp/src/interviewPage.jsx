@@ -43,7 +43,7 @@ export const CSS = `
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
 
 .ip-card-name{font-family:var(--font);font-size:24px;font-weight:700;line-height:1.15}
-.ip-card-intro{font-size:14.5px;color:var(--gray1);font-style:italic;margin:0;
+.ip-card-intro{font-family:var(--font-body);font-size:14.5px;color:var(--gray1);font-style:italic;margin:0;
   padding-left:8px;border-left:2px solid var(--gray4);
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .ip-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;
