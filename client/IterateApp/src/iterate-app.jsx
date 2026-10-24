@@ -184,7 +184,7 @@ function TreeLines() {
 
 
 
-// ─── Landing / Onboarding ────────────────────────────────────────────────────
+// ─── Login Page ────────────────────────────────────────────────────
 function Landing({ setPage }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -216,7 +216,7 @@ function Landing({ setPage }) {
           <>
             <h1 className="hero-headline">Learn CS.<br />Actually retain it.</h1>
             <p className="hero-sub">
-              Iterate builds a personalised revision tree from your syllabus — unlocking topics as you master their prerequisites.
+              Iterate turns your revision into a growing tree, helps you get unstuck, and prepares you for tech interviews at local companies.
             </p>
 
             <div className="input-row">
@@ -228,9 +228,9 @@ function Landing({ setPage }) {
 
             <div className="feature-row">
               {[
-                ["◈", "Skill tree progress", "Visual map of what you know"],
-                ["⊞", "Spaced repetition", "Sessions timed to your forgetting curve"],
-                ["⊙", "Syllabus-aware", "Import your course — it maps itself"],
+                ["◈", "Revision Progress Tree", "See your progress as a binary tree that grows with every topic you cover."],
+                ["⊞", "Confused Vault", "Stuck on something? Save it and get video resources that clear it up and take you further."],
+                ["⊙", "Local interview guides", "Scout Bangladeshi tech companies and learn what to expect before you apply."],
               ].map(([icon, title, desc]) => (
                 <div key={title} className="feature-card">
                   <div className="feature-icon">{icon}</div>
