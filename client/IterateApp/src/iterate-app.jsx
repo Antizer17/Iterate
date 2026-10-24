@@ -220,7 +220,7 @@ function Landing({ setPage }) {
             </p>
 
             <div className="input-row">
-              <button onClick={handleSubmit} className="hm-cta-primary">
+              <button onClick={handleSubmit} className="cta-button">
                 Sign in with Google →
               </button>
             </div>
