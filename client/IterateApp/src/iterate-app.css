@@ -332,6 +332,7 @@ button:focus-visible { outline: 2px solid #1A1A1A; outline-offset: 2px; }
   white-space: nowrap;
   transition: opacity 0.15s;
 }
+.cta-button:hover{transform:translateY(-2px);box-shadow:0 8px 18px -8px rgba(26,26,24,0.4)}
 .fine-print { font-size: 11px; color: #AAA; margin-bottom: 32px; }
 .feature-row { display: flex; gap: 12px; border-top: 1px solid #E8E5DE; padding-top: 24px; }
 .feature-card { flex: 1; }
@@ -342,5 +343,4 @@ button:focus-visible { outline: 2px solid #1A1A1A; outline-offset: 2px; }
 .success-state { text-align: center; padding: 32px 0; }
 .success-text { margin-top: 20px; font-family: 'DM Serif Display', serif; font-size: 20px; color: #1A1A1A; }
 
-.hm-cta-primary{font-family:var(--font-body);font-size:16px;font-weight:600;padding:10px 26px};
-.hm-cta-primary:hover{transform:translateY(-2px);box-shadow:0 8px 18px -8px rgba(26,26,24,0.4)}
+
