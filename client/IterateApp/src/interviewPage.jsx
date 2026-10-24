@@ -11,7 +11,7 @@ export const CSS = `
 .ip-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
-  --font:'Caveat',cursive;
+  --font:'Caveat',cursive;--font-body:'Inter',sans-serif;
   background:var(--paper);color:var(--ink);font-family:var(--font);
   width:100%;
 }
@@ -19,10 +19,10 @@ export const CSS = `
 
 .ip-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .ip-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.6deg)}
-.ip-sub{font-family:var(--font);font-size:16px;color:var(--gray2);font-style:italic;margin-top:2px}
+.ip-sub{font-family:var(--font-body);font-size:16px;color:var(--gray2);font-style:italic;margin-top:2px}
 
 .ip-search{display:flex;justify-content:flex-start;margin-bottom:1.5rem}
-.ip-search input{font-family:var(--font);font-size:16px;padding:5px 14px;background:var(--paper);
+.ip-search input{font-family:var(--font-body);font-size:16px;padding:5px 14px;background:var(--paper);
   border:1.5px solid var(--gray4);color:var(--ink);width:100%;max-width:340px;transform:rotate(-0.2deg)}
 .ip-search input:focus{outline:none;border-color:var(--ink)}
 
@@ -48,12 +48,12 @@ export const CSS = `
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .ip-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;
   margin-top:auto;padding-top:8px;border-top:1px dashed var(--gray4)}
-.ip-card-count{font-family:var(--font);font-size:13px;padding:1px 10px;background:var(--ink);
+.ip-card-count{font-family:var(--font);font-size:16px;padding:1px 10px;background:var(--ink);
   border:1px solid var(--gray4);border-radius:20px;color:var(--paper3)}
 .ip-card-cta{font-family:var(--font);font-size:14.5px;font-weight:700;color:var(--gray1)}
 .ip-card:hover .ip-card-cta{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
-.ip-status{font-family:var(--font);font-size:19px;color:var(--gray2);font-style:italic;
+.ip-status{font-family:var(--font-body);font-size:19px;color:var(--gray2);font-style:italic;
   text-align:center;padding:2.5rem 0}
 .ip-status--error{color:#c0433d}
 .ip-empty{grid-column:1/-1;font-family:var(--font);font-size:17px;color:var(--gray2);font-style:italic;
