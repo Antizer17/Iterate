@@ -5,13 +5,13 @@ import { SideNav } from "./iterate-app";
 // Same variable names / font as InterviewPage.jsx / CompanyGuidePage.jsx /
 // ReportedContentPage.jsx so this reads as the same app.
 export const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 .sp-root *{box-sizing:border-box;margin:0;padding:0}
 .sp-root{
   --ink:#1a1a18;--paper:#faf8f4;--paper2:#f3f1eb;--paper3:#eceae3;
   --gray1:#4a4845;--gray2:#7a7870;--gray3:#aaa89f;--gray4:#ccc9c0;
   --ok:#5f8d63;--bkash:#e2136e;
-  --font:'Caveat',cursive;
+  --font:'Caveat',cursive;--font-body:'Inter',sans-serif;
   background:var(--paper);color:var(--ink);font-family:var(--font);
   width:100%;
 }
@@ -19,7 +19,7 @@ export const CSS = `
 
 .sp-header{text-align:left;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .sp-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.5deg)}
-.sp-sub{font-family:var(--font);font-size:17px;color:var(--gray2);font-style:italic;margin-top:4px}
+.sp-sub{font-family:var(--font-body);font-size:15px;color:var(--gray2);font-style:italic;margin-top:4px}
 
 .sp-card{background:linear-gradient(178deg, var(--paper) 0%, var(--paper2) 100%);
   border:1.5px solid var(--gray4);border-radius:2px 14px 4px 12px;padding:1.4rem 1.5rem;
@@ -29,20 +29,20 @@ export const CSS = `
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
 
 .sp-method-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.sp-bkash-badge{font-family:var(--font);font-size:16px;font-weight:700;color:#fff;
-  background:var(--bkash);padding:3px 14px;border-radius:20px;transform:rotate(-1deg)}
-.sp-method-label{font-size:15px;color:var(--gray2);font-style:italic}
+.sp-bkash-badge{font-family:var(--font-body);font-size:12.5px;font-weight:700;letter-spacing:0.3px;color:#fff;
+  background:var(--bkash);padding:2px 12px;border-radius:20px;transform:rotate(-1deg)}
+.sp-method-label{font-family:var(--font-body);font-size:14px;color:var(--gray2);font-style:italic}
 
 .sp-number-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
   background:var(--paper3);border:1.5px dashed var(--gray4);border-radius:8px;
   padding:0.75rem 1rem;margin-bottom:6px}
 .sp-number{font-family:'Courier New',monospace;font-size:22px;font-weight:700;letter-spacing:1px;color:var(--ink)}
-.sp-copy-btn{font-family:var(--font);font-size:15px;font-weight:700;color:var(--ink);
+.sp-copy-btn{font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--ink);
   background:var(--paper);border:1.5px solid var(--gray4);border-radius:20px;
   padding:4px 14px;cursor:pointer;transition:background .15s ease, color .15s ease}
 .sp-copy-btn:hover{background:var(--ink);color:var(--paper)}
 .sp-copy-btn--copied{background:var(--ok);color:#fff;border-color:var(--ok)}
-.sp-type{font-size:14.5px;color:var(--gray2);font-style:italic}
+.sp-type{font-family:var(--font-body);font-size:13.5px;color:var(--gray2);font-style:italic;margin-top:6px}
 
 .sp-section-title{font-family:var(--font);font-size:22px;font-weight:700;margin-bottom:0.75rem;
   display:inline-block;transform:rotate(-0.3deg)}
@@ -54,12 +54,12 @@ export const CSS = `
   padding:0.7rem 0.5rem;transition:transform .12s ease, box-shadow .12s ease, background .12s ease}
 .sp-amount-btn:hover{transform:translateY(-2px);box-shadow:0 6px 14px -6px rgba(26,26,24,0.3)}
 .sp-amount-btn--active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.sp-amount-sub{font-size:12px;font-weight:400;display:block;margin-top:2px;opacity:.75}
+.sp-amount-sub{font-family:var(--font-body);font-size:12px;font-weight:400;display:block;margin-top:2px;opacity:.75}
 
 .sp-custom-row{display:flex;align-items:center;gap:8px;margin-top:4px}
-.sp-custom-row span{font-size:19px;color:var(--gray2)}
-.sp-custom-row input{font-family:var(--font);font-size:19px;padding:6px 12px;background:var(--paper);
-  border:1.5px solid var(--gray4);color:var(--ink);width:130px}
+.sp-custom-row span{font-family:var(--font-body);font-size:14.5px;color:var(--gray2)}
+.sp-custom-row input{font-family:var(--font-body);font-size:14.5px;padding:6px 12px;background:var(--paper);
+  border:1.5px solid var(--gray4);color:var(--ink);width:140px;border-radius:4px}
 .sp-custom-row input:focus{outline:none;border-color:var(--ink)}
 
 .sp-steps{list-style:none;margin-top:1rem}
@@ -68,13 +68,13 @@ export const CSS = `
   position:relative;transform:rotate(-0.15deg)}
 .sp-step::before{content:'';position:absolute;top:-1px;right:-1px;width:7px;height:7px;
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
-.sp-step-num{font-family:var(--font);font-size:15px;font-weight:700;color:var(--paper);
+.sp-step-num{font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--paper);
   background:var(--ink);width:22px;height:22px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center}
-.sp-step-text{font-size:16.5px;color:var(--gray1)}
-.sp-step-text b{color:var(--ink)}
+.sp-step-text{font-family:var(--font-body);font-size:15px;line-height:1.55;color:var(--gray1)}
+.sp-step-text b{color:var(--ink);font-weight:600}
 
-.sp-note{font-size:15px;color:var(--gray2);font-style:italic;text-align:center;
+.sp-note{font-family:var(--font-body);font-size:13.5px;color:var(--gray2);font-style:italic;text-align:center;
   margin-top:1.5rem;padding-top:1rem;border-top:1px dashed var(--gray4)}
 `;
 
