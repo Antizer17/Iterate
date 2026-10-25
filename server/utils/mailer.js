@@ -9,15 +9,9 @@ import { marked } from 'marked';
 import getLinkToken from './linkTokenGenerator.js';
 import generateSolutionPDF from '../engines/buildPDF.js';
 import brevo from '../config/transporterConfig.js';
-
-
-
-
-
-
+import sendReminderEmail from './reminderMailer.js';
 
 const BASE_URL = process.env.BASE_URL || "https://api.iterate-app.me";
-
 
 // 6. Dispatch the structured email
 export const runDailyEmailJob = async () => {
@@ -31,7 +25,10 @@ export const runDailyEmailJob = async () => {
       const checkerData = await progress.find({user:user._id});
       const isCheck = checkerData.filter(obj => obj.currentOrderStep===obj.targetOrderStep);
       if(isCheck.length>0){
-        await users.findOneAndUpdate(user._id,{isActive:false});
+        const pendingProgress = isCheck.sort((a, b) => new Date(b.lastServedAt) - new Date(a.lastServedAt))[0];
+        console.log(`⏳ Sending pause reminder to ${user.name} (${user.email}) for ${pendingProgress.courseCode}...`);
+        await sendReminderEmail(user, pendingProgress);
+        await users.findByIdAndUpdate(user._id, {isActive:false});
         continue;
       }
 
