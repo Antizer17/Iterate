@@ -1,59 +1,97 @@
-import ollama from 'ollama'
+import { GoogleGenAI, Type } from '@google/genai';
+
+const ai = new GoogleGenAI({ 
+  apiKey: process.env.GEMINI_API_KEY,
+  httpOptions: { timeout: 60000 }
+});
+
 export default async function parseFullGuideWithLLM(companyName, markdownText) {
-  const prompt = `
-You are an advanced software engineering data extraction engine. Parse this raw Markdown document containing information regarding the interview process for ${companyName}.
-The markdown typically reads chronologically: an introduction or background information about the company, details regarding the overall structure or stages of the interview process, followed by real interview questions which may or may not include code solutions.
+  const prompt = `You are an expert technical recruiter and software engineering data extractor.
+Analyze this raw Markdown document containing the interview guide for ${companyName}.
+Carefully parse the company overview, the chronological interview stages, and the interview questions.
 
-Your goal is to parse this information cleanly into a single valid JSON object.
-
-CRITICAL RULES:
-- Only return a raw JSON object matching the format below. Do not include markdown code block containers (\`\`\`json) or conversational text.
-- If a question includes a code example or complete implementation solution block, isolate that exact code block and store it inside the "solutionCode" string field. Do not leave the code lumped together with the question text.
-- Clean up any messy HTML tags or broken syntax.
+IMPORTANT INSTRUCTIONS:
+- Extract company metadata from the table at the top if present:
+  * "foundingYear": e.g. "2013" (leave empty string if missing or empty in table)
+  * "technologies": array of technology/stack strings mentioned in "Technologies Used" (e.g. ["Python", "NodeJS", "React", "MongoDB"]). Empty array if none.
+  * "website": URL for "Company Website" if present, else empty string.
+  * "careerUrl": URL for "Career Website" if present, else empty string.
+- For each question, identify which interview stage or round it was asked in (e.g., "Round 1", "Phone Interview", "Take-Home Assignment", "Technical On-Site", "HR Round").
+- If the question was listed under a specific section heading (like "## Phone Interview", "## First round Interview Questions", "## Take-Home Assignment Questions"), use that round name.
+- If the markdown does not separate questions by round and just lists them under a general "## Questions" heading, default the stage to "Technical Round".
+- If a question contains a code implementation/solution, extract that into "solutionCode" and keep the problem statement in "questionText".
 
 Raw Markdown Payload:
 """
 ${markdownText}
-"""
-
-Expected Output Schema Format:
-{
-  "introduction": "The parsed context, description, or intro information about the company from the top of the file.",
-  "interviewStages": [
-    "Stage 1 description (e.g., Online Coding Assessment - 3 problems, 90 mins)",
-    "Stage 2 description (e.g., Technical Interview - Core DSA and Architecture)",
-    "Stage 3 description (e.g., HR & Behavioral Round)"
-  ],
-  "questions": [
-    {
-      "questionText": "The exact question asked",
-      "category": "DSA",
-      "difficulty": "Medium",
-      "details": "Any extra notes, non-code explanation, or contextual advice provided for this question.",
-      "solutionCode": "function solve() { ... } // Leave completely empty if no solution code snippet is present"
-    }
-  ]
-}
-`;
+"""`;
 
   try {
-    const response = await ollama.generate({
-      model: "qwen2.5-coder:7b",
-      prompt: prompt,
-      stream: false,
-      options: {
-        temperature: 0.1 
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            introduction: { 
+              type: Type.STRING, 
+              description: "Parsed context, description, or intro information about the company." 
+            },
+            foundingYear: {
+              type: Type.STRING,
+              description: "Founding year from metadata table if present, else empty string."
+            },
+            technologies: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: "List of technologies/tech stack mentioned under 'Technologies Used'."
+            },
+            website: {
+              type: Type.STRING,
+              description: "Company website URL if present, else empty string."
+            },
+            careerUrl: {
+              type: Type.STRING,
+              description: "Company careers website URL if present, else empty string."
+            },
+            interviewStages: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: "List of stages/rounds described in the guide."
+            },
+            questions: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  questionText: { type: Type.STRING, description: "The exact question asked." },
+                  stage: { type: Type.STRING, description: "The round/stage this question was asked in (e.g. 'Phone Interview', 'Round 1', 'Take-Home Assignment', 'Technical Round')." },
+                  category: {
+                    type: Type.STRING,
+                    enum: ["Database", "Operating Systems", "DSA", "System Design", "OOP", "Frontend", "Backend", "HR/Behavioral", "General CS"]
+                  },
+                  difficulty: {
+                    type: Type.STRING,
+                    enum: ["Easy", "Medium", "Hard"]
+                  },
+                  details: { type: Type.STRING, description: "Any extra notes, explanation, or context." },
+                  solutionCode: { type: Type.STRING, description: "Code implementation if present, otherwise empty string." }
+                },
+                required: ["questionText", "stage", "category", "difficulty"]
+              }
+            }
+          },
+          required: ["introduction", "interviewStages", "questions"]
+        }
       }
     });
 
-    const rawJSONText = response.response
-      .replace(/```json/g, '')
-      .replace(/```/g, '')
-      .trim();
-
-    return JSON.parse(rawJSONText);
+    const parsed = JSON.parse(response.text);
+    return parsed;
   } catch (err) {
-    console.error(`❌ Ollama Parsing Error for ${companyName}:`, err.message);
+    console.error(`❌ Gemini Parsing Error for ${companyName}:`, err.message);
     return null;
   }
 }

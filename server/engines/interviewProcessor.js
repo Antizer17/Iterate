@@ -1,6 +1,5 @@
 import axios from 'axios';
 import mongoose from 'mongoose';
-import ollama from 'ollama';
 import CompanyGuide from '../models/companyGuide.js';
 import parseFullGuideWithLLM from './llmParser.js';
 const MONGO_URI = process.env.MONGODB_URI;
@@ -29,8 +28,9 @@ async function runSyncPipeline() {
       const companyName = file.name.replace('.md', '').toUpperCase();
       console.log(`\n--------------------------------------------`);
      
-      const existing = await CompanyGuide.findOne({company: companyName})
+      const existing = await CompanyGuide.findOne({company: companyName});
       if(existing && existing.sha === file.sha){
+        console.log(`⏩ [${companyName}] is already up to date (${file.sha.slice(0, 7)}). Skipping.`);
         continue;
       }
       console.log(`Processing Comprehensive Guide for [${companyName}]...`);
@@ -40,7 +40,7 @@ async function runSyncPipeline() {
       const markdownText = rawContentResponse.data;
 
       // Transform via LLM
-      console.log(`Querying Ollama (qwen2.5-coder:7b) to deeply parse structural guide...`);
+      console.log(`Querying Gemini (gemini-2.5-flash) to deeply parse structural guide...`);
       const structuredGuide = await parseFullGuideWithLLM(companyName, markdownText);
       
       if (!structuredGuide) {
@@ -56,6 +56,10 @@ async function runSyncPipeline() {
           company: companyName,
           sha: file.sha,
           introduction: structuredGuide.introduction,
+          foundingYear: structuredGuide.foundingYear || "",
+          technologies: structuredGuide.technologies || [],
+          website: structuredGuide.website || "",
+          careerUrl: structuredGuide.careerUrl || "",
           interviewStages: structuredGuide.interviewStages,
           questions: structuredGuide.questions
         },
