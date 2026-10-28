@@ -24,7 +24,12 @@ export const CSS = `
 
 .cg-header{margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1.5px solid var(--gray4)}
 .cg-title{font-family:var(--font);font-size:44px;font-weight:700;display:inline-block;transform:rotate(-0.5deg)}
-.cg-intro{font-family:var(--font-body);font-size:15px;color:var(--gray1);font-style:italic;margin-top:8px;
+.cg-meta-strip{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:6px;font-family:var(--font-body);font-size:13px;color:var(--gray2)}
+.cg-meta-link{color:var(--gray1);text-decoration:none;font-weight:600;font-size:13px;transition:color .12s}
+.cg-meta-link:hover{color:var(--ink);text-decoration:underline}
+.cg-tech-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cg-tech-chip{font-family:var(--font-body);font-size:12px;font-weight:500;padding:2px 9px;background:var(--paper2);border:1px solid var(--gray4);border-radius:4px;color:var(--ink)}
+.cg-intro{font-family:var(--font-body);font-size:15px;color:var(--gray1);font-style:italic;margin-top:12px;
   padding-left:10px;border-left:2px solid var(--gray4)}
 
 .cg-section-title{font-family:var(--font);font-size:24px;font-weight:700;margin-bottom:0.75rem;
@@ -120,6 +125,35 @@ export default function CompanyGuidePage() {
           <>
             <div className="cg-header">
               <span className="cg-title">{guide.data.company}</span>
+
+              {(guide.data.foundingYear || guide.data.website || guide.data.careerUrl) && (
+                <div className="cg-meta-strip">
+                  {guide.data.foundingYear && (
+                    <span>📅 Founded {guide.data.foundingYear}</span>
+                  )}
+                  {guide.data.website && (
+                    <a href={guide.data.website} target="_blank" rel="noopener noreferrer" className="cg-meta-link">
+                      website ↗
+                    </a>
+                  )}
+                  {guide.data.careerUrl && (
+                    <a href={guide.data.careerUrl} target="_blank" rel="noopener noreferrer" className="cg-meta-link">
+                      careers ↗
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {guide.data.technologies?.length > 0 && (
+                <div className="cg-tech-list">
+                  {guide.data.technologies.map((tech, i) => (
+                    <span key={i} className="cg-tech-chip">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
+
               {guide.data.introduction && <p className="cg-intro">{guide.data.introduction}</p>}
             </div>
 
@@ -137,29 +171,54 @@ export default function CompanyGuidePage() {
               </>
             )}
 
-            <span className="cg-section-title">questions ({guide.data.questions?.length || 0})</span>
-            <div className="cg-questions" style={{ marginTop: "0.75rem" }}>
-              {guide.data.questions?.map((q, i) => (
-                <div className="cg-qcard" style={{ "--r": `${rotFor(i)}deg` }} key={i}>
-                  <div className="cg-qcard-meta">
-                    <span className="cg-chip">{q.category}</span>
-                    <span className={`cg-chip ${difficultyClass(q.difficulty)}`}>{q.difficulty}</span>
+            {(() => {
+              const grouped = (guide.data.questions || []).reduce((acc, q) => {
+                const stageName = q.stage || "Technical Round";
+                if (!acc[stageName]) acc[stageName] = [];
+                acc[stageName].push(q);
+                return acc;
+              }, {});
+
+              const stageEntries = Object.entries(grouped);
+
+              if (stageEntries.length === 0) {
+                return (
+                  <p className="cg-status" style={{ textAlign: "left", padding: "1rem 0" }}>
+                    No questions recorded yet for this company.
+                  </p>
+                );
+              }
+
+              return stageEntries.map(([stageName, questions], stageIndex) => (
+                <div key={stageName} style={{ marginBottom: "2.5rem" }}>
+                  <span className="cg-section-title">
+                    {stageName.toLowerCase()} ({questions.length})
+                  </span>
+                  <div className="cg-questions" style={{ marginTop: "0.75rem" }}>
+                    {questions.map((q, i) => (
+                      <div className="cg-qcard" style={{ "--r": `${rotFor(i + stageIndex)}deg` }} key={i}>
+                        <div className="cg-qcard-meta">
+                          <span className="cg-chip">{q.category}</span>
+                          <span className={`cg-chip ${difficultyClass(q.difficulty)}`}>{q.difficulty}</span>
+                        </div>
+                        <p className="cg-qcard-text">{q.questionText}</p>
+                        {q.details && <p className="cg-qcard-details">{q.details}</p>}
+                        {q.solutionCode && (
+                          <details className="cg-solution-dropdown" style={{ marginTop: "1rem" }}>
+                            <summary style={{ cursor: "pointer", fontWeight: "600", fontSize: "0.85rem", color: "var(--gray1)" }}>
+                              View Solution Code
+                            </summary>
+                            <pre className="cg-qcard-code" style={{ marginTop: "0.5rem" }}>
+                              <code>{q.solutionCode}</code>
+                            </pre>
+                          </details>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  <p className="cg-qcard-text">{q.questionText}</p>
-                  {q.details && <p className="cg-qcard-details">{q.details}</p>}
-                  {q.solutionCode && (
-                   <details className="cg-solution-dropdown" style={{ marginTop: "1rem" }}>
-    <summary style={{ cursor: "pointer", fontWeight: "600", fontSize: "0.85rem", color: "var(--gray1)" }}>
-      View Solution Code
-    </summary>
-    <pre className="cg-qcard-code" style={{ marginTop: "0.5rem" }}>
-      <code>{q.solutionCode}</code>
-    </pre>
-  </details>
-                  )}
                 </div>
-              ))}
-            </div>
+              ));
+            })()}
           </>
         )}
       </div>
