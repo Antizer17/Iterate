@@ -2,7 +2,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 
 const ai = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: { timeout: 60000 }
+  httpOptions: { timeout: 120000 }
 });
 
 export default async function parseFullGuideWithLLM(companyName, markdownText) {
@@ -92,6 +92,7 @@ ${markdownText}
     return parsed;
   } catch (err) {
     console.error(`❌ Gemini Parsing Error for ${companyName}:`, err.message);
-    return null;
+    const isQuotaExceeded = err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED') || err.status === 429;
+    return { error: err.message, isQuotaExceeded };
   }
 }

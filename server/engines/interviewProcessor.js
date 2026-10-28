@@ -8,10 +8,13 @@ const MONGO_URI = process.env.MONGODB_URI;
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function runSyncPipeline() {
+  const shouldDisconnect = mongoose.connection.readyState === 0;
   try {
-    console.log("Connecting to MongoDB...");
-    await mongoose.connect(MONGO_URI);
-    console.log("MongoDB Connected!");
+    if (shouldDisconnect) {
+      console.log("Connecting to MongoDB...");
+      await mongoose.connect(MONGO_URI);
+      console.log("MongoDB Connected!");
+    }
 
     console.log("🌐 Fetching file list from GitHub...");
     const repoFilesUrl = "https://api.github.com/repos/TamimEhsan/interview-questions-bangladesh/contents/docs/companies";
@@ -26,6 +29,11 @@ async function runSyncPipeline() {
     const forceSync = process.argv.includes('--force');
     const targetCompany = process.argv.find(arg => arg.startsWith('--company='))?.split('=')[1]?.toUpperCase();
 
+    let syncedCount = 0;
+    let skippedCount = 0;
+    let failedCount = 0;
+    let quotaExceeded = false;
+
     for (const file of mdFiles) {
   
       const companyName = file.name.replace('.md', '').toUpperCase();
@@ -38,6 +46,7 @@ async function runSyncPipeline() {
       const hasMetadata = existing && existing.technologies !== undefined && existing.foundingYear !== undefined;
       if (!forceSync && existing && existing.sha === file.sha && hasMetadata) {
         console.log(`⏩ [${companyName}] is already up to date (${file.sha.slice(0, 7)}). Skipping.`);
+        skippedCount++;
         continue;
       }
       console.log(`Processing Comprehensive Guide for [${companyName}]...`);
@@ -50,8 +59,14 @@ async function runSyncPipeline() {
       console.log(`Querying Gemini (gemini-2.5-flash) to deeply parse structural guide...`);
       const structuredGuide = await parseFullGuideWithLLM(companyName, markdownText);
       
-      if (!structuredGuide) {
+      if (!structuredGuide || structuredGuide.error) {
+        if (structuredGuide?.isQuotaExceeded) {
+          console.log(`\n⚠️ Gemini API daily free tier quota reached (429). Halting sync loop until quota resets.`);
+          quotaExceeded = true;
+          break;
+        }
         console.log(`Failed to parse structural data for ${companyName}. Skipping DB Load.`);
+        failedCount++;
         continue;
       }
 
@@ -74,17 +89,34 @@ async function runSyncPipeline() {
       );
 
       console.log(`✅ [${companyName}] guide successfully synced!`);
+      syncedCount++;
       await delay(1000); 
     }
 
-    console.log("\nComplete Data Pipeline Finished Successfully! :D");
+    const summary = {
+      totalFound: mdFiles.length,
+      syncedCount,
+      skippedCount,
+      failedCount,
+      quotaExceeded
+    };
+    console.log(`\nData Pipeline Summary: ${syncedCount} synced, ${skippedCount} skipped, ${failedCount} failed, quotaExceeded: ${quotaExceeded}.`);
+    return summary;
   } catch (err) {
     console.error("❌ Pipeline Error:", err.message);
+    throw err;
   } finally {
-    await mongoose.disconnect();
-    console.log("🔌 MongoDB Disconnected.");
+    if (shouldDisconnect) {
+      await mongoose.disconnect();
+      console.log("🔌 MongoDB Disconnected.");
+    }
   }
 }
 
+const isCLI = process.argv[1] && process.argv[1].replace(/\\/g, '/').endsWith('interviewProcessor.js');
+if (isCLI) {
+  runSyncPipeline().catch(err => console.error("Sync CLI execution error:", err));
+}
 
-runSyncPipeline();
+export default runSyncPipeline;
+export { runSyncPipeline };
