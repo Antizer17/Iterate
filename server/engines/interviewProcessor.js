@@ -23,13 +23,20 @@ async function runSyncPipeline() {
     const mdFiles = githubResponse.data.filter(file => file.name.endsWith('.md') && file.name !== 'index.md');
     console.log(`📂 Found ${mdFiles.length} company markdown files to process.`);
 
+    const forceSync = process.argv.includes('--force');
+    const targetCompany = process.argv.find(arg => arg.startsWith('--company='))?.split('=')[1]?.toUpperCase();
+
     for (const file of mdFiles) {
   
       const companyName = file.name.replace('.md', '').toUpperCase();
+      if (targetCompany && companyName !== targetCompany) {
+        continue;
+      }
       console.log(`\n--------------------------------------------`);
      
-      const existing = await CompanyGuide.findOne({company: companyName});
-      if(existing && existing.sha === file.sha){
+      const existing = await CompanyGuide.findOne({ company: companyName }).lean();
+      const hasMetadata = existing && existing.technologies !== undefined && existing.foundingYear !== undefined;
+      if (!forceSync && existing && existing.sha === file.sha && hasMetadata) {
         console.log(`⏩ [${companyName}] is already up to date (${file.sha.slice(0, 7)}). Skipping.`);
         continue;
       }
@@ -63,7 +70,7 @@ async function runSyncPipeline() {
           interviewStages: structuredGuide.interviewStages,
           questions: structuredGuide.questions
         },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
 
       console.log(`✅ [${companyName}] guide successfully synced!`);

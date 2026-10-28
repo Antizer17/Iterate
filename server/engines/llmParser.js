@@ -83,7 +83,7 @@ ${markdownText}
               }
             }
           },
-          required: ["introduction", "interviewStages", "questions"]
+          required: ["introduction", "foundingYear", "technologies", "website", "careerUrl", "interviewStages", "questions"]
         }
       }
     });
