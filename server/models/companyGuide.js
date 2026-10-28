@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 const CompanyGuideSchema = new mongoose.Schema({
   company: { type: String, required: true, unique: true },
+  sha: {type: String, default: null},
   introduction: { type: String, default: "" },
   interviewStages: [{ type: String }], // Array of strings outlining the chronological timeline
   questions: [

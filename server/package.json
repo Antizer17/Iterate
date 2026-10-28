@@ -16,7 +16,7 @@
     "generateSyllabus": "node ./engines/generateSyllabus.js",
     "generateContent": "node ./engines/fetchGenerate.js",
     "vault": "node ./engines/vaultProcessor.js",
-    "interviewProcessor": "node ./engines/interviewProcessor.js"
+    "interviewProcessor": "node --env-file=.env  ./engines/interviewProcessor.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^6.0.2",

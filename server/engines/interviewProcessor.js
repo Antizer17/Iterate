@@ -1,8 +1,8 @@
 import axios from 'axios';
 import mongoose from 'mongoose';
 import ollama from 'ollama';
-import CompanyGuide from '../models/companyGuide';
-import parseFullGuideWithLLM from './llmParser';
+import CompanyGuide from '../models/companyGuide.js';
+import parseFullGuideWithLLM from './llmParser.js';
 const MONGO_URI = process.env.MONGODB_URI;
 
 
@@ -25,8 +25,14 @@ async function runSyncPipeline() {
     console.log(`📂 Found ${mdFiles.length} company markdown files to process.`);
 
     for (const file of mdFiles) {
+  
       const companyName = file.name.replace('.md', '').toUpperCase();
       console.log(`\n--------------------------------------------`);
+     
+      const existing = await CompanyGuide.findOne({company: companyName})
+      if(existing && existing.sha === file.sha){
+        continue;
+      }
       console.log(`Processing Comprehensive Guide for [${companyName}]...`);
 
       // Extract raw text
@@ -48,6 +54,7 @@ async function runSyncPipeline() {
         { company: companyName },
         {
           company: companyName,
+          sha: file.sha,
           introduction: structuredGuide.introduction,
           interviewStages: structuredGuide.interviewStages,
           questions: structuredGuide.questions

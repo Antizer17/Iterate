@@ -1,3 +1,4 @@
+import ollama from 'ollama'
 export default async function parseFullGuideWithLLM(companyName, markdownText) {
   const prompt = `
 You are an advanced software engineering data extraction engine. Parse this raw Markdown document containing information regarding the interview process for ${companyName}.
