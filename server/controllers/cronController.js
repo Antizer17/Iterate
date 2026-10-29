@@ -24,6 +24,7 @@ async function syncGuidesTask(req, res) {
     return res.status(401).json({ error: 'Unauthorized: Invalid cron secret' });
   }
   try {
+    res.status(202).json({success: true,message: "Syncing initiated successfully!"})
     console.log('Executing interview guides sync cron task...');
     const result = await runSyncPipeline();
     res.status(200).json({ success: true, message: "Guides sync pipeline completed!", result });

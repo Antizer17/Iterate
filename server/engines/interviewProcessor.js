@@ -90,7 +90,7 @@ async function runSyncPipeline() {
 
       console.log(`✅ [${companyName}] guide successfully synced!`);
       syncedCount++;
-      await delay(1000); 
+      await delay(2500); 
     }
 
     const summary = {
