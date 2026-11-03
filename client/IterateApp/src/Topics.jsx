@@ -250,7 +250,7 @@ export default function Topics() {
       console.error(err)
     }
     const course = courses.find(c => c.courseCode === data.courseId);
-    showToast(`✓ Enrolled in ${course?.courseCode} — confidence ${data.confidence}/10`);
+    showToast(`✓ Enrolled in ${ data.course?.course || cardData.course?.title || "Computer Science Course"} — confidence ${data.confidenceScore}/10`);
   }
 
   // async function syncToBackend() {
