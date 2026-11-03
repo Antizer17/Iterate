@@ -13,7 +13,7 @@
     "seedContent": "node seed.js",
     "mail": "node ./utils/mailer.js",
     "seedUser": "node ./utils/seedUserProgress.js",
-    "generateSyllabus": "node ./engines/generateSyllabus.js",
+    "generateSyllabus": "node --env-file=.env ./engines/generateSyllabus.js",
     "generateContent": "node ./engines/fetchGenerate.js",
     "vault": "node ./engines/vaultProcessor.js",
     "interviewProcessor": "node --env-file=.env  ./engines/interviewProcessor.js"
