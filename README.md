@@ -1,10 +1,10 @@
 <div align="center">
 
-# ⚡ Iterate
+# Iterate
 
 ### Automated Spaced-Repetition & Interview Revision Engine for Computer Science
 
-**Bite-sized, exam-focused syllabus modules and dynamically compiled PDF solution guides delivered straight to your inbox.**
+**Bite-sized, highly relevant syllabus modules and dynamically compiled PDF solution guides delivered straight to your inbox.**
 
 [![Node.js](https://img.shields.io/badge/Node.js-20+-68a063?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18+-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -19,18 +19,18 @@
 
 ---
 
-## 📌 The Problem: The Semester Trap
+## The Problem: The Semester Trap
 
 Every semester, computer science undergraduates are bombarded with **3 to 4 intensive, fast-paced courses**. Between lab reports, midterm exams, programming assignments, and project deadlines, 100% of a student's mental bandwidth is consumed just staying afloat in their current semester.
 
 The inevitable consequence? **Severe knowledge decay.**
-* Concepts mastered in semester 2 (OOP, Linear Data Structures) fade by semester 4.
+* Concepts mastered in semester 4 (OOP, Data Structures) fade by semester 6.
 * Heavy systems concepts (Operating Systems, Networks, Database Internals) blur into memory by the time senior-year technical interview season arrives.
-* Students find themselves forced to re-study entire multi-month courses from scratch—an overwhelming task while still managing a full academic course load.
+* Students find themselves less confident and are forced to re-study courses from scratch which is an overwhelming task while still managing a full academic course load.
 
 ---
 
-## 🎯 The Solution: 10 Minutes a Day to Keep Fundamentals Evergreen
+## The Solution: 10 Minutes a Day to Keep Fundamentals Evergreen
 
 **Iterate** was built to break this cycle. Its core philosophy is simple: **Give 10 minutes a day to build a sustainable revision habit that keeps previous semester knowledge evergreen while you freely pursue new courses.**
 
@@ -42,11 +42,11 @@ Instead of letting hard-earned fundamentals fade, Iterate acts as an automated b
 
 ---
 
-## ⚡ Why Not Just Use ChatGPT?
+##  Why Not Just Use ChatGPT?
 
-A common question is: *“Can’t I just ask ChatGPT to review these topics?”*
+A common question that may come to mind: *“Can’t I just ask ChatGPT to review these topics?”*
 
-Technically, yes—but in reality, **raw LLMs introduce significant friction and cognitive overhead**:
+Yes, but in reality, **raw LLMs introduce significant friction and cognitive overhead**:
 
 | Dimension | Using ChatGPT / Raw LLMs | Using Iterate |
 | :--- | :--- | :--- |
@@ -59,7 +59,7 @@ Iterate eliminates the planning fatigue so you can focus entirely on keeping you
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 Iterate is structured as an event-driven system with separated concerns for content ingestion, scheduling, transactional dispatch, and web presentation:
 
@@ -97,7 +97,7 @@ flowchart TD
 
 ---
 
-## 💡 Core Engineering Highlights
+## Core Engineering Highlights
 
 ### 1. Spaced Repetition Retention Decay Engine
 Instead of basic sequential ordering or random picking, Iterate dynamically serves topics using a mathematical decay formula in [`prioritySchedular.js`](server/engines/prioritySchedular.js):
@@ -129,7 +129,7 @@ Long-running jobs (such as syncing multi-company interview guides) are built wit
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Domain | Technology | Description |
 | :--- | :--- | :--- |
@@ -168,7 +168,7 @@ RevisionApp/
 
 ---
 
-## 🚀 Local Development Setup
+## Local Development Setup
 
 ### Prerequisites
 * [Node.js (v20+)](https://nodejs.org/)
@@ -228,9 +228,8 @@ Visit `http://localhost:5173` to explore the application.
 
 ---
 
-## 📚 Supported Courses
+## Supported Courses
 
-* **CSE111:** Object-Oriented Programming
 * **CSE220:** Data Structures
 * **CSE221:** Algorithms
 * **CSE321:** Operating Systems
