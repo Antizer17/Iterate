@@ -594,7 +594,7 @@ export function ConfusedVault({ topics: topicsProp ,onAdd: onAddProp, onResolve:
           <div className="cv-empty">
             {console.log(`testiiiing ${visible}`)}
             {vaultTopics.length === 0
-              ? "vault's empty — nothing to crack yet"
+              ? "vault's empty"
               : "nothing matches that search"}
           </div>
         ) : (
