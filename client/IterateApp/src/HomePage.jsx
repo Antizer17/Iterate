@@ -26,6 +26,10 @@ export const CSS = `
   background:var(--paper);border:1.5px solid var(--ink);color:var(--ink);cursor:pointer;
   border-radius:4px;transition:all .12s}
 .hm-login-btn:hover{background:var(--ink);color:var(--paper)}
+.hm-top-actions{display:flex;align-items:center;gap:16px}
+.hm-top-link{font-family:var(--font-body);font-size:14.5px;color:var(--gray1);background:none;
+  border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:color .12s}
+.hm-top-link:hover{color:var(--ink)}
 
 .hm-wrap{max-width:900px;margin:0 auto;padding:0 1.5rem}
 
@@ -81,6 +85,9 @@ export const CSS = `
   box-shadow:2px 3px 0 rgba(26,26,24,0.05), 0 8px 18px -10px rgba(26,26,24,0.25);
   transition:box-shadow .15s ease}
 .hm-pillar:hover{box-shadow:3px 5px 0 rgba(26,26,24,0.07), 0 12px 24px -10px rgba(26,26,24,0.28)}
+.hm-pillar.clickable{cursor:pointer;transition:transform .15s ease, box-shadow .15s ease}
+.hm-pillar.clickable:hover{transform:translateY(-3px) rotate(var(--r));box-shadow:3px 8px 20px -8px rgba(26,26,24,0.3)}
+.hm-pillar-browse{display:inline-block;margin-top:12px;font-family:var(--font-body);font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 .hm-pillar::before{content:'';position:absolute;top:-1px;right:-1px;width:9px;height:9px;
   border-top:1.5px solid var(--gray3);border-right:1.5px solid var(--gray3)}
 .hm-pillar-icon{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--gray4);
@@ -152,7 +159,12 @@ export default function HomePage() {
           <IterateLogo spin/>
           <span className="hm-brand-name">iterate</span>
         </div>
-        <button className="hm-login-btn" onClick={() => navigate("/login")}>log in →</button>
+        <div className="hm-top-actions">
+          <button className="hm-top-link" onClick={() => navigate("/interview")}>
+            interview guides ↗
+          </button>
+          <button className="hm-login-btn" onClick={() => navigate("/login")}>log in →</button>
+        </div>
       </div>
 
       <div className="hm-wrap">
@@ -164,6 +176,9 @@ export default function HomePage() {
           <div className="hm-hero-ctas">
             <button className="hm-cta-primary" onClick={() => navigate("/login")}>
               get started
+            </button>
+            <button className="hm-cta-secondary" onClick={() => navigate("/interview")}>
+              explore interview guides →
             </button>
             <button className="hm-cta-secondary" onClick={scrollToHowItWorks}>
               see how it works ↓
@@ -243,13 +258,14 @@ Each one comes with 2 quick MCQs and a PDF holding the answers, so once it's in 
                 YouTube explainers on that exact topic queued up so the confusion doesn't linger.
               </p>
             </div>
-            <div className="hm-pillar" style={{ "--r": "-0.2deg" }}>
+            <div className="hm-pillar clickable" style={{ "--r": "-0.2deg" }} onClick={() => navigate("/interview")}>
               <div className="hm-pillar-icon"><BriefcaseIcon /></div>
-              <div className="hm-pillar-title">interview guides</div>
+              <div className="hm-pillar-title">interview guides ↗</div>
               <p className="hm-pillar-text">
                 Real questions and stages that Bangladesh tech companies ask and their complete interview guide pulled from a crowd-sourced GitHub repo of
                 interview experiences, organized and readable.
               </p>
+              <span className="hm-pillar-browse">browse 40+ companies (free) →</span>
             </div>
           </div>
         </div>
