@@ -265,7 +265,7 @@ Each one comes with 2 quick MCQs and a PDF holding the answers, so once it's in 
                 Real questions and stages that Bangladesh tech companies ask and their complete interview guide pulled from a crowd-sourced GitHub repo of
                 interview experiences, organized and readable.
               </p>
-              <span className="hm-pillar-browse">browse 40+ companies (free) →</span>
+              <span className="hm-pillar-browse">browse 40+ companies →</span>
             </div>
           </div>
         </div>
@@ -275,7 +275,7 @@ Each one comes with 2 quick MCQs and a PDF holding the answers, so once it's in 
           <span className="hm-closing-title">ready to actually retain what you study?</span>
           <div>
             <button className="hm-cta-primary" onClick={() => navigate("/login")}>
-              get started — it's free
+              get started
             </button>
           </div>
         </div>
